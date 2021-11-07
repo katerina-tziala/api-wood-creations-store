@@ -1,0 +1,5 @@
+CREATE TABLE sub_category (
+    id SERIAL PRIMARY KEY,
+    category_id INTEGER REFERENCES category(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    name VARCHAR(60) NOT NULL UNIQUE
+);
