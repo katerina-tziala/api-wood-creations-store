@@ -49,3 +49,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ## Database Schema
 The following diagram depicts the database schema that address the API endpoints and data contracts above:
+
+<p align="center">
+    <img src="https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/wood-creations-store.png" alt="database-schema" width="100%" height="auto">
+</p>
