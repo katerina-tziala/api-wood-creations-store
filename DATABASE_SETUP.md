@@ -54,37 +54,45 @@ In the psql shell create the database for testing and grant all privileges to yo
 
 2. Grant all privileges to your user:
 
-   ` \c <POSTGRES_DB_TEST> `
+   ``` 
+   \c <POSTGRES_DB_TEST>
    
-   ` GRANT ALL PRIVILEGES ON DATABASE <POSTGRES_DB_TEST> TO <POSTGRES_USER>; `
+   GRANT ALL PRIVILEGES ON DATABASE <POSTGRES_DB_TEST> TO <POSTGRES_USER>;
+   ```
 
 ### Docker Volumes
 
 Docker-Compose helps us manage creating and destroying the named volumes. These volumes allow the data to persist even if we destroy the containers.
-To tell Docker-Compose to destroy the volume and its data, you need to run in the root directory of the project `docker-compose down --volumes`.
+To tell Docker-Compose to destroy the volume and its data, you need to run in the root directory of the project:
+
+` docker-compose down --volumes `
 
 ## Set Up Database Locally
 
 If you want to run the database locally, kind of like localhost, then make sure you have installed [postgres](https://www.postgresql.org/download/).
 Make sure postgres server is running and open a psql terminal.
 
-1. Run: ` psql -U postgres `
+1. To connect to the database run:
+    ` psql -U postgres `
 
-2. Run: ` CREATE USER <POSTGRES_USER> WITH PASSWORD <POSTGRES_PASSWORD>; `
+2. To create the database user run:
+    ` CREATE USER <POSTGRES_USER> WITH PASSWORD <POSTGRES_PASSWORD>; `
 
     _Do not forget to use single quotes for the password._
 
 3. Create the development and testing databases:
 
-    * `CREATE DATABASE <POSTGRES_DB>;`
-
-    * `CREATE DATABASE <POSTGRES_DB_TEST>;`
+    ```
+    CREATE DATABASE <POSTGRES_DB | POSTGRES_DB_TEST>;
+    ```
 
 4. Connect to the databases and grant all privileges
 
-   * Connect: ` \c <POSTGRES_DB | POSTGRES_DB_TEST> `
-   * Grand privilledges:
-   ` GRANT ALL PRIVILEGES ON DATABASE <POSTGRES_DB | POSTGRES_DB_TEST> TO <POSTGRES_USER>; `
+   ```
+   \c <POSTGRES_DB | POSTGRES_DB_TEST>
+   
+   GRANT ALL PRIVILEGES ON DATABASE <POSTGRES_DB | POSTGRES_DB_TEST> TO <POSTGRES_USER>;
+   ```
 
 To connect to each one of the databases you can run
 
