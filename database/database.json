@@ -2,37 +2,37 @@
     "dev": {
         "driver": "pg",
         "user": {
-            "ENV": "DB_USER"
+            "ENV": "POSTGRES_USER"
         },
         "password": {
-            "ENV": "DB_PASSWORD"
+            "ENV": "POSTGRES_PASSWORD"
         },
         "host": {
-            "ENV": "DB_HOST"
+            "ENV": "POSTGRES_HOST"
         },
         "database": {
-            "ENV": "DB_NAME"
+            "ENV": "POSTGRES_DB"
         },
         "port": {
-            "ENV": "DB_PORT"
+            "ENV": "POSTGRES_PORT"
         }
     },
     "test": {
         "driver": "pg",
         "user": {
-            "ENV": "DB_USER"
+            "ENV": "POSTGRES_USER"
         },
         "password": {
-            "ENV": "DB_PASSWORD"
+            "ENV": "POSTGRES_PASSWORD"
         },
         "host": {
-            "ENV": "DB_HOST"
+            "ENV": "POSTGRES_HOST"
         },
         "database": {
-            "ENV": "DB_NAME_TEST"
+            "ENV": "POSTGRES_DB_TEST"
         },
         "port": {
-            "ENV": "DB_PORT"
+            "ENV": "POSTGRES_PORT"
         }
     },
     "sql-file": true

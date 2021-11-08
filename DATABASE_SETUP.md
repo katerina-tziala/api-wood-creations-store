@@ -1,0 +1,93 @@
+# DATABASE SETUP
+
+In order to run the app you must have a database up and running. In this document you will find the instructions on how to install, run and connect to the database(s) of this app.
+The choice is yours! Just make sure you do not use both setups interchangeably.
+
+# SET UP ENVIRONMENT
+
+In the .env file you must create the following variables:
+
+```
+    POSTGRES_HOST=
+    POSTGRES_PORT=
+    POSTGRES_USER=
+    POSTGRES_PASSWORD=
+    POSTGRES_DB=
+    POSTGRES_DB_TEST=
+```
+
+The default setting used for development and testing (but not in production) can be found in the example.env file.
+
+You should add the values for the following variables:
+
+```
+    POSTGRES_USER=
+    POSTGRES_PASSWORD=
+```
+
+## SET UP DATABASE IN A DOCKER CONTAINER
+
+If you want to run the database in a docker container make sure you can use [docker](https://www.docker.com/get-started).
+To set up the databases for the project open a terminal, navigate to the root directory of the project and run:
+`docker-compose up`
+The docker-compose.yml file will handle the installation. Docker-Compose will only download the image the first time you run this command.
+Now postgres server is running in a docker container.
+
+1. In a new terminal, navigate to the root directory of the project and run the following command to drop into the container shell (psql):
+   `docker-compose run database bash`
+
+2. To connect to the database run:
+   `psql --host=database --username=<POSTGRES_USER> --dbname=<POSTGRES_DB | POSTGRES_DB_TEST>`
+   And use the password you already set in the .env file (POSTGRES_PASSWORD).
+    **Note:** When setting up the databases (in the first run), you will not be able to connect to POSTGRES_DB_TEST since it does not exist yet!
+
+3. Then, grant all privileges to your user for the POSTGRES_DB:
+   `GRANT ALL PRIVILEGES ON DATABASE <POSTGRES_DB> TO <POSTGRES_USER>;`
+
+### CREATE THE DATABASE FOR TESTING
+
+In the psql shell create the database for testing and grant all privileges to your user:
+
+1. Create the database for testing: `CREATE DATABASE <POSTGRES_DB_TEST>;`
+
+2. Grant all privileges to your user:
+   `\c <POSTGRES_DB_TEST>`
+   `GRANT ALL PRIVILEGES ON DATABASE <POSTGRES_DB_TEST> TO <POSTGRES_USER>;`
+
+### DOCKER VOLUMES
+
+Docker-Compose helps us manage creating and destroying the named volumes. These volumes allow the data to persist even if we destroy the containers.
+To tell Docker-Compose to destroy the volume and its data, you need to run in the root directory of the project `docker-compose down --volumes`.
+
+## SET UP DATABASE LOCALLY
+
+If you want to run the database locally, kind of like localhost, then make sure you have installed [postgres](https://www.postgresql.org/download/).
+Make sure postgres server is running and open a psql terminal.
+
+1. Run: `psql -U postgres`
+
+2. Run: `CREATE USER <POSTGRES_USER> WITH PASSWORD <POSTGRES_PASSWORD>;`
+   Do not forget to use single quotes for the password.
+
+3. Create the development and testing databases:
+
+   - `CREATE DATABASE <POSTGRES_DB>;`
+
+   - `CREATE DATABASE <POSTGRES_DB_TEST>;`
+
+4. Connect to the databases and grant all privileges
+
+   - Connect: `\c <POSTGRES_DB | POSTGRES_DB_TEST>`
+   - Grand privilledges: `GRANT ALL PRIVILEGES ON DATABASE <POSTGRES_DB | POSTGRES_DB_TEST> TO <POSTGRES_USER>;`
+
+To connect to each one of the databases you can run ` psql --username=<POSTGRES_USER> --dbname=<POSTGRES_DB | POSTGRES_DB_TEST> `;
+
+## PSQL META COMMANDS CHEAT SHEET
+
+- ` \l ` List databases
+
+- ` \c ` Connect to a database
+
+- ` \dt ` Display Tables in a database
+
+- ` \q ` Quit out of psql to normal terminal

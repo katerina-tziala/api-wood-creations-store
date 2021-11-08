@@ -11,10 +11,10 @@
     "tsc": "tsc",
     "start": "node src/index.ts",
     "watch": "npm run clean && tsc-watch --esModuleInterop src/index.ts --outDir ./dist --onSuccess 'node ./dist/index.js'",
-    "db-up-dev": "db-migrate up -e dev -m ./_db/migrations --config ./_db/database.json",
-    "db-down-dev": "db-migrate reset -e dev -m ./_db/migrations --config ./_db/database.json",
-    "db-up-test": "db-migrate up -e test -m ./_db/migrations --config ./_db/database.json",
-    "db-down-test": "db-migrate reset -e test -m ./_db/migrations --config ./_db/database.json"
+    "db-up-dev": "db-migrate up -e dev -m ./database/migrations --config ./database/database.json",
+    "db-down-dev": "db-migrate reset -e dev -m ./database/migrations --config ./database/database.json",
+    "db-up-test": "db-migrate up -e test -m ./database/migrations --config ./database/database.json",
+    "db-down-test": "db-migrate reset -e test -m ./database/migrations --config ./database/database.json"
   },
   "repository": {
     "type": "git",
