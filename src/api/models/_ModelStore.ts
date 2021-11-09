@@ -1,16 +1,18 @@
 import { Pool, PoolClient, QueryResult } from 'pg';
 import { dbConf } from '../../config/config';
 
-export type ModelType = {
+export interface ModelType {
   id: number;
-};
+}
 
 export class ModelStore<T> {
   protected table = '';
+  protected selectQuery: string;
   private dbConn: Pool = new Pool(dbConf);
 
-  constructor(table: string) {
+  constructor(table: string, selectQuery?: string) {
     this.table = table;
+    this.selectQuery = selectQuery ? selectQuery : `SELECT * FROM ${table}`;
   }
 
   private getCommaSeparatedValues(values: string[]): string {
@@ -49,13 +51,21 @@ export class ModelStore<T> {
     }
   }
 
+  protected async getByRelationId(
+    id: number,
+    relatedTable: string
+  ): Promise<T[]> {
+    const sql = `${this.selectQuery} WHERE ${relatedTable}=($1) ORDER BY id ASC`;
+    return await this.runQuery(sql, [id]);
+  }
+
   public async getAll(): Promise<T[]> {
-    const sql = `SELECT * FROM ${this.table} ORDER BY id ASC`;
+    const sql = `${this.selectQuery} ORDER BY id ASC`;
     return await this.runQuery(sql);
   }
 
   public async getById(id: number): Promise<T> {
-    const sql = `SELECT * FROM ${this.table} WHERE id=($1)`;
+    const sql = `${this.selectQuery} WHERE id=($1)`;
     const results = await this.runQuery(sql, [id]);
     return this.returnOne(results, id);
   }

@@ -1,4 +1,3 @@
-import { Category, CategoryStore } from '../../src/api/models/Category';
 import { ModelStore, ModelType } from '../../src/api/models/_ModelStore';
 
 function selectId(data: Array<Partial<ModelType>>): number {

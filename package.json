@@ -13,6 +13,8 @@
     "dev": "npm run clean && tsc-watch --esModuleInterop src/index.ts --outDir ./dist --onSuccess 'node ./dist/index.js'",
     "database-up": "db-migrate up -m ./database/migrations --config ./database/database.json",
     "database-down": "db-migrate reset -m ./database/migrations --config ./database/database.json",
+    "database-up-data": "db-migrate up -m ./database/data-migrations --config ./database/database.json",
+    "database-down-data": "db-migrate down -m ./database/data-migrations --config ./database/database.json",
     "test": "ENV=test npm run database-up && jasmine-ts && npm run database-down",
     "test-f": "ENV=test npm run database-up && jasmine-ts"
   },

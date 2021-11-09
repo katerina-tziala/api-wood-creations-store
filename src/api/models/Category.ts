@@ -1,6 +1,6 @@
 import { ModelStore, ModelType } from './_ModelStore';
 
-export type Category = ModelType & {
+export interface Category extends ModelType {
   name: string;
 };
 
