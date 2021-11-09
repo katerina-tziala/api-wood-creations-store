@@ -73,13 +73,8 @@ export function testDeleteMethods<T, U>(
     );
   });
 
-  it(`should delete and return the correct record when using deleteById method`, async () => {
-    const result: Partial<ModelType> = await model.deleteById(id);
-    expect(result).toBeDefined();
-    expect(result.id).toBe(id);
-    expect(
-      expectedData.find(existingRecord => existingRecord.id === id)
-    ).not.toBeDefined();
+  it(`should delete the correct record when using deleteById method`, async () => {
+    await expectAsync(model.deleteById(id)).toBeResolvedTo(id);
   });
 
   it('should throw an error when using the deleteById method with an id that does not exist', async () => {

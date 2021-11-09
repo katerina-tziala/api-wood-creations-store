@@ -10,13 +10,14 @@
     "lint": "eslint . --ext .ts",
     "tsc": "tsc",
     "start": "node src/index.ts",
-    "dev": "npm run clean && tsc-watch --esModuleInterop src/index.ts --outDir ./dist --onSuccess 'node ./dist/index.js'",
+    "dev": "cross-env NODE_ENV=dev tsc-watch --esModuleInterop src/index.ts --outDir ./dist --onSuccess 'node ./dist/index.js'",
     "database-up": "db-migrate up -m ./database/migrations --config ./database/database.json",
     "database-down": "db-migrate reset -m ./database/migrations --config ./database/database.json",
     "database-up-data": "db-migrate up -m ./database/data-migrations --config ./database/database.json",
     "database-down-data": "db-migrate down -m ./database/data-migrations --config ./database/database.json",
-    "test": "ENV=test npm run database-up && jasmine-ts && npm run database-down",
-    "test-f": "ENV=test npm run database-up && jasmine-ts"
+    "db-up-test": "db-migrate up -e test -m ./database/migrations --config ./database/database.json",
+    "db-down-test": "db-migrate reset -e test -m ./database/migrations --config ./database/database.json",
+    "test": "npm run db-up-test && cross-env NODE_ENV=test jasmine-ts && npm run db-down-test"
   },
   "repository": {
     "type": "git",
@@ -52,6 +53,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

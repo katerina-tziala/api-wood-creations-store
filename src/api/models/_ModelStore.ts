@@ -29,7 +29,7 @@ export class ModelStore<T> {
     return updateProperties;
   }
 
-  private returnOne(results: Array<T>, id: number): T {
+  protected returnOne(results: Array<T>, id: number): T {
     const record = results[0];
     if (!record) {
       // TODO: error handling
@@ -53,9 +53,9 @@ export class ModelStore<T> {
 
   protected async getByRelationId(
     id: number,
-    relatedTable: string
+    relatedKey: string
   ): Promise<T[]> {
-    const sql = `${this.selectQuery} WHERE ${relatedTable}=($1) ORDER BY id ASC`;
+    const sql = `${this.selectQuery} WHERE ${relatedKey}=($1) ORDER BY id ASC`;
     return await this.runQuery(sql, [id]);
   }
 
@@ -91,15 +91,20 @@ export class ModelStore<T> {
     return this.returnOne(results, id);
   }
 
-  public async deleteById(id: number): Promise<T> {
+  public async deleteById(id: number): Promise<number> {
     const sql = `DELETE FROM ${this.table} WHERE id=($1) RETURNING *`;
     const results = await this.runQuery(sql, [id]);
-    return this.returnOne(results, id);
+    const record = results[0];
+    if (!record) {
+      // TODO: error handling
+      throw Error(`record with id ${id} does not exist`);
+    }
+    return id;
   }
 
-  public async deleteAll(): Promise<T[]> {
+  public async deleteAll(): Promise<number[]> {
     const sql = `DELETE FROM ${this.table} RETURNING *`;
     const results = await this.runQuery(sql);
-    return results;
+    return results.map((record: T extends ModelType ? any: any) => record.id);
   }
 }

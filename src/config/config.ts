@@ -6,9 +6,12 @@ import { PoolConfig } from 'pg';
 export const PORT = parseInt(process.env.PORT as unknown as string, 10);
 
 const database =
-  process.env.ENV === 'test'
+  process.env.NODE_ENV === 'test'
     ? process.env.POSTGRES_DB_TEST
     : process.env.POSTGRES_DB;
+
+    console.log(process.env.NODE_ENV);
+    
 
 export const dbConf: PoolConfig = {
   host: process.env.POSTGRES_HOST,
