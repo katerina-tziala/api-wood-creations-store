@@ -19,7 +19,7 @@ Here’s a high level list of the technologies used for this app:
 
 1. Fork and clone this repository
 
-2. In the root directory of the project create a .env file based on the example.env
+2. In the root directory of the project create a **_.env_** file based on the **_example.env_**
 
 
 
