@@ -15,7 +15,7 @@ api.get('/', async (_, res: Response): Promise<void> => {
     const name = 'accessoires';
     // seasonally
     //'office supplies'
-    // const test = await category.create({ name });
+    const test = await category.create({ name });
 
     // const test = await category.getAll();
     // const test = await category.getById(1);
@@ -24,7 +24,7 @@ api.get('/', async (_, res: Response): Promise<void> => {
 
     // const test = await category.updateById(8, { name: 'accessoires' });
 
-    const test = await subcategory.getAll();
+    // const test = await subcategory.getAll();
 
     // const test = await subcategory.create({ name: 'er', category_id: 12 });
 

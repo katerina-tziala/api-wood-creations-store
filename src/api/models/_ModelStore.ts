@@ -36,8 +36,21 @@ export class ModelStore<T> {
     return record;
   }
 
+  protected async runQuery<U>(sql: string, params: U[] = []): Promise<T[]> {
+    try {
+      const conn: PoolClient = await this.dbConn.connect();
+      const result: QueryResult = await conn.query(sql, params);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      // TODO: error handling
+      // console.log(err);
+      throw new Error(`runQuery Error: ${err}`);
+    }
+  }
+
   public async getAll(): Promise<T[]> {
-    const sql = `SELECT * FROM ${this.table}`;
+    const sql = `SELECT * FROM ${this.table} ORDER BY id ASC`;
     return await this.runQuery(sql);
   }
 
@@ -74,16 +87,9 @@ export class ModelStore<T> {
     return this.returnOne(results, id);
   }
 
-  protected async runQuery<U>(sql: string, params: U[] = []): Promise<T[]> {
-    try {
-      const conn: PoolClient = await this.dbConn.connect();
-      const result: QueryResult = await conn.query(sql, params);
-      conn.release();
-      return result.rows;
-    } catch (err) {
-      // TODO: error handling
-      // console.log(err);
-      throw new Error(`runQuery Error: ${err}`);
-    }
+  public async deleteAll(): Promise<T[]> {
+    const sql = `DELETE FROM ${this.table} RETURNING *`;
+    const results = await this.runQuery(sql);
+    return results;
   }
 }
