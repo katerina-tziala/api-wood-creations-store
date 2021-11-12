@@ -7,8 +7,29 @@ You have been tasked with building the API that will support this application, a
 These are the notes from a meeting with the frontend developer that describe what endpoints the API needs to supply, as well as data shapes the frontend and backend have agreed meet the requirements of the application. 
 
 ## API Endpoints
+All api endpoints are under the route **/api**. The data contracts used to present the response of each endpoint are presented in the **Data Contracts**  section of this document.
+### Products
+
+#### [GET] /products
+Returns a list of all products.
+
+**_Response:_** ```[ Product, ... ]```
+
+**_Possible Errors_**
+| Error Code                | description                                         |
+| ------------------------- | --------------------------------------------------- |
+| 500 Internal Server Error | The products could not be fetched                   |
+
+#### [GET] /products:id
+
+
+
+
+
+
 #### Products
 - Index 
+
 - Show
 - Create [token required]
 - [OPTIONAL] Top 5 most popular products 

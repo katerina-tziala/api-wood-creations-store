@@ -5,18 +5,31 @@ export interface OrderItem extends ModelType {
   product_id: number;
   quantity: number;
   engraving?: string;
+  name?: string;
+  price?: string;
 }
 
 export class OrderItemStore extends ModelStore<OrderItem> {
   constructor() {
-    const selectQuery = `SELECT order_item.*, product.name, product.price`
-      .concat(` FROM order_item`)
-      .concat(` INNER JOIN product`)
-      .concat(` ON order_item.product_id = product.id`);
+    const selectQuery =
+      `SELECT order_item.*, product.name as name, product.price as price`
+        .concat(` FROM order_item`)
+        .concat(` INNER JOIN product`)
+        .concat(` ON order_item.product_id = product.id`);
     super('order_item', selectQuery);
   }
 
-  public async getOrderItems(order_id: number): Promise<OrderItem[]> {
-    return await this.getByRelationId(order_id, 'order_id');
+  public async create(data: Partial<OrderItem>): Promise<OrderItem> {
+    const { name, price, ...properties } = data;
+    return super.create(properties);
+  }
+
+  public async update(data: Partial<OrderItem>): Promise<OrderItem> {
+    const { name, price, ...properties } = data;
+    return super.create(properties);
+  }
+
+  public async getItemsInOrder(order_id: number): Promise<OrderItem[]> {
+    return await this.getBykey(order_id, 'order_id');
   }
 }

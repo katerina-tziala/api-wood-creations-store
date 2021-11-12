@@ -10,16 +10,25 @@ export interface Product extends ModelType {
 
 export class ProductStore extends ModelStore<Product> {
   constructor() {
-    const selectQuery =
-      `SELECT product.*, category.name as category`
-        .concat(` FROM product`)
-        .concat(` INNER JOIN category`)
-        .concat(` ON category.id = product.category_id`);
+    const selectQuery = `SELECT product.*, category.name as category`
+      .concat(` FROM product`)
+      .concat(` INNER JOIN category`)
+      .concat(` ON category.id = product.category_id`);
     super('product', selectQuery);
   }
 
+  public async create(data: Partial<Product>): Promise<Product> {
+    const { category, ...properties } = data;
+    return super.create(properties);
+  }
+
+  public async update(data: Partial<Product>): Promise<Product> {
+    const { category, ...properties } = data;
+    return super.create(properties);
+  }
+
   public async getAllByCategory(id: number): Promise<Product[]> {
-    return await this.getByRelationId(id, 'category_id');
+    return await this.getBykey(id, 'category_id');
   }
 
 }

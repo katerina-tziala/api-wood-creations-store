@@ -1,11 +1,13 @@
-import { Pool, PoolClient, QueryResult } from 'pg';
+import { DatabaseError, Pool, PoolClient, QueryResult } from 'pg';
 import { dbConf } from '../../config/config';
+import {QueryErrorType, extractQueryErorrMessage} from './models-utilities/query-error';
+import * as QUERY from './models-utilities/query-helper';
 
 export interface ModelType {
   id: number;
 }
 
-export class ModelStore<T> {
+export class ModelStore<T extends ModelType> {
   protected table = '';
   protected selectQuery: string;
   private dbConn: Pool = new Pool(dbConf);
@@ -15,48 +17,46 @@ export class ModelStore<T> {
     this.selectQuery = selectQuery ? selectQuery : `SELECT * FROM ${table}`;
   }
 
-  private getCommaSeparatedValues(values: string[]): string {
-    return values.join(', ');
-  }
-
-  private extractUpdateProperties(data: Partial<T>): string[] {
-    let updateProperties = [];
-
-    for (const [key, value] of Object.entries(data)) {
-      const setValue = typeof value === 'string' ? `'${value}'` : `${value}`;
-      updateProperties.push(`${key} = ${setValue}`);
-    }
-    return updateProperties;
-  }
-
-  protected returnOne(results: Array<T>, id: number): T {
-    const record = results[0];
-    if (!record) {
-      // TODO: error handling
-      throw Error(`record with id ${id} does not exist`);
-    }
-    return record;
-  }
-
   protected async runQuery<U>(sql: string, params: U[] = []): Promise<T[]> {
     try {
       const conn: PoolClient = await this.dbConn.connect();
       const result: QueryResult = await conn.query(sql, params);
       conn.release();
       return result.rows;
-    } catch (err) {
-      // TODO: error handling
-      // console.log(err);
-      throw new Error(`runQuery Error: ${err}`);
+    } catch (error) {
+      const errorMessage = extractQueryErorrMessage(
+        error as DatabaseError
+      );
+      throw new Error(errorMessage);
     }
   }
 
-  protected async getByRelationId(
-    id: number,
-    relatedKey: string
-  ): Promise<T[]> {
-    const sql = `${this.selectQuery} WHERE ${relatedKey}=($1) ORDER BY id ASC`;
+  protected async getBykey(id: number, key: string): Promise<T[]> {
+    const sql = `${this.selectQuery} WHERE ${key}=($1) ORDER BY id ASC`;
     return await this.runQuery(sql, [id]);
+  }
+
+  protected returnOne(results: Array<T>): T {
+    const record = results[0];
+    if (!record) {
+      const message = QueryErrorType.NotFound;
+      throw Error(message);
+    }
+    return record;
+  }
+
+  public async create(data: Partial<T>): Promise<T> {
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    if (!keys.length || !values.length) {
+      const errorMessage = QueryErrorType.NoValuesCreate;
+      throw Error(errorMessage);
+    }
+
+    const sql = QUERY.getCreationQuery(this.table, keys, values);
+    const results = await this.runQuery(sql, values);
+    return results[0];
   }
 
   public async getAll(): Promise<T[]> {
@@ -65,46 +65,35 @@ export class ModelStore<T> {
   }
 
   public async getById(id: number): Promise<T> {
-    const sql = `${this.selectQuery} WHERE id=($1)`;
+    const results = await this.getBykey(id, 'id');
+    return this.returnOne(results);
+  }
+
+  public async update(model: Partial<T>): Promise<T> {
+    const { id, ...data } = model;
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    if (!keys.length || !values.length) {
+      const errorMessage = QueryErrorType.NoValuesUpdate;
+      throw Error(errorMessage);
+    }
+
+    const sql = QUERY.getUpdateQuery(this.table, data);
     const results = await this.runQuery(sql, [id]);
-    return this.returnOne(results, id);
+    return this.returnOne(results);
   }
 
-  public async create(data: Partial<T>): Promise<T> {
-    const sqlParams = Object.values(data);
-
-    const properties = Object.keys(data).join(', ');
-    const valuesIndexes = sqlParams.map((_, index) => `$${index + 1}`);
-    const valuesString = this.getCommaSeparatedValues(valuesIndexes);
-
-    const sql = `INSERT INTO ${this.table} (${properties}) VALUES(${valuesString}) RETURNING *`;
-    const results = await this.runQuery(sql, sqlParams);
-    return results[0];
+  public async deleteAll(): Promise<T[]> {
+    const sql = `DELETE FROM ${this.table} RETURNING id`;
+    const results: T[] = await this.runQuery(sql);
+    return results;
   }
 
-  public async updateById(id: number, data: Partial<T>): Promise<T> {
-    const queryParams = this.extractUpdateProperties(data);
-    const setQuery = this.getCommaSeparatedValues(queryParams);
-
-    const sql = `UPDATE ${this.table} SET ${setQuery} WHERE id=($1) RETURNING *`;
-    const results = await this.runQuery(sql, [id]);
-    return this.returnOne(results, id);
-  }
-
-  public async deleteById(id: number): Promise<number> {
+  public async deleteById(id: number): Promise<T> {
     const sql = `DELETE FROM ${this.table} WHERE id=($1) RETURNING *`;
     const results = await this.runQuery(sql, [id]);
-    const record = results[0];
-    if (!record) {
-      // TODO: error handling
-      throw Error(`record with id ${id} does not exist`);
-    }
-    return id;
+    return this.returnOne(results);
   }
 
-  public async deleteAll(): Promise<number[]> {
-    const sql = `DELETE FROM ${this.table} RETURNING *`;
-    const results = await this.runQuery(sql);
-    return results.map((record: T extends ModelType ? any: any) => record.id);
-  }
 }

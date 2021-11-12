@@ -1,6 +1,6 @@
 
 INSERT INTO product(id, category_id, name, price, description)
-VALUES (1, 1, 'dark wood', 12.5, 'dark wood earrings for women');
+VALUES (1, 1, 'earrings dark wood', 12.5, 'dark wood earrings for women');
 
 INSERT INTO product(id, category_id, name, price, description)
 VALUES (2, 1, 'bracelet', 15, 'dark wood bracelet for men');

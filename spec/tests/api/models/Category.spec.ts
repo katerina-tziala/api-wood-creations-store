@@ -1,98 +1,136 @@
 import {
   hasBasicMethods,
-  testGetMethods,
-  testDeleteMethods
-} from '../../../helpers/model-helper';
-import { CategoryStore, Category } from '../../../../src/api/models/Category';
-import { createCategories } from '../../../helpers/model-data-utils';
+  testGetlMethods,
+  testDeletelOneError,
+  testDeletelOneSuccess,
+  testDeletelAllFailure,
+  runDeleteAllSuccess
+} from '../../../../spec/helpers/model-helpers/model-helper';
 
+import { CategoryStore, Category } from '../../../../src/api/models/Category';
+import { CATEGORIES } from '../../../helpers/model-helpers/dummy-data';
+import {
+  setData,
+  deleteProducts,
+  clearData
+} from '../../../helpers/model-helpers/model-data-utils';
+
+const MockData: Category[] = CATEGORIES;
+const MockItem: Category = CATEGORIES[0];
+const MockNewItem: Category = {
+  id: 224,
+  name: 'office supplies'
+};
 const store: CategoryStore = new CategoryStore();
 
-const data = { name: 'accessoires' };
-async function initGetTest() {
-  let categories = await createCategories();
-  categories = categories.sort((recordA, recordB) => recordA.id - recordB.id);
-  return categories;
+describe('* Category Model *', () => {
+  beforeAll(async (): Promise<void> => {
+    await setData();
+  });
+
+  afterAll(async (): Promise<void> => {
+    await clearData();
+  });
+
+  hasBasicMethods<CategoryStore, Category>(store);
+
+  describe('- Create Methods', () => runCreationTest());
+
+  describe('- Read Methods', () => {
+    testGetlMethods<CategoryStore, Category>(store, MockData, {
+      singular: 'category',
+      plural: 'categories'
+    });
+  });
+
+  describe('- Update Methods', () => runUpdateTest());
+
+  describe('- Delete Methods', () => runDeletionTest());
+});
+
+function creationSuccess() {
+  it('create: should create a new category when passing name only', async () => {
+    const created: Category = await store.create({ name: 'test' });
+    expect(created).toBeDefined();
+    expect(created.id).toBeDefined();
+    expect(created.name).toBe('test');
+    MockData.push({ ...created });
+  });
+
+  it('create: should create a new category when passing id and name', async () => {
+    await expectAsync(store.create(MockNewItem)).toBeResolvedTo(MockNewItem);
+    MockData.push(MockNewItem);
+  });
 }
 
-function testCreation() {
-  beforeAll(async (): Promise<void> => {
-    await store.deleteAll();
-  });
-
-  it('should create a category using the create method', async () => {
-    const result: Category = await store.create(data);
-    expect(result?.id).toBeDefined();
-  });
-
-  it('should throw an error when name is not unique', async () => {
-    await expectAsync(store.create(data)).toBeRejected();
-  });
-
-  it('should throw an error when name is not defined', async () => {
+function runCreationTest() {
+  it('create: should throw an error when no data passed', async () => {
     await expectAsync(store.create({})).toBeRejected();
   });
 
-  afterAll(async (): Promise<void> => {
-    await store.deleteAll();
-  });
-}
-
-function testUpdate() {
-  let selectedRecord: Category;
-  const name = 'test category';
-  const namePass = 'another category';
-
-  beforeAll(async (): Promise<void> => {
-    await store.deleteAll();
-    await store.create({ name });
-    selectedRecord = await store.create(data);
-  });
-
-  it('should update a category using the updateById method', async () => {
-    const result: Category = await store.updateById(selectedRecord.id, {
-      name: namePass
-    });
-    expect(result?.name).toEqual(namePass);
-  });
-
-  it('should throw an error when name is not unique', async () => {
+  it('create: should throw an error when id is not unique', async () => {
     await expectAsync(
-      store.updateById(selectedRecord.id, { name })
+      store.create({ id: MockItem.id, name: 'test' })
     ).toBeRejected();
   });
 
-  it('should throw an error when name is not defined', async () => {
-    await expectAsync(store.updateById(selectedRecord.id, {})).toBeRejected();
+  it('create: should throw an error when name is not defined', async () => {
+    await expectAsync(store.create({ id: 4 })).toBeRejected();
   });
 
-  it('should throw an error when id is not defined', async () => {
-    await expectAsync(
-      store.updateById(selectedRecord.id + 1, { name })
-    ).toBeRejected();
+  it('create: should throw an error when name is not unique', async () => {
+    await expectAsync(store.create({ name: MockItem.name })).toBeRejected();
+  });
+  creationSuccess();
+}
+
+function runUpdateTest() {
+  it('update: should throw an error when id is not present in data', async () => {
+    await expectAsync(store.update({ name: 'update test' })).toBeRejected();
   });
 
-  afterAll(async (): Promise<void> => {
-    await store.deleteAll();
+  it('update: should throw an error when name is not defined', async () => {
+    await expectAsync(store.update({ id: MockItem.id })).toBeRejected();
+  });
+
+  it('update: should throw an error when name is not unique', async () => {
+    const updateData = { ...MockItem, name: MockNewItem.name };
+    await expectAsync(store.update(updateData)).toBeRejected();
+  });
+
+  it('update: should update correctly a category when data is passed', async () => {
+    const updateData = { ...MockItem, name: 'update test' };
+    const result: Category = await store.update(updateData);
+    expect(result).toEqual(updateData);
   });
 }
 
-describe('Category Model', () => {
-  hasBasicMethods<CategoryStore, Category>(store);
+function runDeletionTest() {
+  testDeletelOneError<CategoryStore, Category>(
+    store,
+    0,
+    'category that does not exist'
+  );
 
-  describe('create category', () => {
-    testCreation();
-  });
+  testDeletelOneError<CategoryStore, Category>(
+    store,
+    1,
+    'category that relates to a product'
+  );
 
-  describe('get category', () => {
-    testGetMethods<CategoryStore, Category>(store, initGetTest);
-  });
+  testDeletelOneSuccess<CategoryStore, Category>(
+    store,
+    MockNewItem,
+    'category'
+  );
 
-  describe('delete category', () => {
-    testDeleteMethods<CategoryStore, Category>(store, initGetTest);
-  });
+  testDeletelAllFailure<CategoryStore, Category>(
+    store,
+    'categories and there are related products'
+  );
 
-  describe('update category', () => {
-    testUpdate();
+  it(`deleteAll: should delete all categories`, async () => {
+    await deleteProducts();
+    await runDeleteAllSuccess<CategoryStore, Category>(store);
   });
-});
+}

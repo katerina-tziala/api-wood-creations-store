@@ -15,7 +15,6 @@ app.get('/', async (_, res: Response): Promise<void> => {
   res.status(200).send(`Server up and running. Server started at ${startedAt}`);
 });
 
-
 app.listen(PORT, () => {
   // prettier-ignore
   // eslint-disable-next-line

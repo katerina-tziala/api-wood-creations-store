@@ -11,6 +11,7 @@ export interface Order extends ModelType {
   created_at: Date;
   completed_at?: Date;
   comments?: string;
+  total?: string;
 }
 
 export class OrderStore extends ModelStore<Order> {
@@ -28,7 +29,7 @@ export class OrderStore extends ModelStore<Order> {
   }
 
   public async create(data: Partial<Order>): Promise<Order> {
-    const newOrder: Order = Object.assign(data);
+    const { total, ...newOrder } = data;
     newOrder.status = OrderStatus.Active;
     newOrder.created_at = new Date();
     return super.create(newOrder);
@@ -36,15 +37,16 @@ export class OrderStore extends ModelStore<Order> {
 
   public async completeOrderById(id: number): Promise<Order> {
     const data: Partial<Order> = {
+      id,
       status: OrderStatus.Complete,
       completed_at: new Date()
     };
 
-    return super.updateById(id, data);
+    return super.update(data);
   }
 
   public async getOrdersOfUser(userId: number): Promise<Order[]> {
-    const sql = `${this.selectQuery} WHERE customer_id=($1) ORDER BY id DESC`;
+    const sql = `${this.selectQuery} WHERE customer_id=($1) ORDER BY created_at DESC`;
     return await this.runQuery(sql, [userId]);
   }
 
@@ -56,7 +58,10 @@ export class OrderStore extends ModelStore<Order> {
     );
   }
 
-  public async getCompletedOrdersOfUser(userId: number, limit?: number): Promise<Order[]> {
+  public async getCompletedOrdersOfUser(
+    userId: number,
+    limit?: number
+  ): Promise<Order[]> {
     const options = limit ? `LIMIT ${limit}` : '';
     return await this.getOrdersOfUseBryStatus(
       userId,
