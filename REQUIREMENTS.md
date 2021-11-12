@@ -9,14 +9,20 @@ These are the notes from a meeting with the frontend developer that describe wha
 ## API Endpoints
 All api endpoints are under the route **/api**. The data contracts used to present the response of each endpoint are presented in the **Data Contracts**  section of this document.
 ### Products
+- [GET] /products
+  _Description_: Returns a list of all products.
 
-#### [GET] /products
-Returns a list of all products.
+  **_Success Response:_**
 
-**_Response:_** ```[ Product, ... ]```
+  - Code: 200 OK
+  - Content: ```[ Product, ... ]```
+
+  **_Error Response:_** 
+
+
 
 **_Possible Errors_**
-| Error Code                | description                                         |
+| Code                | Content                                     |
 | ------------------------- | --------------------------------------------------- |
 | 500 Internal Server Error | The products could not be fetched                   |
 
