@@ -10,6 +10,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 All api endpoints are under the route **/api**. The data contracts used to present the response of each endpoint are presented in the **Data Contracts**  section of this document.
 ### Products
 - [GET] /products
+
   _Description_: Returns a list of all products.
 
   **_Success Response:_**

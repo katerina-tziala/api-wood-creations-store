@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use('/api', api);
 
-app.get('/', async (_, res: Response): Promise<void> => {
+app.get('/', async (_req: Request, res: Response): Promise<void> => {
   res.status(200).send(`Server up and running. Server started at ${startedAt}`);
 });
 

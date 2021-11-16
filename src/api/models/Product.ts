@@ -27,7 +27,7 @@ export class ProductStore extends ModelStore<Product> {
     return super.create(properties);
   }
 
-  public async getAllByCategory(id: number): Promise<Product[]> {
+  public async getByCategory(id: number): Promise<Product[]> {
     return await this.getBykey(id, 'category_id');
   }
 

@@ -5,6 +5,15 @@ import { PoolConfig } from 'pg';
 
 export const PORT = parseInt(process.env.PORT as unknown as string, 10);
 
+export const SALT_ROUNDS = parseInt(
+  process.env.SALT_ROUNDS as unknown as string,
+  10
+);
+
+export const BCRYPT_PASSWORD: string = process.env.BCRYPT_PASSWORD as unknown as string;
+
+export const TOKEN_SECRET: string = process.env.TOKEN_SECRET as unknown as string;
+
 const database =
   process.env.NODE_ENV === 'test'
     ? process.env.POSTGRES_DB_TEST

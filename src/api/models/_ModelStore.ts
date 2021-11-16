@@ -4,7 +4,7 @@ import {QueryErrorType, extractQueryErorrMessage} from './models-utilities/query
 import * as QUERY from './models-utilities/query-helper';
 
 export interface ModelType {
-  id: number;
+  id?: number;
 }
 
 export class ModelStore<T extends ModelType> {
@@ -27,6 +27,7 @@ export class ModelStore<T extends ModelType> {
       const errorMessage = extractQueryErorrMessage(
         error as DatabaseError
       );
+      // TODO get details
       throw new Error(errorMessage);
     }
   }
@@ -40,7 +41,7 @@ export class ModelStore<T extends ModelType> {
     const record = results[0];
     if (!record) {
       const message = QueryErrorType.NotFound;
-      throw Error(message);
+      throw new Error(message);
     }
     return record;
   }
@@ -51,7 +52,7 @@ export class ModelStore<T extends ModelType> {
 
     if (!keys.length || !values.length) {
       const errorMessage = QueryErrorType.NoValuesCreate;
-      throw Error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     const sql = QUERY.getCreationQuery(this.table, keys, values);
@@ -76,19 +77,19 @@ export class ModelStore<T extends ModelType> {
 
     if (!keys.length || !values.length) {
       const errorMessage = QueryErrorType.NoValuesUpdate;
-      throw Error(errorMessage);
+      throw new Error(errorMessage);
     }
 
     const sql = QUERY.getUpdateQuery(this.table, data);
     const results = await this.runQuery(sql, [id]);
-    return this.returnOne(results);
+    return results[0];
   }
 
-  public async deleteAll(): Promise<T[]> {
-    const sql = `DELETE FROM ${this.table} RETURNING id`;
-    const results: T[] = await this.runQuery(sql);
-    return results;
-  }
+  // public async deleteAll(): Promise<T[]> {
+  //   const sql = `DELETE FROM ${this.table} RETURNING id`;
+  //   const results: T[] = await this.runQuery(sql);
+  //   return results;
+  // }
 
   public async deleteById(id: number): Promise<T> {
     const sql = `DELETE FROM ${this.table} WHERE id=($1) RETURNING *`;
