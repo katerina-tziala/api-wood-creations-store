@@ -1,31 +1,43 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { QueryErrorType } from '../models/models-utilities/query-error';
-
 import { Product, ProductStore } from '../models/Product';
-
-import { idChecker } from '../middlewares/utilities';
+import {
+  adminGuard,
+  authTokenGuard,
+  idChecker
+} from '../middlewares/middlewares';
 
 const productIdChecker = idChecker('PRODUCT');
 const categoryIdChecker = idChecker('CATEGORY');
 
-const productsRouter = express.Router();
+const router = express.Router();
 const store: ProductStore = new ProductStore();
 
-// Get all products
-productsRouter.get(
+// Create product
+router.post(
   '/',
-  async (_req: Request, res: Response, next: NextFunction) => {
+  [authTokenGuard, adminGuard],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const products: Product[] = await store.getAll();
-      res.json(products);
+      const product: Exclude<Product, 'id'> = await store.create(req.body);
+      res.status(200).json(product);
     } catch (error) {
       next(error);
     }
   }
 );
 
-// Get product by id
-productsRouter.get(
+// Get all products
+router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const products: Product[] = await store.getAll();
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get product
+router.get(
   '/:id',
   productIdChecker,
   async (req: Request, res: Response, next: NextFunction) => {
@@ -39,10 +51,10 @@ productsRouter.get(
   }
 );
 
-// Get product by category
-productsRouter.get(
+// Get products by category
+router.get(
   '/category/:id',
-  categoryIdChecker, // can be an array
+  categoryIdChecker,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const categoryId: number = parseInt(req.params.id);
     try {
@@ -54,24 +66,39 @@ productsRouter.get(
   }
 );
 
-// Get product by category
-productsRouter.get(
-  '/top/:limit',
-  // categoryIdChecker, // can be an array
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// TODO:
+// Top 5 most popular products
+// Add a popular products endpoint that sends back the 5 most commonly ordered items
 
-    console.log('get top top3, 5,10 ');
-    
-    res.json([]);
-    // const categoryId: number = parseInt(req.params.id);
-    // try {
-    //   const products: Product[] = await store.getByCategory(categoryId);
-    //   res.json(products);
-    // } catch (error) {
-    //   next(error);
-    // }
+// Update product
+router.patch(
+  '/:id',
+  [authTokenGuard, adminGuard, productIdChecker],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const id: number = parseInt(req.params.id);
+    const updateData: Partial<Product> = { ...req.body, id };
+    try {
+      const updatedUser = await store.update(updateData);
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
+// Delete product
+router.delete(
+  '/:id',
+  [authTokenGuard, adminGuard, productIdChecker],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const id: number = parseInt(req.params.id);
+    try {
+      await store.deleteById(id);
+      res.status(200).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-export default productsRouter;
+export { router };

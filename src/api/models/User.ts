@@ -24,16 +24,21 @@ export class UserStore extends ModelStore<User> {
   }
 
   public async create(data: Exclude<User, 'id'>): Promise<User> {
-    const { username, firstName, lastName, password, role } = data;
-    const userPassword = encryptPassword(password as string);
+    const { username, firstName, lastName, role } = data;
+    const userPassword = encryptPassword(data.password as string);
     // validate data before running query
-    return super.create({
+
+    const {password, ...createdUser} = await super.create({
       username,
       firstName,
       lastName,
       password: userPassword,
       role: UserRole[role] || UserRole.Customer
     });
+
+    
+
+    return createdUser;
   }
 
   public async update(data: Partial<User>): Promise<User> {

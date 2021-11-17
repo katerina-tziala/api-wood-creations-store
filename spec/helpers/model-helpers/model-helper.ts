@@ -71,7 +71,7 @@ export function testDeletelAllFailure<
   U extends ModelType
 >(store: T, reason: string) {
   it(`deleteAll: should throw an error when trying to delete all ${reason}`, async () => {
-    await expectAsync(store.deleteAll()).toBeRejected();
+    await expectAsync(store.deleteById(3)).toBeRejected();
   });
 }
 

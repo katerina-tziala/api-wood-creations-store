@@ -27,13 +27,15 @@ export class ModelStore<T extends ModelType> {
       const errorMessage = extractQueryErorrMessage(
         error as DatabaseError
       );
+      console.log(error);
+      
       // TODO get details
       throw new Error(errorMessage);
     }
   }
 
   protected async getBykey(id: number, key: string): Promise<T[]> {
-    const sql = `${this.selectQuery} WHERE ${key}=($1) ORDER BY id ASC`;
+    const sql = `${this.selectQuery} WHERE ${this.table}.${key}=($1) ORDER BY id ASC`;
     return await this.runQuery(sql, [id]);
   }
 

@@ -11,37 +11,34 @@ import {
 
 const userIdChecker = idChecker('USER');
 
-const usersRouter = express.Router();
+const router = express.Router();
 const store: UserStore = new UserStore();
 // TODO: endpoints for customers and admins???
 
-const authenticate = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { username, password } = req.body;
-  try {
-    const user = await store.authenticate(username, password);
-    !user
-      ? res.status(401).json({ error: 'WRONG_CREDENTIALS' })
-      : res.json(generateUserToken(user));
-  } catch (error) {
-    next(error);
-  }
-};
-
 // Authenticate user
-usersRouter.use('/authenticate', authenticate);
+router.post(
+  '/authenticate',
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { username, password } = req.body;
+    try {
+      const user = await store.authenticate(username, password);
+      !user
+        ? res.status(401).json({ error: 'WRONG_CREDENTIALS' })
+        : res.json(generateUserToken(user));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Create user
-usersRouter.post(
+router.post(
   '/',
   [authTokenGuard, adminGuard],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await store.create(req.body);
-      res.status(200).send();
+      const newUser: Exclude<User, 'id'> = await store.create(req.body);
+      res.status(200).json(newUser);
     } catch (error) {
       next(error);
     }
@@ -49,7 +46,7 @@ usersRouter.post(
 );
 
 // Get user
-usersRouter.get(
+router.get(
   '/:id',
   [authTokenGuard, adminGuard, userIdChecker],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -66,7 +63,7 @@ usersRouter.get(
 );
 
 // Get all users
-usersRouter.get(
+router.get(
   '/',
   [authTokenGuard, adminGuard],
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -79,8 +76,24 @@ usersRouter.get(
   }
 );
 
+// Update user
+router.patch(
+  '/:id',
+  [authTokenGuard, adminGuard, userIdChecker],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const id: number = parseInt(req.params.id);
+    const updateData: Partial<User> = { ...req.body, id };
+    try {
+      const updatedUser = await store.update(updateData);
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 // Delete user
-usersRouter.delete(
+router.delete(
   '/:id',
   [authTokenGuard, adminGuard, userIdChecker],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -99,18 +112,4 @@ usersRouter.delete(
   }
 );
 
-// Update user
-usersRouter.patch(
-  '/',
-  [authTokenGuard, adminGuard],
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const updatedUser = await store.update(req.body);
-      res.status(200).json(updatedUser);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-export default usersRouter;
+export { router };

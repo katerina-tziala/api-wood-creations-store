@@ -8,4 +8,5 @@ export class CategoryStore extends ModelStore<Category> {
   constructor() {
     super('category');
   }
+  // data validation
 }
