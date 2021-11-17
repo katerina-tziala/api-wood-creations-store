@@ -1,2 +1,2 @@
 DROP TABLE store_user;
-DROP TYPE userRole;
+DROP TYPE user_role;
