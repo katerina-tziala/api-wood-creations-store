@@ -30,7 +30,7 @@ router.post(
 router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const products: Product[] = await store.getAll();
-    res.json(products);
+    res.status(200).json(products);
   } catch (error) {
     next(error);
   }
@@ -44,7 +44,7 @@ router.get(
     try {
       const productId: number = parseInt(req.params.id);
       const product: Product = await store.getById(productId);
-      res.json(product);
+      res.status(200).json(product);
     } catch (error) {
       next(error);
     }
@@ -59,7 +59,7 @@ router.get(
     const categoryId: number = parseInt(req.params.id);
     try {
       const products: Product[] = await store.getByCategory(categoryId);
-      res.json(products);
+      res.status(200).json(products);
     } catch (error) {
       next(error);
     }

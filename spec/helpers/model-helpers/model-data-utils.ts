@@ -15,13 +15,13 @@ export async function createProducts(): Promise<Product[]> {
 
 export async function deleteProducts(): Promise<void> {
   const store: ProductStore = new ProductStore();
-  await store.deleteAll();
+  // await store.deleteAll();
   return;
 }
 
 async function deleteCategories(): Promise<void> {
   const store: CategoryStore = new CategoryStore();
-  await store.deleteAll();
+  // await store.deleteAll();
   return;
 }
 

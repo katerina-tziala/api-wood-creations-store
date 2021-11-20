@@ -11,8 +11,8 @@ export enum UserRole {
 
 export interface User extends ModelType {
   username: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   role: UserRole;
   password?: string;
 }
@@ -24,14 +24,14 @@ export class UserStore extends ModelStore<User> {
   }
 
   public async create(data: Exclude<User, 'id'>): Promise<User> {
-    const { username, firstName, lastName, role } = data;
+    const { username, firstname, lastname, role } = data;
     const userPassword = encryptPassword(data.password as string);
     // validate data before running query
 
     const {password, ...createdUser} = await super.create({
       username,
-      firstName,
-      lastName,
+      firstname,
+      lastname,
       password: userPassword,
       role: UserRole[role] || UserRole.Customer
     });
@@ -53,7 +53,7 @@ export class UserStore extends ModelStore<User> {
     username: string,
     password: string
   ): Promise<User | null> {
-    const sql = `SELECT * from ${this.table} WHERE username=($1) ORDER BY id ASC`;
+    const sql = `SELECT * from ${this.table} WHERE username=($1)`;
     const results = await this.runQuery(sql, [username]);
     const user = results[0];
     return user && passwordsMatch(password, user.password as string)

@@ -14,7 +14,7 @@ const userIdChecker = idChecker('USER');
 const router = express.Router();
 const store: UserStore = new UserStore();
 // TODO: endpoints for customers and admins???
-
+// todo token expiration
 // Authenticate user
 router.post(
   '/authenticate',

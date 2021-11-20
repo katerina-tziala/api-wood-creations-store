@@ -20,16 +20,19 @@ export class OrderItemStore extends ModelStore<OrderItem> {
   }
 
   public async create(data: Partial<OrderItem>): Promise<OrderItem> {
+    // data validation
     const { name, price, ...properties } = data;
     return super.create(properties);
   }
 
   public async update(data: Partial<OrderItem>): Promise<OrderItem> {
+    // data validation
     const { name, price, ...properties } = data;
-    return super.create(properties);
+    return super.update(properties);
   }
 
-  public async getItemsInOrder(order_id: number): Promise<OrderItem[]> {
+  public async getItemsByOrderId(order_id: number): Promise<OrderItem[]> {
     return await this.getBykey(order_id, 'order_id');
   }
 }
+
