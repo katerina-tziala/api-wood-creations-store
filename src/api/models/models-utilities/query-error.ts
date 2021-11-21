@@ -233,7 +233,7 @@ const PG_QUERY_ERROR: {
 };
 
 export enum QueryErrorType {
-  NotFound = 'RECORD_NOT_FOUND',
+  NotFound = 'NOT_FOUND',
   NoValuesCreate = 'NO_VALUES_TO_CREATE',
   NoValuesUpdate = 'NO_VALUES_TO_UPDATE'
 }

@@ -31,3 +31,6 @@ Here’s a high level list of the technologies used for this app:
 
 
 5. Make sure your database is up and running -->
+
+
+// FUTURE IMPROVEMENTS: extent roles and access to orders

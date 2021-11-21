@@ -1,7 +1,3 @@
-export function getCommaSeparatedString(values: string[]): string {
-  return values.length ? values.join(', ') : '';
-}
-
 export function getCreationQuery<U>(
   table: string,
   keys: string[],
@@ -14,18 +10,16 @@ export function getCreationQuery<U>(
   return `INSERT INTO ${table} (${properties}) VALUES(${valuesString}) RETURNING *`;
 }
 
-export function getUpdateQuery(table: string, data: Object): string {
-  const queryParams = extractUpdateProperties(data);
+export function getUpdateQuery(
+  table: string,
+  keys: string[],
+  where: string
+): string {
+  const queryParams = keys.map((key, index) => `${key} = $${index + 1}`);
   const setQuery = getCommaSeparatedString(queryParams);
-  return `UPDATE ${table} SET ${setQuery} WHERE id=($1) RETURNING *`;
+  return `UPDATE ${table} SET ${setQuery} WHERE ${where} RETURNING *`;
 }
 
-function extractUpdateProperties(data: Object): string[] {
-  let updateProperties = [];
-
-  for (const [key, value] of Object.entries(data)) {
-    const setValue = typeof value === 'string' ? `'${value}'` : `${value}`;
-    updateProperties.push(`${key} = ${setValue}`);
-  }
-  return updateProperties;
+function getCommaSeparatedString(values: string[]): string {
+  return values.length ? values.join(', ') : '';
 }

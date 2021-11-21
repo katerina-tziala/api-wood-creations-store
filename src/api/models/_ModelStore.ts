@@ -1,6 +1,9 @@
 import { DatabaseError, Pool, PoolClient, QueryResult } from 'pg';
 import { dbConf } from '../../config/config';
-import {QueryErrorType, extractQueryErorrMessage} from './models-utilities/query-error';
+import {
+  QueryErrorType,
+  extractQueryErorrMessage
+} from './models-utilities/query-error';
 import * as QUERY from './models-utilities/query-helper';
 
 export interface ModelType {
@@ -24,11 +27,9 @@ export class ModelStore<T extends ModelType> {
       conn.release();
       return result.rows;
     } catch (error) {
-      const errorMessage = extractQueryErorrMessage(
-        error as DatabaseError
-      );
+      const errorMessage = extractQueryErorrMessage(error as DatabaseError);
       console.log(error);
-      
+
       // TODO get details
       throw new Error(errorMessage);
     }
@@ -82,8 +83,12 @@ export class ModelStore<T extends ModelType> {
       throw new Error(errorMessage);
     }
 
-    const sql = QUERY.getUpdateQuery(this.table, data);
-    const results = await this.runQuery(sql, [id]);
+    const sql = QUERY.getUpdateQuery(
+      this.table,
+      keys,
+      `id=($${keys.length + 1})`
+    );
+    const results = await this.runQuery(sql, [...values, id]);
     return results[0];
   }
 
@@ -98,5 +103,4 @@ export class ModelStore<T extends ModelType> {
     const results = await this.runQuery(sql, [id]);
     return this.returnOne(results);
   }
-
 }

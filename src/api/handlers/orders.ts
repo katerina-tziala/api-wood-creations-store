@@ -1,22 +1,19 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { OrderController } from '../controllers/order-controller';
 import {
-  adminGuard,
   authTokenGuard,
   idChecker
 } from '../middlewares/middlewares';
 
-import { Category, CategoryStore } from '../models/Category';
 import { OrderStore, Order } from '../models/Order';
+import { OrderItem } from '../models/OrderItem';
 
-// const categoryIdChecker = idChecker('CATEGORY');
+const itemIdChecker = idChecker('ORDER_ITEM');
 
 const store: OrderStore = new OrderStore();
+
 const orderController = new OrderController();
 const router = express.Router();
-
-// Current Order by user (args: user id)[token required]
-// [OPTIONAL] Completed Orders by user (args: user id)[token required]
 
 // Create order
 router.post(
@@ -38,77 +35,139 @@ router.post(
   }
 );
 
+// Get orders of user
+router.get(
+  '/',
+  [authTokenGuard],
+  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const userId: number = res.locals.userData.id;
+    try {
+      const orders = await store.getOrdersOfUser(userId);
+      res.status(200).json(orders);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
+// Get completed orders of user
+router.get(
+  '/completed/',
+  [authTokenGuard],
+  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const userId: number = res.locals.userData.id;
+    try {
+      const orders = await store.getCompletedOrdersOfUser(userId);
+      res.status(200).json(orders);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
+// Get current order of user
+router.get(
+  '/current/',
+  [authTokenGuard],
+  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const userId: number = res.locals.userData.id;
+    try {
+      const order: Order = await orderController.getCurrentOrder(userId);
+      res.status(200).json(order);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
+// Add item in current order
+router.post(
+  '/current/item/',
+  [authTokenGuard],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const order = await orderController.addItemInCurrentOrder(
+        res.locals.userData.id,
+        req.body
+      );
+      res.status(200).json(order);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
+// Remove item from current order
+router.delete(
+  '/current/item/:id',
+  [authTokenGuard, itemIdChecker],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const itemId: number = parseInt(req.params.id);
+    try {
+      const order = await orderController.deleteItemFromCurrentOrder(
+        res.locals.userData.id,
+        itemId
+      );
+      res.status(200).json(order);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
+// Update item in current order
+router.patch(
+  '/current/item/:id',
+  [authTokenGuard, itemIdChecker],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const itemId: number = parseInt(req.params.id);
+    const updateData: Partial<OrderItem> = req.body;
+    try {
+      const order = await orderController.updateItemInCurrentOrder(
+        res.locals.userData.id,
+        itemId,
+        updateData
+      );
+      res.status(200).json(order);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
+// Complete current order
+router.patch(
+  '/current/complete/',
+  [authTokenGuard],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { calledAt, comments } = req.body;
+    // TODO: validate calledAt
+    try {
+      const order = await orderController.completeCurrentOrder(
+        res.locals.userData.id,
+        new Date(calledAt),
+        comments
+      );
+      res.status(200).json(order);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
-
-
-
-
-
-
-// // Get all categories
-// router.get(
-//   '/',
-//   [authTokenGuard, adminGuard],
-//   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
-//     try {
-//       const categories = await store.getAll();
-//       res.status(200).json(categories);
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
-
-// // Get category
-// router.get(
-//   '/:id',
-//   [authTokenGuard, adminGuard, categoryIdChecker],
-//   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//     const userId: number = parseInt(req.params.id);
-//     try {
-//       const category = await store.getById(userId);
-//       res.status(200).json(category);
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
-
-// // Update category
-// router.patch(
-//   '/:id',
-//   [authTokenGuard, adminGuard, categoryIdChecker],
-//   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//     const id: number = parseInt(req.params.id);
-//     const updateData: Partial<Category> = { ...req.body, id };
-//     try {
-//       const updatedCategory = await store.update(updateData);
-//       res.status(200).json(updatedCategory);
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
-
-// // Delete category
-// router.delete(
-//   '/:id',
-//   [authTokenGuard, adminGuard, categoryIdChecker],
-//   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//     const id: number = parseInt(req.params.id);
-//     try {
-//       await store.deleteById(id);
-//       res.status(200).send();
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
+// Delete current order of user
+router.delete(
+  '/current/',
+  [authTokenGuard],
+  async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const userId: number = res.locals.userData.id;
+    try {
+      await orderController.deleteCurrentOrder(userId);
+      res.status(200).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export { router };
