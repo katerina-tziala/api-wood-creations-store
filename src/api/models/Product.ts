@@ -4,12 +4,27 @@ export interface Product extends ModelType {
   name: string;
   price: string;
   category_id: number;
-  description?: string;
+  description?: string | null;
 }
 
 export class ProductStore extends ModelStore<Product> {
   constructor() {
     super('product');
+  }
+  private getDescription(description: string | undefined): string | null {
+    return !description ? null : description.length > 0 ? description : null;
+  }
+
+  public async create(data: Omit<Product, 'id'>): Promise<Product> {
+    data.description = this.getDescription(data.description as string);
+    return super.create(data);
+  }
+
+  public async update(data: Partial<Product>): Promise<Product> {
+    if (data.description) {
+      data.description = this.getDescription(data.description);
+    }
+    return super.update(data);
   }
 
   public async getByCategory(id: number): Promise<Product[]> {

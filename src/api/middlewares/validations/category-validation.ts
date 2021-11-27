@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { Category } from '../../models/Category';
 import { stringValidationError } from '../../../utilities/validations';
 
 export function checkCategoryName(
@@ -6,7 +7,14 @@ export function checkCategoryName(
   res: Response,
   next: NextFunction
 ): void {
-  const { name } = req.body;
+  req.body = getCategoryData(req.body);
+  let { name } = getCategoryData(req.body);
   const error = stringValidationError(name, 'name', 3);
   error ? res.status(400).json({ error }) : next();
+}
+
+function getCategoryData(params: Omit<Category, 'id'>): Omit<Category, 'id'> {
+  let { name } = params;
+  name = name.toString().trim();
+  return { name };
 }

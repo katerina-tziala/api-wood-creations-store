@@ -3,7 +3,7 @@ import { OrderController } from '../controllers/order-controller';
 import {
   authTokenGuard,
   idChecker
-} from '../middlewares/middlewares';
+} from '../middlewares/@middlewares.module';
 
 import { OrderStore, Order } from '../models/Order';
 import { OrderItem } from '../models/OrderItem';

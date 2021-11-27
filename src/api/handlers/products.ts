@@ -4,7 +4,12 @@ import {
   adminGuard,
   authTokenGuard,
   idChecker
-} from '../middlewares/middlewares';
+} from '../middlewares/@middlewares.module';
+
+import {
+  checkCreation,
+  checkUpdate
+} from '../middlewares/validations/product-validation';
 
 const productIdChecker = idChecker('PRODUCT');
 const categoryIdChecker = idChecker('CATEGORY');
@@ -15,10 +20,11 @@ const store: ProductStore = new ProductStore();
 // Create product
 router.post(
   '/',
-  [authTokenGuard, adminGuard],
+  [authTokenGuard, adminGuard, checkCreation],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const data: Omit<Product, 'id'> = req.body;
     try {
-      const product: Omit<Product, 'id'> = await store.create(req.body);
+      const product: Product = await store.create(data);
       res.status(200).json(product);
     } catch (error) {
       next(error);
@@ -38,7 +44,7 @@ router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
 
 // Get 5 most popular products
 router.get(
-  '/popular/',
+  '/top-five/',
   async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const products: Product[] = await store.getTopFive();
@@ -82,7 +88,7 @@ router.get(
 // Update product
 router.patch(
   '/:id',
-  [authTokenGuard, adminGuard, productIdChecker],
+  [authTokenGuard, adminGuard, productIdChecker, checkUpdate],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id: number = parseInt(req.params.id);
     const updateData: Partial<Product> = { ...req.body, id };

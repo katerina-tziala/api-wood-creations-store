@@ -3,7 +3,7 @@ import {
   adminGuard,
   authTokenGuard,
   idChecker
-} from '../middlewares/middlewares';
+} from '../middlewares/@middlewares.module';
 import { checkCategoryName } from '../middlewares/validations/category-validation';
 import { Category, CategoryStore } from '../models/Category';
 
@@ -61,7 +61,7 @@ router.patch(
   [authTokenGuard, adminGuard, categoryIdChecker, checkCategoryName],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id: number = parseInt(req.params.id);
-    const updateData: Partial<Category> = { ...req.body, id };
+    const updateData: Category = { ...req.body, id };
     try {
       const updatedCategory = await store.update(updateData);
       res.status(200).json(updatedCategory);

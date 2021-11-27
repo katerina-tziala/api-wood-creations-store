@@ -8,7 +8,7 @@ import {
   adminGuard,
   authTokenGuard,
   idChecker
-} from '../middlewares/middlewares';
+} from '../middlewares/@middlewares.module';
 
 import {
   checkCredentials,
@@ -28,7 +28,7 @@ router.post(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { username, password } = req.body;
     try {
-      const user = await store.authenticate(username, password);
+      const user = await store.authenticate(username as string, password as string);
       !user
         ? res.status(401).json({ error: 'WRONG_CREDENTIALS' })
         : res.status(200).json({ accessToken: generateUserToken(user) });
@@ -43,8 +43,9 @@ router.post(
   '/',
   [authTokenGuard, adminGuard, checkCreation],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const data: Omit<User, 'id'> = req.body;
     try {
-      const newUser: User = await store.create(req.body);
+      const newUser: User = await store.create(data);
       res.status(200).json(newUser);
     } catch (error) {
       next(error);

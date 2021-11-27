@@ -59,7 +59,7 @@ export class UserStore extends ModelStore<User> {
     password: string
   ): Promise<User | null> {
     const sql = `SELECT * from ${this.table} WHERE username=($1)`;
-    const results = await this.runQuery(sql, [username]);
+    const results = await this.runQuery(sql, [username]); 
     const user = results[0];
     return user && passwordsMatch(password, user.password as string)
       ? user

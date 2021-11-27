@@ -9,4 +9,11 @@ export class CategoryStore extends ModelStore<Category> {
     super('category');
   }
 
+  public async create(data: Omit<Category, 'id'>): Promise<Category> {
+    return super.create(data);
+  }
+
+  public async update(data: Category): Promise<Category> {
+    return super.update(data);
+  }
 }
