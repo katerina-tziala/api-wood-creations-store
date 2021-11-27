@@ -9,10 +9,11 @@ export function stringValidationError(
   name: string,
   minLength = 4
 ): string | undefined {
-  const key = name.toUpperCase();
+  const key = getErrorKey(name);
   if (!value) {
     return `${key}_REQUIRED`;
   }
+
   return stringShorterThan(value, minLength) ? `${key}_TOO_SHORT` : undefined;
 }
 
@@ -24,26 +25,43 @@ export function optionalStringValidationError(
   if (!value) {
     return undefined;
   }
-  return stringShorterThan(value, minLength)
-    ? `${name.toUpperCase()}_TOO_SHORT`
-    : undefined;
+  const key = getErrorKey(name);
+
+  return stringShorterThan(value, minLength) ? `${key}_TOO_SHORT` : undefined;
 }
 
-export function numberTypeError(value: any, name: string): string | undefined {
-  return typeof value !== 'number'
-    ? `${name.toUpperCase()}_MUST_BE_A_NUMBER`
-    : undefined;
+export function numberTypeError<T>(value: T, name: string): string | undefined {
+  const key = getErrorKey(name);
+
+  return typeof value !== 'number' ? `INVALID_NUMBER_${key}` : undefined;
 }
 
-export function optionalNumberTypeError(
-  value: any,
+export function optionalNumberTypeError<T>(
+  value: T,
   name: string
 ): string | undefined {
   return !value ? undefined : numberTypeError(value, name);
 }
 
 export function requiredDataError<T extends ModelType>(
-  data: T
+  data: Partial<T>,
+  errorKey = 'DATA_REQUIRED'
 ): string | undefined {
-  return !Object.values(data).length ? 'DATA_REQUIRED' : undefined;
+  return !Object.values(data).length ? errorKey : undefined;
+}
+
+export function requiredTimestampError(
+  value: Date | undefined,
+  name: string
+): string | undefined {
+  const key = getErrorKey(name);
+  if (!value) {
+    return `${key}_REQUIRED`;
+  }
+  const validDate = !!value.getTime();
+  return !validDate ? `INVALID_TIMESTAMP_${key}` : undefined;
+}
+
+function getErrorKey(name: string | undefined): string {
+  return name ? name.toUpperCase() : '';
 }

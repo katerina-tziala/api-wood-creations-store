@@ -12,3 +12,18 @@ Content-Type: application/json
 ### GET USERS
 GET {{api}}/users
 Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+### CREATE ORDER
+POST {{api}}/orders
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "item": {
+        "product_id": 1,
+        "quantity":1,
+        "engraving": "custom engraving"
+    },
+    "comments": "new order",
+    "calledAt": 1638044955061
+}

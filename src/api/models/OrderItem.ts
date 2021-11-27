@@ -4,7 +4,7 @@ export interface OrderItem extends ModelType {
   order_id: number;
   product_id: number;
   quantity: number;
-  engraving?: string;
+  engraving?: string | null;
   name?: string;
   price?: string;
   category_id?: number;
@@ -21,24 +21,38 @@ export class OrderItemStore extends ModelStore<OrderItem> {
     super('order_item', selectQuery);
   }
 
-  public async create(data: Partial<OrderItem>): Promise<OrderItem> {
-    // data validation
-    const { name, price, ...properties } = data;
-    return super.create(properties);
+  private getEngraving(engraving: string | undefined): string | null {
+    return !engraving ? null : engraving.length > 0 ? engraving : null;
   }
 
-  public async update(data: Partial<OrderItem>): Promise<OrderItem> {
-    // data validation
+  private getCreationData(data: Partial<OrderItem>): Partial<OrderItem> {
+    const { order_id, product_id, quantity, engraving } = data;
+    return {
+      order_id,
+      product_id,
+      quantity,
+      engraving: this.getEngraving(engraving as string)
+    };
+  }
+
+  private getUpdateData(data: Partial<OrderItem>): Partial<OrderItem> {
     const { id, quantity, engraving } = data;
     const updateData: Partial<OrderItem> = { id };
     if (quantity) {
       updateData.quantity = quantity;
     }
-    if (engraving && engraving.length) {
-      updateData.engraving = engraving;
+    if (engraving) {
+      updateData.engraving = this.getEngraving(engraving);
     }
+    return updateData;
+  }
 
-    return super.update(updateData);
+  public async create(data: Partial<OrderItem>): Promise<OrderItem> {
+    return super.create(this.getCreationData(data));
+  }
+
+  public async update(data: Partial<OrderItem>): Promise<OrderItem> {
+    return super.update(this.getUpdateData(data));
   }
 
   public async getItemsByOrderId(order_id: number): Promise<OrderItem[]> {

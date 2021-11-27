@@ -8,11 +8,11 @@ export class OrderController {
   private async createOrderItem(
     order_id: number,
     orderItem: OrderItem
-  ): Promise<OrderItem[]> {
+  ): Promise<OrderItem> {
     try {
       const itemData = { ...orderItem, order_id };
       const item: OrderItem = await this.OrderItemStore.create(itemData);
-      return [item];
+      return item;
     } catch (error) {
       await this.OrderStore.deleteById(order_id);
       throw new Error('ORDER_NOT_CREATED_COULD_NOT_CREATE_ORDER_ITEMS');
@@ -22,7 +22,7 @@ export class OrderController {
   private async getCurrentOrderOfUser(userId: number): Promise<Order> {
     const order = await this.OrderStore.getCurrentOrderOfUser(userId);
     if (!order) {
-      throw new Error('CURRENT_ORDER_DOES_NOT_EXIST');
+      throw new Error('CURRENT_ORDER_NOT_FOUND');
     }
     return order;
   }
@@ -30,49 +30,55 @@ export class OrderController {
   private async checkCurrentOrderExistence(userId: number): Promise<undefined> {
     const order = await this.OrderStore.getCurrentOrderOfUser(userId);
     if (order) {
-      throw new Error('CURRENT_ORDER_EXISTS_CANNOT_CREATE_NEW');
+      throw new Error('CURRENT_ORDER_EXISTS');
     }
     return;
   }
 
   private async getOrderById(id: number): Promise<Order> {
     const order: Order = await this.OrderStore.getById(id);
+    return this.fetchItemsListForOrder(order);
+  }
+
+  private async fetchItemsListForOrder(order: Order): Promise<Order> {
     const items: OrderItem[] = await this.OrderItemStore.getItemsByOrderId(
       order.id
     );
     return { ...order, items };
+  }
+
+  private async fetchItemsForOrders(orders: Order[]): Promise<Order[]> {
+    if (!orders.length) {
+      return orders;
+    }
+    const requests = orders.map(order => this.fetchItemsListForOrder(order));
+    return Promise.all(requests);
+  }
+
+  private async orderHasItems(orderId: number): Promise<boolean> {
+    const items: OrderItem[] = await this.OrderItemStore.getItemsByOrderId(
+      orderId
+    );
+    return !!items.length;
   }
 
   public async createOrder(
     newOrder: Partial<Order>,
     orderItem: OrderItem
   ): Promise<Order> {
-    if (!orderItem) {
-      throw new Error('NO_ITEMS_IN_ORDER');
-    }
-    // validate data
     // if there is a current order, then the user cannot create a new one
     await this.checkCurrentOrderExistence(newOrder.customer_id as number);
-
     const order = await this.OrderStore.create(newOrder);
-    const items: OrderItem[] = await this.createOrderItem(
-      order.id,
-      orderItem
-    );
-    return { ...order, items };
+    await this.createOrderItem(order.id, orderItem);
+    return this.getOrderById(order.id);
   }
 
-  public async getCurrentOrder(userId: number): Promise<Order> {
-    const order: Order = await this.getCurrentOrderOfUser(userId);
-    const items: OrderItem[] = await this.OrderItemStore.getItemsByOrderId(
-      order.id
-    );
-    return { ...order, items };
-  }
-
-  public async deleteCurrentOrder(userId: number): Promise<Order> {
-    const order: Order = await this.getCurrentOrderOfUser(userId);
-    return await this.OrderStore.deleteById(order.id);
+  public async getCurrentOrder(userId: number): Promise<Order | null> {
+    const order = await this.OrderStore.getCurrentOrderOfUser(userId);
+    if (!order) {
+      return null;
+    }
+    return this.fetchItemsListForOrder(order);
   }
 
   public async completeCurrentOrder(
@@ -81,12 +87,29 @@ export class OrderController {
     comments?: string
   ): Promise<Order> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
-    await this.OrderStore.completeOrderById(
-      order.id,
-      completed_at,
-      comments
-    );
+    await this.OrderStore.completeOrderById(order.id, completed_at, comments);
     return this.getOrderById(order.id);
+  }
+
+  public async deleteCurrentOrder(userId: number): Promise<Order> {
+    const order: Order = await this.getCurrentOrderOfUser(userId);
+    return await this.OrderStore.deleteById(order.id);
+  }
+
+  public async getOrdersOfUser(userId: number): Promise<Order[]> {
+    const orders: Order[] = await this.OrderStore.getOrdersOfUser(userId);
+    return this.fetchItemsForOrders(orders);
+  }
+
+  public async getCompletedOrdersOfUser(
+    userId: number,
+    limit?: number
+  ): Promise<Order[]> {
+    const orders: Order[] = await this.OrderStore.getCompletedOrdersOfUser(
+      userId,
+      limit
+    );
+    return this.fetchItemsForOrders(orders);
   }
 
   public async addItemInCurrentOrder(
@@ -94,11 +117,12 @@ export class OrderController {
     orderItem: OrderItem
   ): Promise<Order> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
+    const order_id = order.id;
     await this.OrderItemStore.create({
       ...orderItem,
-      order_id: order.id
+      order_id
     });
-    return this.getCurrentOrder(userId);
+    return this.getOrderById(order_id);
   }
 
   public async updateItemInCurrentOrder(
@@ -107,11 +131,11 @@ export class OrderController {
     updateData: Partial<OrderItem>
   ): Promise<Order> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
-    const orderId = order.id;
+    const order_id = order.id;
     // check if item in order
-    await this.OrderItemStore.getByIdAndOrderId(itemId, orderId);
-    await this.OrderItemStore.update({...updateData, id: itemId});
-    return this.getCurrentOrder(userId);
+    await this.OrderItemStore.getByIdAndOrderId(itemId, order_id);
+    await this.OrderItemStore.update({ ...updateData, id: itemId });
+    return this.getOrderById(order_id);
   }
 
   public async deleteItemFromCurrentOrder(
@@ -120,13 +144,14 @@ export class OrderController {
   ): Promise<Order | null> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
     const orderId = order.id;
-  
+
     await this.OrderItemStore.deleteByIdAndOrderId(itemId, orderId);
 
-    const items: OrderItem[] = await this.OrderItemStore.getItemsByOrderId(orderId);
-    if (items.length) {
-      return { ...order, items };
+    const hasItems = await this.orderHasItems(orderId);
+    if (hasItems) {
+      return this.getOrderById(orderId);
     }
+
     await this.OrderStore.deleteById(orderId);
     return null;
   }

@@ -34,6 +34,6 @@ Here’s a high level list of the technologies used for this app:
 
 
 // FUTURE IMPROVEMENTS: extent roles and access to orders
-// merge products in same order
+// allow admins view orders from specific customers
 
 // TODO: endpoints for customers and admins???

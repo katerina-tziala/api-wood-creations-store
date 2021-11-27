@@ -11,7 +11,7 @@ export interface Order extends ModelType {
   status: OrderStatus;
   created_at: Date;
   completed_at?: Date;
-  comments?: string;
+  comments?: string | null;
   total?: string;
   number_of_products?: string;
   items?: OrderItem[];
@@ -31,9 +31,22 @@ export class OrderStore extends ModelStore<Order> {
     super('customer_order', selectQuery);
   }
 
+  private async getOrdersOfUseByStatus(
+    userId: number,
+    status: OrderStatus,
+    options = ''
+  ): Promise<Order[]> {
+    const sql = `${this.selectQuery} WHERE customer_id=($1) AND status=($2) ORDER BY completed_at DESC ${options}`;
+    return await this.runQuery(sql, [userId, status]);
+  }
+
+  private getComments(comments: string | undefined): string | null {
+    return !comments ? null : comments.length > 0 ? comments : null;
+  }
+
   public async create(newOrder: Partial<Order>): Promise<Order> {
-    // validate data
     newOrder.status = OrderStatus.Active;
+    newOrder.comments = this.getComments(newOrder.comments as string);
     return super.create(newOrder);
   }
 
@@ -49,18 +62,9 @@ export class OrderStore extends ModelStore<Order> {
       completed_at
     };
     if (comments) {
-      data.comments = comments;
+      data.comments = this.getComments(comments);
     }
     return super.update(data);
-  }
-
-  private async getOrdersOfUseByStatus(
-    userId: number,
-    status: OrderStatus,
-    options = ''
-  ): Promise<Order[]> {
-    const sql = `${this.selectQuery} WHERE customer_id=($1) AND status=($2) ORDER BY completed_at DESC ${options}`;
-    return await this.runQuery(sql, [userId, status]);
   }
 
   public async getOrdersOfUser(userId: number): Promise<Order[]> {

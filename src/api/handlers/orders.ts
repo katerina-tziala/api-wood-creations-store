@@ -1,16 +1,18 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { OrderController } from '../controllers/order-controller';
-import {
-  authTokenGuard,
-  idChecker
-} from '../middlewares/@middlewares.module';
+import { authTokenGuard, idChecker } from '../middlewares/@middlewares.module';
 
-import { OrderStore, Order } from '../models/Order';
+import {
+  checkCompletion,
+  checkCreation,
+  checkOrderItemCreation,
+  checkOrderItemUpdate
+} from '../middlewares/validations/order-validation';
+
+import { Order } from '../models/Order';
 import { OrderItem } from '../models/OrderItem';
 
-const itemIdChecker = idChecker('ORDER_ITEM');
-
-const store: OrderStore = new OrderStore();
+const itemIdChecker = idChecker('ORDER_ITEM_ID');
 
 const orderController = new OrderController();
 const router = express.Router();
@@ -18,14 +20,9 @@ const router = express.Router();
 // Create order
 router.post(
   '/',
-  [authTokenGuard],
+  [authTokenGuard, checkCreation],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { item, calledAt, comments } = req.body;
-    const orderData: Partial<Order> = {
-      created_at: new Date(calledAt),
-      customer_id: res.locals.userData.id,
-      comments: comments ? comments : null
-    };
+    const { item, ...orderData } = req.body;
     try {
       const order = await orderController.createOrder(orderData, item);
       res.status(200).json(order);
@@ -42,7 +39,7 @@ router.get(
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId: number = res.locals.userData.id;
     try {
-      const orders = await store.getOrdersOfUser(userId);
+      const orders: Order[] = await orderController.getOrdersOfUser(userId);
       res.status(200).json(orders);
     } catch (error) {
       next(error);
@@ -57,7 +54,7 @@ router.get(
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId: number = res.locals.userData.id;
     try {
-      const orders = await store.getCompletedOrdersOfUser(userId);
+      const orders = await orderController.getCompletedOrdersOfUser(userId);
       res.status(200).json(orders);
     } catch (error) {
       next(error);
@@ -72,8 +69,8 @@ router.get(
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId: number = res.locals.userData.id;
     try {
-      const order: Order = await orderController.getCurrentOrder(userId);
-      res.status(200).json(order);
+      const order: Order | null = await orderController.getCurrentOrder(userId);
+      !order ? res.status(404).send() : res.status(200).json(order);
     } catch (error) {
       next(error);
     }
@@ -83,7 +80,7 @@ router.get(
 // Add item in current order
 router.post(
   '/current/item/',
-  [authTokenGuard],
+  [authTokenGuard, checkOrderItemCreation],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const order = await orderController.addItemInCurrentOrder(
@@ -118,7 +115,7 @@ router.delete(
 // Update item in current order
 router.patch(
   '/current/item/:id',
-  [authTokenGuard, itemIdChecker],
+  [authTokenGuard, itemIdChecker, checkOrderItemUpdate],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const itemId: number = parseInt(req.params.id);
     const updateData: Partial<OrderItem> = req.body;
@@ -138,14 +135,13 @@ router.patch(
 // Complete current order
 router.patch(
   '/current/complete/',
-  [authTokenGuard],
+  [authTokenGuard, checkCompletion],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { calledAt, comments } = req.body;
-    // TODO: validate calledAt
+    const { completed_at, comments } = req.body;
     try {
       const order = await orderController.completeCurrentOrder(
         res.locals.userData.id,
-        new Date(calledAt),
+        completed_at,
         comments
       );
       res.status(200).json(order);

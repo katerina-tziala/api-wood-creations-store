@@ -1,7 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 
 import { User, UserStore } from '../models/User';
-import { Order, OrderStore } from '../models/Order';
+import { Order } from '../models/Order';
+import { OrderController } from '../controllers/order-controller';
+
 import { generateUserToken } from '../../utilities/token';
 
 import {
@@ -19,8 +21,7 @@ import {
 const userIdChecker = idChecker('USER');
 const router = express.Router();
 const store: UserStore = new UserStore();
-const ordersStore: OrderStore = new OrderStore();
-
+const orderController = new OrderController();
 // Authenticate user
 router.post(
   '/authenticate',
@@ -28,7 +29,10 @@ router.post(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { username, password } = req.body;
     try {
-      const user = await store.authenticate(username as string, password as string);
+      const user = await store.authenticate(
+        username as string,
+        password as string
+      );
       !user
         ? res.status(401).json({ error: 'WRONG_CREDENTIALS' })
         : res.status(200).json({ accessToken: generateUserToken(user) });
@@ -61,11 +65,9 @@ router.get(
     const userId: number = parseInt(req.params.id);
     try {
       const user = await store.getById(userId);
-      const recentOrders: Order[] = await ordersStore.getCompletedOrdersOfUser(
-        userId,
-        5
-      );
-      const currentOrder = await ordersStore.getCurrentOrderOfUser(userId);
+      const recentOrders: Order[] =
+        await orderController.getCompletedOrdersOfUser(userId, 5);
+      const currentOrder = await orderController.getCurrentOrder(userId);
       const userData = {
         ...user,
         recentOrders,
