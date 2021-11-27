@@ -1,0 +1,14 @@
+@api = http://localhost:3000/api
+
+# @name authenticate
+POST {{api}}/users/authenticate
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "root"
+}
+
+### GET USERS
+GET {{api}}/users
+Authorization: Bearer {{authenticate.response.body.accessToken}}

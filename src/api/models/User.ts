@@ -3,6 +3,7 @@ import {
   encryptPassword,
   passwordsMatch
 } from '../../utilities/password-encryption';
+import { Order } from './Order';
 
 export enum UserRole {
   Admin = 'Admin',
@@ -14,38 +15,42 @@ export interface User extends ModelType {
   firstname: string;
   lastname: string;
   role: UserRole;
-  password?: string;
+  password?: string | null;
+  recentOrders?: Order[];
+  currentOrder?: Order;
 }
 
 export class UserStore extends ModelStore<User> {
   constructor() {
-    const selectQuery = `SELECT store_user.id, store_user.username, store_user.firstName, store_user.lastName, store_user.role FROM store_user`;
+    const selectQuery = `SELECT id, username, firstname, lastname, role FROM store_user`;
     super('store_user', selectQuery);
   }
 
-  public async create(data: Exclude<User, 'id'>): Promise<User> {
-    const { username, firstname, lastname, role } = data;
-    const userPassword = encryptPassword(data.password as string);
-    // validate data before running query
+  private getUserRole(role: keyof typeof UserRole): UserRole {
+    return UserRole[role] || UserRole.Customer;
+  }
 
-    const {password, ...createdUser} = await super.create({
-      username,
-      firstname,
-      lastname,
-      password: userPassword,
-      role: UserRole[role] || UserRole.Customer
-    });
+  public async create(data: Omit<User, 'id'>): Promise<User> {
+    const newUserData: Omit<User, 'id'> = {
+      username: data.username,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      role: this.getUserRole(data.role),
+      password: data.password ? encryptPassword(data.password) : null
+    };
 
-    
-
+    const { password, ...createdUser } = await super.create(newUserData);
     return createdUser;
   }
 
-  public async update(data: Partial<User>): Promise<User> {
-    const { password, ...updated } = await super.update(data);
-
-    console.log('encrypt password');
-    // validate data before running query
+  public async update(updateData: Partial<User>): Promise<User> {
+    if (updateData.password) {
+      updateData.password = encryptPassword(updateData.password);
+    }
+    if (updateData.role) {
+      updateData.role = this.getUserRole(updateData.role);
+    }
+    const { password, ...updated } = await super.update(updateData);
     return updated;
   }
 

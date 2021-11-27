@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyUserToken } from '../../utilities/token';
 
-export const authTokenGuard = (
+export function authTokenGuard(
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+) {
   try {
     const authorization: string = req.headers.authorization || '';
     const token: string = authorization.split(' ').pop() || '';
@@ -15,4 +15,4 @@ export const authTokenGuard = (
   } catch (error) {
     res.status(401).json({ error: 'UNAUTHORIZED' });
   }
-};
+}

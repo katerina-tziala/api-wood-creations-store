@@ -4,6 +4,7 @@ import {
   authTokenGuard,
   idChecker
 } from '../middlewares/middlewares';
+import { checkCategoryName } from '../middlewares/validations/category-validation';
 import { Category, CategoryStore } from '../models/Category';
 
 const categoryIdChecker = idChecker('CATEGORY');
@@ -14,10 +15,10 @@ const store: CategoryStore = new CategoryStore();
 // Create category
 router.post(
   '/',
-  [authTokenGuard, adminGuard],
+  [authTokenGuard, adminGuard, checkCategoryName],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const newCategory: Exclude<Category, 'id'> = await store.create(req.body);
+      const newCategory: Omit<Category, 'id'> = await store.create(req.body);
       res.status(200).json(newCategory);
     } catch (error) {
       next(error);
@@ -57,7 +58,7 @@ router.get(
 // Update category
 router.patch(
   '/:id',
-  [authTokenGuard, adminGuard, categoryIdChecker],
+  [authTokenGuard, adminGuard, categoryIdChecker, checkCategoryName],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id: number = parseInt(req.params.id);
     const updateData: Partial<Category> = { ...req.body, id };
@@ -78,7 +79,7 @@ router.delete(
     const id: number = parseInt(req.params.id);
     try {
       await store.deleteById(id);
-      res.status(200).send();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

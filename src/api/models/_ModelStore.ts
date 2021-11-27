@@ -7,7 +7,7 @@ import {
 import * as QUERY from './models-utilities/query-helper';
 
 export interface ModelType {
-  id?: number;
+  id: number;
 }
 
 export class ModelStore<T extends ModelType> {
@@ -31,7 +31,7 @@ export class ModelStore<T extends ModelType> {
       console.log(error);
 
       // TODO get details
-      throw new Error(errorMessage);
+      throw error;
     }
   }
 
@@ -52,8 +52,7 @@ export class ModelStore<T extends ModelType> {
   public async create(data: Partial<T>): Promise<T> {
     const keys = Object.keys(data);
     const values = Object.values(data);
-
-    if (!keys.length || !values.length) {
+    if (!values.length) {
       const errorMessage = QueryErrorType.NoValuesCreate;
       throw new Error(errorMessage);
     }
@@ -77,12 +76,10 @@ export class ModelStore<T extends ModelType> {
     const { id, ...data } = model;
     const keys = Object.keys(data);
     const values = Object.values(data);
-
-    if (!keys.length || !values.length) {
+    if (!values.length) {
       const errorMessage = QueryErrorType.NoValuesUpdate;
       throw new Error(errorMessage);
     }
-
     const sql = QUERY.getUpdateQuery(
       this.table,
       keys,
@@ -92,15 +89,15 @@ export class ModelStore<T extends ModelType> {
     return results[0];
   }
 
-  // public async deleteAll(): Promise<T[]> {
-  //   const sql = `DELETE FROM ${this.table} RETURNING id`;
-  //   const results: T[] = await this.runQuery(sql);
-  //   return results;
-  // }
-
   public async deleteById(id: number): Promise<T> {
     const sql = `DELETE FROM ${this.table} WHERE id=($1) RETURNING *`;
     const results = await this.runQuery(sql, [id]);
     return this.returnOne(results);
   }
+
+  // public async deleteAll(): Promise<T[]> {
+  //   const sql = `DELETE FROM ${this.table} RETURNING id`;
+  //   const results: T[] = await this.runQuery(sql);
+  //   return results;
+  // }
 }

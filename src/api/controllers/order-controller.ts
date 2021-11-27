@@ -38,7 +38,7 @@ export class OrderController {
   private async getOrderById(id: number): Promise<Order> {
     const order: Order = await this.OrderStore.getById(id);
     const items: OrderItem[] = await this.OrderItemStore.getItemsByOrderId(
-      order.id as number
+      order.id
     );
     return { ...order, items };
   }
@@ -56,7 +56,7 @@ export class OrderController {
 
     const order = await this.OrderStore.create(newOrder);
     const items: OrderItem[] = await this.createOrderItem(
-      order.id as number,
+      order.id,
       orderItem
     );
     return { ...order, items };
@@ -65,14 +65,14 @@ export class OrderController {
   public async getCurrentOrder(userId: number): Promise<Order> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
     const items: OrderItem[] = await this.OrderItemStore.getItemsByOrderId(
-      order.id as number
+      order.id
     );
     return { ...order, items };
   }
 
   public async deleteCurrentOrder(userId: number): Promise<Order> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
-    return await this.OrderStore.deleteById(order.id as number);
+    return await this.OrderStore.deleteById(order.id);
   }
 
   public async completeCurrentOrder(
@@ -82,11 +82,11 @@ export class OrderController {
   ): Promise<Order> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
     await this.OrderStore.completeOrderById(
-      order.id as number,
+      order.id,
       completed_at,
       comments
     );
-    return this.getOrderById(order.id as number);
+    return this.getOrderById(order.id);
   }
 
   public async addItemInCurrentOrder(
@@ -107,7 +107,7 @@ export class OrderController {
     updateData: Partial<OrderItem>
   ): Promise<Order> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
-    const orderId = order.id as number;
+    const orderId = order.id;
     // check if item in order
     await this.OrderItemStore.getByIdAndOrderId(itemId, orderId);
     await this.OrderItemStore.update({...updateData, id: itemId});
@@ -119,14 +119,15 @@ export class OrderController {
     itemId: number
   ): Promise<Order | null> {
     const order: Order = await this.getCurrentOrderOfUser(userId);
-    const orderId = order.id as number;
+    const orderId = order.id;
+  
     await this.OrderItemStore.deleteByIdAndOrderId(itemId, orderId);
 
     const items: OrderItem[] = await this.OrderItemStore.getItemsByOrderId(orderId);
     if (items.length) {
       return { ...order, items };
     }
-    await this.OrderStore.deleteById(order.id as number);
+    await this.OrderStore.deleteById(orderId);
     return null;
   }
 }

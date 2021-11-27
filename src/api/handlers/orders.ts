@@ -163,7 +163,7 @@ router.delete(
     const userId: number = res.locals.userData.id;
     try {
       await orderController.deleteCurrentOrder(userId);
-      res.status(200).send();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

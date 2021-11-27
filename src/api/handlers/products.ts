@@ -18,7 +18,7 @@ router.post(
   [authTokenGuard, adminGuard],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const product: Exclude<Product, 'id'> = await store.create(req.body);
+      const product: Omit<Product, 'id'> = await store.create(req.body);
       res.status(200).json(product);
     } catch (error) {
       next(error);
@@ -35,6 +35,19 @@ router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 });
+
+// Get 5 most popular products
+router.get(
+  '/popular/',
+  async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products: Product[] = await store.getTopFive();
+      res.status(200).json(products);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Get product
 router.get(
@@ -66,10 +79,6 @@ router.get(
   }
 );
 
-// TODO:
-// Top 5 most popular products
-// Add a popular products endpoint that sends back the 5 most commonly ordered items
-
 // Update product
 router.patch(
   '/:id',
@@ -94,7 +103,7 @@ router.delete(
     const id: number = parseInt(req.params.id);
     try {
       await store.deleteById(id);
-      res.status(200).send();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

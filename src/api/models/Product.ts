@@ -3,32 +3,26 @@ import { ModelStore, ModelType } from './_ModelStore';
 export interface Product extends ModelType {
   name: string;
   price: string;
-  categoryId: number;
+  category_id: number;
   description?: string;
 }
 
 export class ProductStore extends ModelStore<Product> {
   constructor() {
-    const selectQuery = `SELECT product.*, category.name as category`
-      .concat(` FROM product`)
-      .concat(` INNER JOIN category`)
-      .concat(` ON category.id = product.categoryId`);
     super('product');
   }
 
-  public async create(data: Product): Promise<Product> {
-    // const { category, ...properties } = data;
-    //validate data
-    return super.create(data);
-  }
-
-  public async update(data: Partial<Product>): Promise<Product> {
-    // const { category, ...properties } = data;
-    //validate data
-    return super.update(data);
-  }
-
   public async getByCategory(id: number): Promise<Product[]> {
-    return await this.getBykey(id, 'categoryId');
+    return await this.getBykey(id, 'category_id');
+  }
+
+  public async getTopFive(): Promise<Product[]> {
+    const distinct_products = `SELECT DISTINCT order_id, product_id FROM order_item`;
+    const popular =
+      `SELECT ordered_products.product_id, COUNT(ordered_products.order_id) as times_ordered`.concat(
+        ` FROM (${distinct_products}) as ordered_products GROUP BY ordered_products.product_id`
+      );
+    const sql = `SELECT * FROM product INNER JOIN (${popular}) as popular ON popular.product_id = product.id ORDER BY times_ordered DESC LIMIT 5`;
+    return this.runQuery(sql);
   }
 }

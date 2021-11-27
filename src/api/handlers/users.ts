@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 
 import { User, UserStore } from '../models/User';
+import { Order, OrderStore } from '../models/Order';
 import { generateUserToken } from '../../utilities/token';
 
 import {
@@ -9,22 +10,28 @@ import {
   idChecker
 } from '../middlewares/middlewares';
 
-const userIdChecker = idChecker('USER');
+import {
+  checkCredentials,
+  checkCreation,
+  checkUpdate
+} from '../middlewares/validations/user-validation';
 
+const userIdChecker = idChecker('USER');
 const router = express.Router();
 const store: UserStore = new UserStore();
-// TODO: endpoints for customers and admins???
-// todo token expiration
+const ordersStore: OrderStore = new OrderStore();
+
 // Authenticate user
 router.post(
   '/authenticate',
+  checkCredentials,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { username, password } = req.body;
     try {
       const user = await store.authenticate(username, password);
       !user
         ? res.status(401).json({ error: 'WRONG_CREDENTIALS' })
-        : res.json(generateUserToken(user));
+        : res.status(200).json({ accessToken: generateUserToken(user) });
     } catch (error) {
       next(error);
     }
@@ -34,10 +41,10 @@ router.post(
 // Create user
 router.post(
   '/',
-  [authTokenGuard, adminGuard],
+  [authTokenGuard, adminGuard, checkCreation],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const newUser: Exclude<User, 'id'> = await store.create(req.body);
+      const newUser: User = await store.create(req.body);
       res.status(200).json(newUser);
     } catch (error) {
       next(error);
@@ -53,9 +60,17 @@ router.get(
     const userId: number = parseInt(req.params.id);
     try {
       const user = await store.getById(userId);
-      //Add a users 5 most recent purchases to the data being sent back from the user show endpoint (/users/id)
-
-      res.status(200).json(user);
+      const recentOrders: Order[] = await ordersStore.getCompletedOrdersOfUser(
+        userId,
+        5
+      );
+      const currentOrder = await ordersStore.getCurrentOrderOfUser(userId);
+      const userData = {
+        ...user,
+        recentOrders,
+        currentOrder: currentOrder ? currentOrder : null
+      };
+      res.status(200).json(userData);
     } catch (error) {
       next(error);
     }
@@ -68,7 +83,7 @@ router.get(
   [authTokenGuard, adminGuard],
   async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const users = await store.getAll();
+      const users: User[] = await store.getAll();
       res.status(200).json(users);
     } catch (error) {
       next(error);
@@ -79,7 +94,7 @@ router.get(
 // Update user
 router.patch(
   '/:id',
-  [authTokenGuard, adminGuard, userIdChecker],
+  [authTokenGuard, adminGuard, userIdChecker, checkUpdate],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const id: number = parseInt(req.params.id);
     const updateData: Partial<User> = { ...req.body, id };
@@ -105,7 +120,7 @@ router.delete(
     }
     try {
       await store.deleteById(userId);
-      res.status(200).send();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }
