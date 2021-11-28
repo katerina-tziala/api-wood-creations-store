@@ -16,6 +16,10 @@ Status Code: _401 Unauthorized_
 
 Content: `{ "error": "UNAUTHORIZED" }`
 
+In order to test the endpoints through the [REST Client for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) use the provided [endpoints.rest](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/rest_api/endpoints.rest).
+
+
+
 ### Users
 
 - **[POST] /users/authenticate/**
@@ -749,3 +753,11 @@ The following diagram depicts the database schema that address the API endpoints
 <p align="center">
     <img src="https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/wood-creations-store.png" alt="database-schema" width="100%" height="auto">
 </p>
+
+
+## Future Improvements
+
+- Implement email verification for the new users. Unverified users should not have acees to the endpoints.
+- Create endpoint to allow adminstrators see active orders of specified user(s).
+- Create endpoint to allow adminstrators see statistics about customers' orders.
+- Extend user creation endpoint to allow adminstrators create new adminstrators.
