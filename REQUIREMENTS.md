@@ -4,12 +4,16 @@ The "Wood Creations" company stakeholders want to create an online storefront to
 These are the notes that describe the endpoints of the API, as well as the data contracts the frontend and backend have agreed upon to meet the requirements of the application. 
 
 ## API Endpoints
-All api endpoints are under the route **/api**.
+All  the endpoints of the API are under the route **/api**.
 
 
 ### USERS
 
-#### [POST] /users/authenticate/
+**[POST] /users/authenticate/**
+
+
+
+
 
 #### [GET] /users
 
