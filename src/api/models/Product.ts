@@ -4,12 +4,17 @@ export interface Product extends ModelType {
   name: string;
   price: string;
   category_id: number;
+  category?: string;
   description?: string | null;
 }
 
 export class ProductStore extends ModelStore<Product> {
   constructor() {
-    super('product');
+    const selectQuery =
+      `SELECT product.*, category.name as category FROM product `
+        .concat(` INNER JOIN category`)
+        .concat(` ON product.category_id = category.id`);
+    super('product', selectQuery);
   }
 
   public async create(data: Omit<Product, 'id'>): Promise<Product> {

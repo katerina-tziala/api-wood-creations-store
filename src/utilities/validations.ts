@@ -22,12 +22,12 @@ export function optionalStringValidationError(
   name: string,
   minLength = 4
 ): string | undefined {
-  if (!value) {
-    return undefined;
+  if (value === undefined) {
+    return;
   }
-  const key = getErrorKey(name);
-
-  return stringShorterThan(value, minLength) ? `${key}_TOO_SHORT` : undefined;
+  return value !== null
+    ? stringValidationError(value, name, minLength)
+    : undefined;
 }
 
 export function numberTypeError<T>(value: T, name: string): string | undefined {

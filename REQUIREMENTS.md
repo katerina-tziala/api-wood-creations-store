@@ -8,13 +8,13 @@ These are the notes that describe the endpoints of the API, as well as the data 
 
 There are 4 main routes in the API: users, categories, products and orders. All the endpoints of the API are under the route **/api**.
 
-Success and error responses are described for special cases. 
+Success and error responses are described for special cases.
 
 For endpoints that require authorization, unauthorized users that try to access them will get an error response:
 
-Status Code: _401 Unauthorized_ 
+Status Code: _401 Unauthorized_
 
-Content ```{ "error": "UNAUTHORIZED" }```
+Content: `{ "error": "UNAUTHORIZED" }`
 
 ### Users
 
@@ -113,7 +113,7 @@ Content ```{ "error": "UNAUTHORIZED" }```
 
     - Status Code: _400 Bad Request_
       Content:
-      
+
       ```
       {
           "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
@@ -132,7 +132,7 @@ Content ```{ "error": "UNAUTHORIZED" }```
   - **_Request Body:_**
 
     At least one of the following is required.
-    
+
     ```
     {
       "firstname"?: string,
@@ -140,16 +140,13 @@ Content ```{ "error": "UNAUTHORIZED" }```
       "username"?: string,
       "password"?: string
      }
-     ```
- 
-
-
+    ```
 
   - **_Error Response:_**
 
     - Status Code: _400 Bad Request_
       Content:
-      
+
       ```
       {
           "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
@@ -185,26 +182,24 @@ Content ```{ "error": "UNAUTHORIZED" }```
 
       Content: `{ "error": "NOT_FOUND" }`
 
-
-
-
 ### Categories
+
 Categories can only be managed for authenticated users with the **_Admin_** role. When users with the **_Customer_** role try to access the endpoind they will get an error response:
 
-Status Code _403 Forbidden_ 
+Status Code: _403 Forbidden_
 
-Content ```{ "error": "FORBIDDEN_FOR_CUSTOMER" }```
+Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
 - **[GET] /categories**
 
   Provides a list of all categories for the products.
-  
+
   - **_Request Headers:_**
     ```
     Content-Type: application/json
     Authorization: Bearer <accessToken>
     ```
- 
+
 - **[GET] /categories/:id**
 
   Returns the requested category.
@@ -233,13 +228,13 @@ Content ```{ "error": "FORBIDDEN_FOR_CUSTOMER" }```
     Content-Type: application/json
     Authorization: Bearer <accessToken>
     ```
-   - **_Request Body:_**
+  - **_Request Body:_**
 
-        ```
-        {
-            "name": string
-        }
-        ```
+    ```
+    {
+        "name": string
+    }
+    ```
 
   - **_Error Response:_**
 
@@ -250,62 +245,58 @@ Content ```{ "error": "FORBIDDEN_FOR_CUSTOMER" }```
     - Status Code: _404 Not Found_
 
       Content: `{ "error": "NOT_FOUND" }`
-    
-  
- - **[PATCH] /categories/:id**
 
-    Updates the selected category.
+- **[PATCH] /categories/:id**
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-     - **_Request Body:_**
+  Updates the selected category.
 
-          ```
-          {
-              "name": string
-          }
-          ```
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Request Body:_**
 
-    - **_Error Response:_**
+    ```
+    {
+        "name": string
+    }
+    ```
 
-      - Status Code: _400 Bad Request_
+  - **_Error Response:_**
 
-        Content: `{ "error": "INVALID_CATEGORY_ID" | "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
+    - Status Code: _400 Bad Request_
 
-      - Status Code: _404 Not Found_
+      Content: `{ "error": "INVALID_CATEGORY_ID" | "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
 
-        Content: `{ "error": "NOT_FOUND" }`
-      
-    
- - **[DELETE] /categories/:id**
+    - Status Code: _404 Not Found_
 
-    Deletes the selected category.
+      Content: `{ "error": "NOT_FOUND" }`
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
+- **[DELETE] /categories/:id**
 
-    - **_Success Response:_**
+  Deletes the selected category.
 
-      Status Code: _204 No Content_
+  - **_Request Headers:_**
 
-    - **_Error Response:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
 
-      - Status Code: _400 Bad Request_
+  - **_Success Response:_**
 
-        Content: `{ "error": "INVALID_CATEGORY_ID" }`
+    Status Code: _204 No Content_
 
-      - Status Code: _404 Not Found_
+  - **_Error Response:_**
 
-        Content: `{ "error": "NOT_FOUND" }`
+    - Status Code: _400 Bad Request_
 
+      Content: `{ "error": "INVALID_CATEGORY_ID" }`
 
+    - Status Code: _404 Not Found_
 
+      Content: `{ "error": "NOT_FOUND" }`
 
 ### Products
 
