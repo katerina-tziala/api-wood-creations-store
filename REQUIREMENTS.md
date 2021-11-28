@@ -8,7 +8,13 @@ These are the notes that describe the endpoints of the API, as well as the data 
 
 There are 4 main routes in the API: users, categories, products and orders. All the endpoints of the API are under the route **/api**.
 
-Success and error responses are described for special cases.
+Success and error responses are described for special cases. 
+
+For endpoints that require authorization, unauthorized users that try to access them will get an error response:
+
+Status Code: _401 Unauthorized_ 
+
+Content ```{ "error": "UNAUTHORIZED" }```
 
 ### Users
 
@@ -31,13 +37,13 @@ Success and error responses are described for special cases.
 
   - **_Success Response:_**
 
-    Status Code: 200 OK
+    Status Code: _200 OK_
 
     Content: `{ "accessToken": string }`
 
   - **_Error Response:_**
 
-    - Status Code: 400 Bad Request
+    - Status Code: _400 Bad Request_
 
       Content:
 
@@ -47,7 +53,7 @@ Success and error responses are described for special cases.
       }
       ```
 
-    - Status Code: 401 Unauthorized
+    - Status Code: _401 Unauthorized_
 
       Content: `{ "error": "WRONG_CREDENTIALS" }`
 
@@ -72,21 +78,21 @@ Success and error responses are described for special cases.
     ```
   - **_Error Response:_**
 
-    - Status Code: 400 Bad Request
+    - Status Code: _400 Bad Request_
 
       Content: `{ "error": "INVALID_USER_ID" }`
 
-    - Status Code: 403 Forbidden
+    - Status Code: _403 Forbidden_
 
       Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
-    - Status Code: 404 Not Found
+    - Status Code: _404 Not Found_
 
       Content: `{ "error": "NOT_FOUND" }`
 
 - **[POST] /users**
 
-  Create a user. Creating a user with the **_Admin_** role is not allowed.
+  Creates a user. Creating a user with the **_Admin_** role is not allowed.
 
   - **_Request Headers:_**
     ```
@@ -96,7 +102,7 @@ Success and error responses are described for special cases.
 
     ```
     {
-       "firstname": string,
+        "firstname": string,
         "lastname": string,
         "username": string,
         "password": string
@@ -105,8 +111,9 @@ Success and error responses are described for special cases.
 
   - **_Error Response:_**
 
-    - Status Code: 400 Bad Request
+    - Status Code: _400 Bad Request_
       Content:
+      
       ```
       {
           "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
@@ -124,22 +131,25 @@ Success and error responses are described for special cases.
     ```
   - **_Request Body:_**
 
-  At least one of the following is required.
+    At least one of the following is required.
+    
+    ```
+    {
+      "firstname"?: string,
+      "lastname"?: string,
+      "username"?: string,
+      "password"?: string
+     }
+     ```
+ 
 
-        ```
-        {
-           "firstname"?: string,
-            "lastname"?: string,
-            "username"?: string,
-            "password"?: string
-        }
-        ```
 
 
   - **_Error Response:_**
 
-    - Status Code: 400 Bad Request
+    - Status Code: _400 Bad Request_
       Content:
+      
       ```
       {
           "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
@@ -159,35 +169,145 @@ Success and error responses are described for special cases.
 
   - **_Success Response:_**
 
-    Status Code: 204 No Content
+    Status Code: _204 No Content_
 
   - **_Error Response:_**
 
-    - Status Code: 400 Bad Request
+    - Status Code: _400 Bad Request_
 
       Content: `{ "error": "INVALID_USER_ID" }`
 
-    - Status Code: 403 Forbidden
+    - Status Code: _403 Forbidden_
 
       Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" | "ADMIN_DELETION_FORBIDDEN" }`
 
-    - Status Code: 404 Not Found
+    - Status Code: _404 Not Found_
 
       Content: `{ "error": "NOT_FOUND" }`
 
+
+
+
 ### Categories
+Categories can only be managed for authenticated users with the **_Admin_** role. When users with the **_Customer_** role try to access the endpoind they will get an error response:
 
-#### [GET] /categories
+Status Code _403 Forbidden_ 
 
-#### [GET] /categories/:id
+Content ```{ "error": "FORBIDDEN_FOR_CUSTOMER" }```
 
-#### [POST] /categories
+- **[GET] /categories**
 
-#### [PATCH] /categories/:id
+  Provides a list of all categories for the products.
+  
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+ 
+- **[GET] /categories/:id**
 
-#### [DELETE] /categories/:id
+  Returns the requested category.
 
-### PRODUCTS
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Error Response:_**
+
+    - Status Code: _400 Bad Request_
+
+      Content: `{ "error": "INVALID_CATEGORY_ID" }`
+
+    - Status Code: _404 Not Found_
+
+      Content: `{ "error": "NOT_FOUND" }`
+
+- **[POST] /categories**
+
+  Creates a new category.
+
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+   - **_Request Body:_**
+
+        ```
+        {
+            "name": string
+        }
+        ```
+
+  - **_Error Response:_**
+
+    - Status Code: _400 Bad Request_
+
+      Content: `{ "error": "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
+
+    - Status Code: _404 Not Found_
+
+      Content: `{ "error": "NOT_FOUND" }`
+    
+  
+ - **[PATCH] /categories/:id**
+
+    Updates the selected category.
+
+    - **_Request Headers:_**
+      ```
+      Content-Type: application/json
+      Authorization: Bearer <accessToken>
+      ```
+     - **_Request Body:_**
+
+          ```
+          {
+              "name": string
+          }
+          ```
+
+    - **_Error Response:_**
+
+      - Status Code: _400 Bad Request_
+
+        Content: `{ "error": "INVALID_CATEGORY_ID" | "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
+
+      - Status Code: _404 Not Found_
+
+        Content: `{ "error": "NOT_FOUND" }`
+      
+    
+ - **[DELETE] /categories/:id**
+
+    Deletes the selected category.
+
+    - **_Request Headers:_**
+      ```
+      Content-Type: application/json
+      Authorization: Bearer <accessToken>
+      ```
+
+    - **_Success Response:_**
+
+      Status Code: _204 No Content_
+
+    - **_Error Response:_**
+
+      - Status Code: _400 Bad Request_
+
+        Content: `{ "error": "INVALID_CATEGORY_ID" }`
+
+      - Status Code: _404 Not Found_
+
+        Content: `{ "error": "NOT_FOUND" }`
+
+
+
+
+### Products
 
 #### [GET] /products
 
