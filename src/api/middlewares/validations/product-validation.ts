@@ -54,9 +54,9 @@ function getProductData(params: Omit<Product, 'id'>): Partial<Product> {
 function priceError(price: string): string | undefined {
   const priceValue: number = parseFloat(price);
   if (!priceValue) {
-    return `PRICE_REQUIRED`;
+    return "PRICE_REQUIRED";
   }
-  return priceValue < 0 ? `PRICE_MUST_BE_POSITIVE` : undefined;
+  return priceValue < 0 ? "PRICE_MUST_BE_POSITIVE" : undefined;
 }
 
 function optionalPriceError(price: string): string | undefined {

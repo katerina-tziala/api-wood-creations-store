@@ -85,14 +85,14 @@ Authorization: Bearer {{authenticate.response.body.accessToken}}
 ### GET PRODUCTS
 GET {{api}}/products
 
+### GET TOP FIVE PRODUCTS 
+GET {{api}}/products/top-five
+
 ### GET PRODUCT
 GET {{api}}/products/1
 
 ### GET PRODUCTS BY CATEGORY
 GET {{api}}/products/category/1
-
-### GET TOP FIVE PRODUCTS 
-GET {{api}}/products/top-five
 
 ### CREATE PRODUCT
 # @name new_product

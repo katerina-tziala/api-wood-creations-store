@@ -202,7 +202,7 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
 - **[GET] /categories/:id**
 
-  Returns the requested category.
+  Returns the category with the specified id.
 
   - **_Request Headers:_**
     ```
@@ -248,7 +248,7 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
 - **[PATCH] /categories/:id**
 
-  Updates the selected category.
+  Updates the category with the specified id.
 
   - **_Request Headers:_**
     ```
@@ -275,7 +275,7 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
 - **[DELETE] /categories/:id**
 
-  Deletes the selected category.
+  Deletes the category with the specified id.
 
   - **_Request Headers:_**
 
