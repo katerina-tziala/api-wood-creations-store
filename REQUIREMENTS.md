@@ -12,118 +12,119 @@ Success and error responses are described for special cases.
 
 ### Users
 
-* **[POST] /users/authenticate/**
+- **[POST] /users/authenticate/**
 
-    Authenticates a user and provides access.
-    
-    *  **_Request Headers:_**
-        ```
-        Content-Type: application/json
-        ```
-    * **_Request Body:_**
+  Authenticates a user and provides access.
 
-        ```
-        {
-            "username": string,
-            "password": string
-        }
-        ```
-    * **_Success Response:_**
-    
-        Status Code: 200 OK
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    ```
+  - **_Request Body:_**
 
-        Content: ``` { "accessToken": string } ```
-                
-    * **_Error Response:_**
-    
-       * Status Code: 400 Bad Request
-          
-          Content: 
-            ```
-            {
-                "error": "CREDENTIALS_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT"
-            }
-            ``` 
-        
-        * Status Code: 401 Unauthorized
-          
-          Content: ``` { "error": "WRONG_CREDENTIALS" } ```
-            
-* **[GET] /users**
+    ```
+    {
+        "username": string,
+        "password": string
+    }
+    ```
 
-    Provides a list of all users. Available only for authenticated users with the **_Admin_** role.
-    
-    *  **_Request Headers:_**
-        ```
-        Content-Type: application/json
-        Authorization: Bearer <accessToken>
-        ```
+  - **_Success Response:_**
 
-* **[GET] /users/:id**
+    Status Code: 200 OK
 
-    Returns the requested user including the current order and the 5 most recent completed orders. Available only for authenticated users with the **_Admin_** role.
-    
-    *  **_Request Headers:_**
-        ```
-        Content-Type: application/json
-        Authorization: Bearer <accessToken>
-        ```
-    * **_Error Response:_**
-    
-       * Status Code: 400 Bad Request
-          
-          Content: ``` { "error": "INVALID_USER_ID" } ``` 
-        
-        * Status Code: 403 Forbidden
-          
-          Content: ``` { "error": "FORBIDDEN_FOR_CUSTOMER" } ``` 
+    Content: `{ "accessToken": string }`
 
-        * Status Code: 404 Not Found
-          
-          Content: ``` { "error": "NOT_FOUND" } ``` 
+  - **_Error Response:_**
 
-* **[POST] /users**
+    - Status Code: 400 Bad Request
 
-    Create a user. Creating a user with the **_Admin_** role is not allowed.
-    
-    *  **_Request Headers:_**
-        ```
-        Content-Type: application/json
-        ```
-    * **_Request Body:_**
+      Content:
 
-        ```
-        {
-           "firstname": string,
-            "lastname": string,
-            "username": string,
-            "password": string
-        }
-        ```
-                
-    * **_Error Response:_**
-    
-       * Status Code: 400 Bad Request
-          
-          Content: 
-            ```
-            {
-                "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
-            }
-            ``` 
- 
-* **[PATCH] /users**
+      ```
+      {
+          "error": "CREDENTIALS_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT"
+      }
+      ```
 
-    Updates the logged in user and returns the updated user.
-    
-    *  **_Request Headers:_**
-        ```
-        Content-Type: application/json
-        Authorization: Bearer <accessToken>
-        ```
-    * **_Request Body:_**
-    
-    At least one of the following is required.
+    - Status Code: 401 Unauthorized
+
+      Content: `{ "error": "WRONG_CREDENTIALS" }`
+
+- **[GET] /users**
+
+  Provides a list of all users. Available only for authenticated users with the **_Admin_** role.
+
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+
+- **[GET] /users/:id**
+
+  Returns the requested user including the current order and the 5 most recent completed orders. Available only for authenticated users with the **_Admin_** role.
+
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Error Response:_**
+
+    - Status Code: 400 Bad Request
+
+      Content: `{ "error": "INVALID_USER_ID" }`
+
+    - Status Code: 403 Forbidden
+
+      Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+
+    - Status Code: 404 Not Found
+
+      Content: `{ "error": "NOT_FOUND" }`
+
+- **[POST] /users**
+
+  Create a user. Creating a user with the **_Admin_** role is not allowed.
+
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    ```
+  - **_Request Body:_**
+
+    ```
+    {
+       "firstname": string,
+        "lastname": string,
+        "username": string,
+        "password": string
+    }
+    ```
+
+  - **_Error Response:_**
+
+    - Status Code: 400 Bad Request
+      Content:
+      ```
+      {
+          "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
+      }
+      ```
+
+- **[PATCH] /users**
+
+  Updates the logged in user and returns the updated user.
+
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Request Body:_**
+
+  At least one of the following is required.
 
         ```
         {
@@ -133,46 +134,46 @@ Success and error responses are described for special cases.
             "password"?: string
         }
         ```
-                
-    * **_Error Response:_**
-    
-       * Status Code: 400 Bad Request
-          
-          Content: 
-            ```
-            {
-                "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
-            }
-            ``` 
 
-* **[DELETE] /users/:id**
 
-    Deletes the user with the specified id if the user exists and the user does not have the **_Admin_** role. Available only for authenticated users with the **_Admin_** role.
-    
-    *  **_Request Headers:_**
-        ```
-        Content-Type: application/json
-        Authorization: Bearer <accessToken>
-        ```
-     
-     * **_Success Response:_**
-    
-        Status Code: 204 No Content
-    
-    * **_Error Response:_**
-    
-       * Status Code: 400 Bad Request
-          
-          Content: ``` { "error": "INVALID_USER_ID" } ``` 
-        
-        * Status Code: 403 Forbidden
-          
-          Content: ``` { "error": "FORBIDDEN_FOR_CUSTOMER" | "ADMIN_DELETION_FORBIDDEN" } ``` 
+  - **_Error Response:_**
 
-        * Status Code: 404 Not Found
-          
-          Content: ``` { "error": "NOT_FOUND" } ``` 
+    - Status Code: 400 Bad Request
+      Content:
+      ```
+      {
+          "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
+      }
+      ```
 
+- **[DELETE] /users/:id**
+
+  Deletes the user with the specified id if the user exists and the user does not have the **_Admin_** role. Available only for authenticated users with the **_Admin_** role.
+
+  - **_Request Headers:_**
+
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+
+  - **_Success Response:_**
+
+    Status Code: 204 No Content
+
+  - **_Error Response:_**
+
+    - Status Code: 400 Bad Request
+
+      Content: `{ "error": "INVALID_USER_ID" }`
+
+    - Status Code: 403 Forbidden
+
+      Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" | "ADMIN_DELETION_FORBIDDEN" }`
+
+    - Status Code: 404 Not Found
+
+      Content: `{ "error": "NOT_FOUND" }`
 
 ### Categories
 
