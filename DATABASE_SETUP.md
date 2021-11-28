@@ -16,7 +16,7 @@ POSTGRES_USER =
 POSTGRES_PASSWORD = 
 ```
 
-The default setting used for development and testing (but not in production) can be found in the **_example.env_** file. Make sure you complete the values for all aforementioned variables.
+The default setting used for development and testing (but not in production) can be found in the [example.env](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/example.env) file. Make sure you complete the values for all aforementioned variables.
 
 ## Set Up Database in a Docker Container
 
