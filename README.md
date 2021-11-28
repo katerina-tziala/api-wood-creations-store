@@ -33,9 +33,9 @@ Here’s a high level list of the technologies used for this app:
 5. Make sure your database is up and running -->
 
 ## Code Quality and Testing
-In order to test the endpoints through the [REST Client plugin for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), use the provided [endpoints.rest](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/rest_api/endpoints.rest) file.
+In order to test the endpoints through the [REST Client plugin for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), use the provided [endpoints.rest](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/endpoints.rest) file.
 
-In order to test the endpoints through [Postman](https://www.postman.com/) install the app and import both the [environment](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/rest_api/WoodCreationsStore.postman_environment.json) and the [collection](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/rest_api/WoodCreationsStore.postman_collection.json). Make sure you the imported environment is selected when sending the requests.
+In order to test the endpoints through [Postman](https://www.postman.com/) install the app and import both the [environment](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/WoodCreationsStore.postman_environment.json) and the [collection](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/WoodCreationsStore.postman_collection.json). Make sure you the imported environment is selected when sending the requests.
 
 
 
