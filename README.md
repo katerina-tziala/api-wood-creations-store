@@ -33,7 +33,3 @@ Here’s a high level list of the technologies used for this app:
 5. Make sure your database is up and running -->
 
 
-// FUTURE IMPROVEMENTS: extent roles and access to orders
-// allow admins view orders from specific customers
-
-// TODO: endpoints for customers and admins???
