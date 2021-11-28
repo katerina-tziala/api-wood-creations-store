@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 
-import { User, UserStore } from '../models/User';
+import { User, UserRole, UserStore } from '../models/User';
 import { Order } from '../models/Order';
 import { OrderController } from '../controllers/order-controller';
 
@@ -46,7 +46,7 @@ router.post(
 // Create user
 router.post(
   '/',
-  [authTokenGuard, adminGuard, checkCreation],
+  [checkCreation],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const data: Omit<User, 'id'> = req.body;
     try {
@@ -97,10 +97,10 @@ router.get(
 
 // Update user
 router.patch(
-  '/:id',
-  [authTokenGuard, adminGuard, userIdChecker, checkUpdate],
+  '/',
+  [authTokenGuard, checkUpdate],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const id: number = parseInt(req.params.id);
+    const id: number = res.locals.userData.id;
     const updateData: Partial<User> = { ...req.body, id };
     try {
       const updatedUser = await store.update(updateData);
@@ -117,12 +117,12 @@ router.delete(
   [authTokenGuard, adminGuard, userIdChecker],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId: number = parseInt(req.params.id);
-    const { id } = res.locals.userData;
-    if (id === userId) {
-      res.status(403).json({ error: 'OWN_ACCOUNT_DELETION_FORBIDDEN' });
-      return;
-    }
     try {
+      const userToDelete: User = await store.getById(userId);
+      if (userToDelete.role === UserRole.Admin) {
+        res.status(403).json({ error: 'ADMIN_DELETION_FORBIDDEN' });
+        return;
+      }
       await store.deleteById(userId);
       res.status(204).send();
     } catch (error) {

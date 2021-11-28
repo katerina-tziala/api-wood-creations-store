@@ -24,18 +24,16 @@ Authorization: Bearer {{authenticate.response.body.accessToken}}
 # @name new_user
 POST {{api}}/users
 Content-Type: application/json
-Authorization: Bearer {{authenticate.response.body.accessToken}}
 
 {
     "firstname": "John",
     "lastname": "Doe",
     "username": "jdoe",
-    "password": "customer1234",
-    "role": "Customer"
+    "password": "customer1234"
 }
 
 ### UPDATE USER
-PATCH {{api}}/users/{{new_user.response.body.id}}
+PATCH {{api}}/users
 Content-Type: application/json
 Authorization: Bearer {{authenticate.response.body.accessToken}}
 

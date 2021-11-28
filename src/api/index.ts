@@ -13,10 +13,17 @@ api.get('/', async (_, res: Response): Promise<void> => {
   res.status(200).send('API is listening...');
 });
 
-function handleError(err: Error, req: Request, res: Response, next: NextFunction) {
+function handleError(error: Error, req: Request, res: Response, next: NextFunction) {
+  const message = error.message;
+  if (message === 'NOT_FOUND') {
+    res.status(404).json({error: message});
+    return;
+  }
+  console.log(error.message);
+  
   console.log('ERROR ----');
 
-  console.error(err);
+  console.error(error);
   res.status(500).send('Something broke!');
 }
 
