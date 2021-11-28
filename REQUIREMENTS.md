@@ -308,144 +308,144 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
     ```
     Content-Type: application/json
     ```
-    
+
 - **[GET] /products/top-five**
 
-    Provides a list of the 5 most popular products (most commonly ordered).
+  Provides a list of the 5 most popular products (most commonly ordered).
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      ```
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    ```
 
- - **[GET] /products/:id**
+- **[GET] /products/:id**
 
-    Returns the product with the specified id.
+  Returns the product with the specified id.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      ```
-    - **_Error Response:_**
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    ```
+  - **_Error Response:_**
 
-      - Status Code: _400 Bad Request_
+    - Status Code: _400 Bad Request_
 
-        Content: `{ "error": "INVALID_PRODUCT_ID"}`
+      Content: `{ "error": "INVALID_PRODUCT_ID"}`
 
-      - Status Code: _404 Not Found_
+    - Status Code: _404 Not Found_
 
-        Content: `{ "error": "NOT_FOUND" }`
-   
+      Content: `{ "error": "NOT_FOUND" }`
 
- - **[GET] /products/category/:id**
+- **[GET] /products/category/:id**
 
-    Provides a list of all products that belong in the specified category.
+  Provides a list of all products that belong in the specified category.
 
-    - **_Request Headers:_**
+  - **_Request Headers:_**
 
-      ```
-      Content-Type: application/json
-      ```
+    ```
+    Content-Type: application/json
+    ```
 
-    - **_Error Response:_**
+  - **_Error Response:_**
 
-      - Status Code: _400 Bad Request_
+    - Status Code: _400 Bad Request_
 
-        Content: `{ "error": "INVALID_CATEGORY_ID"}`
+      Content: `{ "error": "INVALID_CATEGORY_ID"}`
 
- - **[POST] /products**
+- **[POST] /products**
 
-    Creates a new product. Available only for authenticated users with the **_Admin_** role.
+  Creates a new product. Available only for authenticated users with the **_Admin_** role.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-    - **_Request Body:_**
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Request Body:_**
 
-      ```
-      {
-        "name": string,
-        "price": string,
-        "category_id": number,
-        "description": string | null
-      }
-      ```
+    ```
+    {
+      "name": string,
+      "price": string,
+      "category_id": number,
+      "description": string | null
+    }
+    ```
 
-    - **_Error Response:_**
+  - **_Error Response:_**
 
-      - Status Code: _400 Bad Request_
-        Content:
-
-        ```
-        {
-            "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
-        }
-        ```
-   
- - **[PATCH] /products/:id**
-
-    Updates the product with the specified id. Available only for authenticated users with the **_Admin_** role.
-
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-     
-     - **_Request Body:_**
-
-      At least one of the following is required.
+    - Status Code: _400 Bad Request_
+      Content:
 
       ```
       {
-        "name"?: string,
-        "price"?: string,
-        "category_id"?: number,
-        "description"?: string | null
+          "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
       }
       ```
 
-    - **_Error Response:_**
+- **[PATCH] /products/:id**
 
-      - Status Code: _400 Bad Request_
-        Content:
+  Updates the product with the specified id. Available only for authenticated users with the **_Admin_** role.
 
-        ```
-        {
-            "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
-        }
-        ```
- 
- - **[DELETE] /products/:id**
+  - **_Request Headers:_**
 
-    Deletes the product with the specified id. Available only for authenticated users with the **_Admin_** role.
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
 
-    - **_Request Headers:_**
+  - **_Request Body:_**
+
+  At least one of the following is required.
+
+  ```
+  {
+    "name"?: string,
+    "price"?: string,
+    "category_id"?: number,
+    "description"?: string | null
+  }
+  ```
+
+  - **_Error Response:_**
+
+    - Status Code: _400 Bad Request_
+      Content:
+
       ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
+      {
+          "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
+      }
       ```
 
-    - **_Success Response:_**
+- **[DELETE] /products/:id**
 
-      Status Code: _204 No Content_
+  Deletes the product with the specified id. Available only for authenticated users with the **_Admin_** role.
 
-    - **_Error Response:_**
+  - **_Request Headers:_**
 
-      - Status Code: _400 Bad Request_
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
 
-        Content: `{ "error": "INVALID_PRODUCT_ID" }`
+  - **_Success Response:_**
 
-      - Status Code: _403 Forbidden_
+    Status Code: _204 No Content_
 
-        Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+  - **_Error Response:_**
 
-      - Status Code: _404 Not Found_
+    - Status Code: _400 Bad Request_
 
-        Content: `{ "error": "NOT_FOUND" }`
+      Content: `{ "error": "INVALID_PRODUCT_ID" }`
 
+    - Status Code: _403 Forbidden_
+
+      Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+
+    - Status Code: _404 Not Found_
+
+      Content: `{ "error": "NOT_FOUND" }`
 
 ### Orders
 
@@ -469,27 +469,69 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
 ## Data Contracts
 
-#### Product
+### Category
 
-- id
-- name
-- price
-- [OPTIONAL] category
+```
+{
+  id: number;
+  name: string;
+}
+```
 
-#### User
+### Product
 
-- id
-- firstName
-- lastName
-- password
+```
+{
+  id: number;
+  name: string;
+  price: string;
+  category_id: number;
+  category?: string;
+  description?: string | null;
+}
+```
 
-#### Orders
+### Order
 
-- id
-- id of each product in the order
-- quantity of each product in the order
-- user_id
-- status of order (active or complete)
+```
+{
+  id: number;
+  customer_id: number;
+  status: 'Active' | 'Complete';
+  created_at: Date;
+  completed_at?: Date;
+  comments?: string | null;
+  total?: string;
+  number_of_products?: string;
+  items?: [
+    {
+      id: number;
+      order_id: number;
+      product_id: number;
+      quantity: number;
+      engraving?: string | null;
+      name?: string;
+      price?: string;
+      category_id?: number;
+      description?: string;
+    },
+    ...
+  ];
+}
+```
+
+### User
+
+```
+{
+  id: number;
+  name: string;
+  price: string;
+  category_id: number;
+  category?: string;
+  description?: string | null;
+}
+```
 
 ## Database Schema
 
