@@ -15,10 +15,17 @@ api.get('/', async (_, res: Response): Promise<void> => {
 
 function handleError(error: Error, req: Request, res: Response, next: NextFunction) {
   const message = error.message;
-  if (message === 'NOT_FOUND') {
+  if (message === 'NOT_FOUND' || message ==='CURRENT_ORDER_NOT_FOUND') {
     res.status(404).json({error: message});
     return;
   }
+
+  if (message === 'CURRENT_ORDER_EXISTS' ) {
+    res.status(403).json({error: message});
+    return;
+  }
+
+  
   console.log(error.message);
   
   console.log('ERROR ----');

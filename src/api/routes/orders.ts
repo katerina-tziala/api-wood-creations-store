@@ -12,7 +12,7 @@ import {
 import { Order } from '../models/Order';
 import { OrderItem } from '../models/OrderItem';
 
-const itemIdChecker = idChecker('ORDER_ITEM_ID');
+const itemIdChecker = idChecker('ORDER_ITEMD');
 
 const orderController = new OrderController();
 const router = express.Router();

@@ -122,7 +122,7 @@ Content: `{ "error": "UNAUTHORIZED" }`
 
 - **[PATCH] /users**
 
-  Updates the logged in user and returns the updated user.
+  Updates the authorized user and returns the updated user.
 
   - **_Request Headers:_**
     ```
@@ -448,17 +448,18 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
       Content: `{ "error": "NOT_FOUND" }`
 
 ### Orders
+
 All the orders endpoints can be accessed by the authorized and are related to that user.
 
 - **[GET] /orders**
 
-    Provides a list of all orders of the user.
+  Provides a list of all orders of the user.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
 
 - **[GET] /orders/current**
 
@@ -477,172 +478,176 @@ All the orders endpoints can be accessed by the authorized and are related to th
 
 - **[GET] /orders/completed**
 
-    Provides a list of all completed orders of the user.
+  Provides a list of all completed orders of the user.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
 
 - **[POST] /orders**
 
-    Creates a new order for the user. Users are allowed to have only one active order.
+  Creates a new order for the user. Users are allowed to have only one active order.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-    - **_Request Body:_**
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Request Body:_**
 
-      ```
-      {
-         "item": {
-            "product_id": number,
-            "quantity": number,
-            "engraving": string | null
-        },
-        "comments": string | null,
-        "calledAt": number (timestamp)
-      }
-      ```
-    - **_Error Response:_**
-
-      - Status Code: _400 Bad Request_
-        Content:
-
-        ```
-        {
-            "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" | "ORDER_ITEM_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
-        }
-        ```
-        
-      - Status Code: _403 Forbidden_
-        Content: ``` { "error": "CURRENT_ORDER_EXISTS" } ```
-
-
-- **[POST] /orders/item**
-
-    Adds a new order item in the current active order of the user.
-
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-    - **_Request Body:_**
-
-      ```
-      {
+    ```
+    {
+       "item": {
           "product_id": number,
           "quantity": number,
           "engraving": string | null
+      },
+      "comments": string | null,
+      "calledAt": number (timestamp)
+    }
+    ```
+
+  - **_Error Response:_**
+
+    - Status Code: _400 Bad Request_
+      Content:
+
+      ```
+      {
+          "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" | "ORDER_ITEM_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
       }
       ```
-    - **_Error Response:_**
 
-      - Status Code: _400 Bad Request_
-        Content:
+    - Status Code: _403 Forbidden_
+      Content: `{ "error": "CURRENT_ORDER_EXISTS" }`
 
-        ```
-        {
-            "error": "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
-        }
-        ```
-        
-      - Status Code: _403 Forbidden_
-        Content: ``` { "error": "CURRENT_ORDER_NOT_FOUND" } ```
+- **[POST] /orders/item**
 
+  Adds a new order item in the current active order of the user.
+
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Request Body:_**
+
+    ```
+    {
+        "product_id": number,
+        "quantity": number,
+        "engraving": string | null
+    }
+    ```
+
+  - **_Error Response:_**
+
+    - Status Code: _400 Bad Request_
+      Content:
+
+      ```
+      {
+          "error": "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
+      }
+      ```
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
 - **[PATCH] /orders/item**
 
-    Updates an order item in the current active order of the user.
+  Updates an order item in the current active order of the user.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-    - **_Request Body:_**
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Request Body:_**
 
-      At least one of the following is required.
+    At least one of the following is required.
+
+    ```
+    {
+        "quantity?": number,
+        "engraving?": string | null
+    }
+    ```
+
+  - **_Error Response:_**
+
+    - Status Code: _400 Bad Request_
+      Content:
+
       ```
       {
-          "quantity?": number,
-          "engraving?": string | null
+          "error": "DATA_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
       }
       ```
-    - **_Error Response:_**
 
-      - Status Code: _400 Bad Request_
-        Content:
+  - Status Code: _404 Not Found_
 
-        ```
-        {
-            "error": "DATA_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
-        }
-        ```
-        
-      - Status Code: _403 Forbidden_
-        Content: ``` { "error": "CURRENT_ORDER_NOT_FOUND" } ```
-
+    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
 - **[DELETE] /orders/item/:id**
 
-    Deletes the order item with the specified id in the current active order of the user. If there are no more items in the current order then the current order is deleted.
+  Deletes the order item with the specified id in the current active order of the user. If there are no more items in the current order then the current order is deleted.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-    - **_Success Response:_**
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Success Response:_**
 
-      Status Code: _200 OK_
-      Content: The current order or null
+    Status Code: _200 OK_
+    Content: The current order or null
 
-    - **_Error Response:_**
+  - **_Error Response:_**
 
-      - Status Code: _400 Bad Request_
+    - Status Code: _400 Bad Request_
 
-        Content: `{ "error": "INVALID_ORDER_ITEM_ID" }`
+      Content: `{ "error": "INVALID_ORDER_ITEM_ID" }`
 
-      - Status Code: _404 Not Found_
+    - Status Code: _404 Not Found_
 
-        Content: `{ "error": "NOT_FOUND" }`
-      
-      - Status Code: _403 Forbidden_
-        Content: ``` { "error": "CURRENT_ORDER_NOT_FOUND" } ```
-        
+      Content: `{ "error": "NOT_FOUND" }`
 
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
 - **[PATCH] /orders/current/complete**
 
-    Completes the current active order of the user.
+  Completes the current active order of the user.
 
-    - **_Request Headers:_**
-      ```
-      Content-Type: application/json
-      Authorization: Bearer <accessToken>
-      ```
-    - **_Request Body:_**
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    Authorization: Bearer <accessToken>
+    ```
+  - **_Request Body:_**
 
-      At least one of the following is required.
-      ```
-      {
-          "calledAt": number (timestamp),
-          "comments": string | null
-      }
-      ```
-    - **_Error Response:_**
+    At least one of the following is required.
 
-      - Status Code: _400 Bad Request_
-        Content: ``` { "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" } ```
-        
-      - Status Code: _403 Forbidden_
-        Content: ``` { "error": "CURRENT_ORDER_NOT_FOUND" } ```
+    ```
+    {
+        "calledAt": number (timestamp),
+        "comments": string | null
+    }
+    ```
 
+  - **_Error Response:_**
+
+    - Status Code: _400 Bad Request_
+      Content: `{ "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
 - **[DELETE] /orders/current/complete**
 

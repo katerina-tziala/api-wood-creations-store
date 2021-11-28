@@ -19,7 +19,7 @@ export function checkCreation(
 
   const error =
     requiredTimestampError(created_at, 'calledAt') ||
-    getNewOrderItemError(orderItem);
+    getNewOrderItemError(orderItem, 'ORDER_ITEM_REQUIRED');
 
   const orderData: Partial<Order> = {
     created_at,
@@ -46,7 +46,8 @@ export function checkOrderItemUpdate(
   res: Response,
   next: NextFunction
 ): void {
-  req.body = getOrderItemData(req.body);
+  const { product_id, ...updateData } = getOrderItemData(req.body);
+  req.body = updateData;
 
   const error = getUpdatedOrderItemError(req.body);
   error ? res.status(400).json({ error }) : next();
@@ -65,22 +66,19 @@ export function checkCompletion(
   error ? res.status(400).json({ error }) : next();
 }
 
-function getNewOrderItemError(item: Partial<OrderItem>) {
+function getNewOrderItemError(item: Partial<OrderItem>, dataError?: string): string | undefined {
   const { product_id, quantity } = item;
   return (
-    requiredDataError<OrderItem>(item, 'ORDER_ITEM_REQUIRED') ||
+    requiredDataError<OrderItem>(item, dataError) ||
     numberTypeError(product_id, 'product_id') ||
     quantityError(quantity)
   );
 }
 
-function getUpdatedOrderItemError(item: Partial<OrderItem>) {
-  const { product_id, quantity } = item;
-  if (product_id) {
-    return 'PRODUCT_ID_CHANGE_NOT_ALLOWED';
-  }
+function getUpdatedOrderItemError(item: Partial<OrderItem>): string | undefined {
+  const { quantity } = item;
   return (
-    requiredDataError<OrderItem>(item, 'ORDER_ITEM_REQUIRED') ||
+    requiredDataError<OrderItem>(item) ||
     optionalQuantityError(quantity)
   );
 }
