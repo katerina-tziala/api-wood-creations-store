@@ -1,55 +1,83 @@
 # API Requirements
-The "Wood Creations" company stakeholders want to create an online storefront to showcase their great product creations. Users need to be able to browse an index of all products, see the specifics of a single product, and add products to an order that they can view in a cart page.
+The "Wood Creations" company stakeholders want to create an online storefront to showcase their great product creations. Users need to be able to browse an index of all products, see the specifics of a single product, and add products to an order that they can view in a cart page. Administrators should also be able to manage users, categories and products of the store.
 
-
-You have been tasked with building the API that will support this application, and your coworker is building the frontend.
-
-These are the notes from a meeting with the frontend developer that describe what endpoints the API needs to supply, as well as data shapes the frontend and backend have agreed meet the requirements of the application. 
+These are the notes that describe the endpoints of the API, as well as the data contracts the frontend and backend have agreed upon to meet the requirements of the application. 
 
 ## API Endpoints
-All api endpoints are under the route **/api**. The data contracts used to present the response of each endpoint are presented in the **Data Contracts**  section of this document.
-### Products
-- [GET] /products
-
-  _Description_: Returns a list of all products.
-
-  **_Success Response:_**
-
-  - Code: 200 OK
-  - Content: ```[ Product, ... ]```
-
-  **_Error Response:_** 
+All api endpoints are under the route **/api**.
 
 
+### USERS
 
-**_Possible Errors_**
-| Code                | Content                                     |
-| ------------------------- | --------------------------------------------------- |
-| 500 Internal Server Error | The products could not be fetched                   |
+#### [POST] /users/authenticate/
 
-#### [GET] /products:id
+#### [GET] /users
+
+#### [GET] /users/:id
+
+
+#### [POST] /users/
+
+#### [PATCH] /users/:id
+
+
+#### [DELETE] /users/:id
 
 
 
+### CATEGORIES
+
+#### [GET] /categories
+
+#### [GET] /categories/:id
+
+#### [POST] /categories
+
+#### [PATCH] /categories/:id
+
+
+#### [DELETE] /categories/:id
 
 
 
-#### Products
-- Index 
+### PRODUCTS
 
-- Show
-- Create [token required]
-- [OPTIONAL] Top 5 most popular products 
-- [OPTIONAL] Products by category (args: product category)
+#### [GET] /products
 
-#### Users
-- Index [token required]
-- Show [token required]
-- Create N[token required]
+#### [GET] /products/:id
 
-#### Orders
-- Current Order by user (args: user id)[token required]
-- [OPTIONAL] Completed Orders by user (args: user id)[token required]
+#### [GET] /products/category/:id
+
+#### [GET] /products/top-five
+
+#### [POST] /products
+
+#### [PATCH] /products/:id
+
+#### [DELETE] /products/:id
+
+
+### ORDERS
+
+#### [GET] /orders
+
+#### [GET] /orders/current
+
+#### [GET] /orders/completed
+
+#### [POST] /orders
+
+#### [POST] /orders/item
+
+#### [PATCH] /orders/item/:id
+#### [DELETE] /orders/item/:id
+
+
+#### [PATCH] /orders/current/complete
+
+#### [DELETE] /orders/current/complete
+
+
 
 
 
