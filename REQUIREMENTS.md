@@ -497,7 +497,7 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 {
   id: number;
   customer_id: number;
-  status: 'Active' | 'Complete';
+  status: Active | Complete;
   created_at: Date;
   completed_at?: Date;
   comments?: string | null;
@@ -525,11 +525,13 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 ```
 {
   id: number;
-  name: string;
-  price: string;
-  category_id: number;
-  category?: string;
-  description?: string | null;
+  username: string;
+  firstname: string;
+  lastname: string;
+  role: Admin | Customer;
+  password?: string | null;
+  recentOrders?: Order[];
+  currentOrder?: Order;
 }
 ```
 
