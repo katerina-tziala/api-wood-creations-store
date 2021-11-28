@@ -16,10 +16,6 @@ Status Code: _401 Unauthorized_
 
 Content: `{ "error": "UNAUTHORIZED" }`
 
-In order to test the endpoints through the [REST Client for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) use the provided [endpoints.rest](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/rest_api/endpoints.rest).
-
-
-
 ### Users
 
 - **[POST] /users/authenticate/**
