@@ -1,26 +1,19 @@
-import express, { NextFunction, Request, Response } from 'express';
-
-import { router as UsersRouter } from './handlers/users';
-import { router as CategoriesRouter } from './handlers/categories';
-import { router as ProductsRouter } from './handlers/products';
-import { router as OrdersRouter } from './handlers/orders';
-
-
+import express, { Request, Response, NextFunction } from 'express';
+import * as Routes from './routes/@routes.module';
 
 const api = express.Router();
 
-api.use('/users', UsersRouter);
-api.use('/categories', CategoriesRouter);
-api.use('/products', ProductsRouter);
-api.use('/orders', OrdersRouter);
+api.use('/users', Routes.Users);
+api.use('/categories', Routes.Categories);
+api.use('/products', Routes.Products);
+api.use('/orders', Routes.Orders);
+
 
 api.get('/', async (_, res: Response): Promise<void> => {
   res.status(200).send('API is listening...');
 });
 
-
-
-function handleError(err: Error, req: Request, res: Response, next: any) {
+function handleError(err: Error, req: Request, res: Response, next: NextFunction) {
   console.log('ERROR ----');
 
   console.error(err);

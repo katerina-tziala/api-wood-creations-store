@@ -234,10 +234,8 @@ const PG_QUERY_ERROR: {
 
 export enum QueryErrorType {
   NotFound = 'NOT_FOUND',
-  NoValuesCreate = 'NO_VALUES_TO_CREATE',
-  NoValuesUpdate = 'NO_VALUES_TO_UPDATE'
+  ValuesRequired = 'VALUES_REQUIRED'
 }
-
 
 function getQueryErorrKey(code: string): string | undefined {
   const codeKeys: string[] = Object.keys(PG_QUERY_ERROR);

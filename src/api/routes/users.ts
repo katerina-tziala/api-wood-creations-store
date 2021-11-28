@@ -22,6 +22,7 @@ const userIdChecker = idChecker('USER');
 const router = express.Router();
 const store: UserStore = new UserStore();
 const orderController = new OrderController();
+
 // Authenticate user
 router.post(
   '/authenticate',

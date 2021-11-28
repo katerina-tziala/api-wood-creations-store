@@ -1,5 +1,8 @@
 @api = http://localhost:3000/api
 
+##### USERS ####
+
+### AUTHENTICATE USER
 # @name authenticate
 POST {{api}}/users/authenticate
 Content-Type: application/json
@@ -12,6 +15,89 @@ Content-Type: application/json
 ### GET USERS
 GET {{api}}/users
 Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+### GET USER
+GET {{api}}/users/1
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+### CREATE USER
+# @name new_user
+POST {{api}}/users
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "firstname": "John",
+    "lastname": "Doe",
+    "username": "jdoe",
+    "password": "customer1234",
+    "role": "Customer"
+}
+
+### UPDATE USER
+PATCH {{api}}/users/{{new_user.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "username": "johndoe"
+}
+
+### DELETE USER
+DELETE {{api}}/users/{{new_user.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+##### CATEGORIES ####
+
+### GET CATEGORIES
+GET {{api}}/categories
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+### GET CATEGORY
+GET {{api}}/categories/1
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+
+### CREATE CATEGORY
+# @name new_category
+POST {{api}}/categories
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "name": "various"
+}
+
+### UPDATE CATEGORY
+PATCH {{api}}/categories/{{new_category.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "name": "various updated"
+}
+
+### DELETE CATEGORY
+DELETE {{api}}/categories/{{new_category.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+##### PRODUCTS ####
+### GET PRODUCTS
+GET {{api}}/products
+
+### GET PRODUCT
+GET {{api}}/products/1
+
+### GET PRODUCTS BY CATEGORY
+GET {{api}}/products/category/1
+
+### GET TOP FIVE PRODUCTS 
+GET {{api}}/products/top-five/
+
+
+##### ORDERS ####
 
 ### CREATE ORDER
 POST {{api}}/orders

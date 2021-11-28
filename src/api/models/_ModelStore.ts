@@ -4,6 +4,7 @@ import {
   QueryErrorType,
   extractQueryErorrMessage
 } from './models-utilities/query-error';
+
 import * as QUERY from './models-utilities/query-helper';
 
 export interface ModelType {
@@ -20,19 +21,31 @@ export class ModelStore<T extends ModelType> {
     this.selectQuery = selectQuery ? selectQuery : `SELECT * FROM ${table}`;
   }
 
+  private getKeysAndValues(data: Omit<Partial<T>, 'id'>): {
+    keys: string[];
+    values: unknown[];
+  } {
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+    if (!values.length) {
+      throw new Error(QueryErrorType.ValuesRequired);
+    }
+    return { keys, values };
+  }
+
   protected async runQuery<U>(sql: string, params: U[] = []): Promise<T[]> {
-    try {
+    // try {
       const conn: PoolClient = await this.dbConn.connect();
       const result: QueryResult = await conn.query(sql, params);
       conn.release();
       return result.rows;
-    } catch (error) {
-      const errorMessage = extractQueryErorrMessage(error as DatabaseError);
-      console.log(error);
+    // } catch (error) {
+    //   const errorMessage = extractQueryErorrMessage(error as DatabaseError);
+    //   // console.log(error);
 
-      // TODO get details
-      throw error;
-    }
+    //   // TODO get details
+    //   throw error;
+    // }
   }
 
   protected async getBykey(id: number, key: string): Promise<T[]> {
@@ -43,20 +56,13 @@ export class ModelStore<T extends ModelType> {
   protected returnOne(results: Array<T>): T {
     const record = results[0];
     if (!record) {
-      const message = QueryErrorType.NotFound;
-      throw new Error(message);
+      throw new Error(QueryErrorType.NotFound);
     }
     return record;
   }
 
   public async create(data: Partial<T>): Promise<T> {
-    const keys = Object.keys(data);
-    const values = Object.values(data);
-    if (!values.length) {
-      const errorMessage = QueryErrorType.NoValuesCreate;
-      throw new Error(errorMessage);
-    }
-
+    const { keys, values } = this.getKeysAndValues(data);
     const sql = QUERY.getCreationQuery(this.table, keys, values);
     const results = await this.runQuery(sql, values);
     return results[0];
@@ -74,17 +80,9 @@ export class ModelStore<T extends ModelType> {
 
   public async update(model: Partial<T>): Promise<T> {
     const { id, ...data } = model;
-    const keys = Object.keys(data);
-    const values = Object.values(data);
-    if (!values.length) {
-      const errorMessage = QueryErrorType.NoValuesUpdate;
-      throw new Error(errorMessage);
-    }
-    const sql = QUERY.getUpdateQuery(
-      this.table,
-      keys,
-      `id=($${keys.length + 1})`
-    );
+    const { keys, values } = this.getKeysAndValues(data);
+    const where = `id=($${keys.length + 1})`;
+    const sql = QUERY.getUpdateQuery(this.table, keys, where);
     const results = await this.runQuery(sql, [...values, id]);
     return results[0];
   }
@@ -94,10 +92,4 @@ export class ModelStore<T extends ModelType> {
     const results = await this.runQuery(sql, [id]);
     return this.returnOne(results);
   }
-
-  // public async deleteAll(): Promise<T[]> {
-  //   const sql = `DELETE FROM ${this.table} RETURNING id`;
-  //   const results: T[] = await this.runQuery(sql);
-  //   return results;
-  // }
 }
