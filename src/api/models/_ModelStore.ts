@@ -1,10 +1,6 @@
-import { DatabaseError, Pool, PoolClient, QueryResult } from 'pg';
+import { Pool, PoolClient, QueryResult } from 'pg';
 import { dbConf } from '../../config/config';
-import {
-  QueryErrorType,
-  extractQueryErorrMessage
-} from './models-utilities/query-error';
-
+import { ErrorType } from '../../utilities/error-handling/error-type.enum';
 import * as QUERY from './models-utilities/query-helper';
 
 export interface ModelType {
@@ -28,40 +24,33 @@ export class ModelStore<T extends ModelType> {
     const keys = Object.keys(data);
     const values = Object.values(data);
     if (!values.length) {
-      throw new Error(QueryErrorType.ValuesRequired);
+      throw new Error(ErrorType.ValuesRequired);
     }
     return { keys, values };
-  }
-  protected getOptionalString(value: string | undefined | null): string | null {
-    return !value ? null : value.length > 0 ? value : null;
-  }
-
-  protected async runQuery<U>(sql: string, params: U[] = []): Promise<T[]> {
-    // try {
-      const conn: PoolClient = await this.dbConn.connect();
-      const result: QueryResult = await conn.query(sql, params);
-      conn.release();
-      return result.rows;
-    // } catch (error) {
-    //   const errorMessage = extractQueryErorrMessage(error as DatabaseError);
-    //   // console.log(error);
-
-    //   // TODO get details
-    //   throw error;
-    // }
-  }
-
-  protected async getBykey(id: number, key: string): Promise<T[]> {
-    const sql = `${this.selectQuery} WHERE ${this.table}.${key}=($1) ORDER BY id ASC`;
-    return await this.runQuery(sql, [id]);
   }
 
   protected returnOne(results: Array<T>): T {
     const record = results[0];
     if (!record) {
-      throw new Error(QueryErrorType.NotFound);
+      throw new Error(ErrorType.NotFound);
     }
     return record;
+  }
+
+  protected getOptionalString(value: string | undefined | null): string | null {
+    return !value ? null : value.length > 0 ? value : null;
+  }
+
+  protected async runQuery<U>(sql: string, params: U[] = []): Promise<T[]> {
+    const conn: PoolClient = await this.dbConn.connect();
+    const result: QueryResult = await conn.query(sql, params);
+    conn.release();
+    return result.rows;
+  }
+
+  protected async getBykey(id: number, key: string): Promise<T[]> {
+    const sql = `${this.selectQuery} WHERE ${this.table}.${key}=($1) ORDER BY id ASC`;
+    return await this.runQuery(sql, [id]);
   }
 
   public async create(data: Partial<T>): Promise<T> {

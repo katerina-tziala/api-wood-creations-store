@@ -1,15 +1,17 @@
 import { hasBasicMethods } from '../../../helpers/model-helpers/model-helper';
 import { ProductStore, Product } from '../../../../src/api/models/Product';
-import { clearData, createCategories, setData } from '../../../helpers/model-helpers/model-data-utils';
+import {
+  clearData,
+  createCategories,
+  setData
+} from '../../../helpers/model-helpers/model-data-utils';
 
 const METHODS = [
   'create',
   'getById',
-  'getAll',
-  'getAllByCategory',
+  'getByCategory',
   'update',
-  'deleteById',
-  'deleteAll'
+  'deleteById'
 ];
 
 const store: ProductStore = new ProductStore();
@@ -46,38 +48,27 @@ const store: ProductStore = new ProductStore();
 //     })).toBeRejected();
 //   });
 
-
 //   afterAll(async (): Promise<void> => {
 //     await store.deleteAll();
 //   });
 // }
 
-
 describe('* Product Model * ', () => {
-  beforeAll(async (): Promise<void> => {
-    await setData();
-  });
+  // beforeAll(async (): Promise<void> => {
+  //   await setData();
+  // });
 
-  afterAll(async (): Promise<void> => {
-    await clearData();
-  });
+  // afterAll(async (): Promise<void> => {
+  //   await clearData();
+  // });
 
   hasBasicMethods<ProductStore, Product>(store, METHODS);
 
-  xdescribe('- Create Methods', () => {
-    
-  });
+  xdescribe('- Create Methods', () => {});
 
-  xdescribe('- Read Methods', () => {
-  
-  });
+  xdescribe('- Read Methods', () => {});
 
-  xdescribe('- Update Methods', () => {
+  xdescribe('- Update Methods', () => {});
 
-  });
-
-  xdescribe('- Delete Methods', () => {
-    
-  });
-
+  xdescribe('- Delete Methods', () => {});
 });

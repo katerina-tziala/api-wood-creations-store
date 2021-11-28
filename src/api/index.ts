@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import * as Routes from './routes/@routes.module';
-
+import { DatabaseError, Pool, PoolClient, QueryResult } from 'pg';
 const api = express.Router();
 
 api.use('/users', Routes.Users);
@@ -13,6 +13,7 @@ api.get('/', async (_, res: Response): Promise<void> => {
   res.status(200).send('API is listening...');
 });
 
+// TODO: error handling
 function handleError(error: Error, req: Request, res: Response, next: NextFunction) {
   const message = error.message;
   if (message === 'NOT_FOUND' || message ==='CURRENT_ORDER_NOT_FOUND') {
@@ -24,7 +25,11 @@ function handleError(error: Error, req: Request, res: Response, next: NextFuncti
     res.status(403).json({error: message});
     return;
   }
+ //   const errorMessage = extractQueryErorrMessage(error as DatabaseError);
+    //   // console.log(error);
 
+    //   // TODO get details
+    //   throw error;
   
   console.log(error.message);
   

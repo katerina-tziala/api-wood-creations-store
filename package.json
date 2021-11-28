@@ -11,11 +11,11 @@
     "tsc": "tsc",
     "start": "node src/index.ts",
     "dev": "cross-env NODE_ENV=dev tsc-watch --esModuleInterop src/index.ts --outDir ./dist --onSuccess 'node ./dist/index.js'",
-    "database-up": "db-migrate up -e dev -m ./database/migrations --config ./database/database.json",
-    "database-down": "db-migrate reset -e dev -m ./database/migrations --config ./database/database.json",
-    "db-up-test": "db-migrate up -e test -m ./database/migrations --config ./database/database.json",
-    "db-down-test": "db-migrate reset -e test -m ./database/migrations --config ./database/database.json",
-    "test": "npm run db-up-test && cross-env NODE_ENV=test jasmine-ts && npm run db-down-test",
+    "database:up": "db-migrate up -e dev -m ./database/migrations --config ./database/database.json",
+    "database:down": "db-migrate reset -e dev -m ./database/migrations --config ./database/database.json",
+    "database:up-test": "db-migrate up -e test -m ./database/migrations --config ./database/database.json",
+    "database:down-test": "db-migrate reset -e test -m ./database/migrations --config ./database/database.json",
+    "test": "npm run database:up-test && cross-env NODE_ENV=test jasmine-ts && npm run database:down-test",
     "test-x": "cross-env NODE_ENV=test jasmine-ts"
   },
   "repository": {

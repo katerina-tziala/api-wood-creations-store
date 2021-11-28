@@ -1,6 +1,6 @@
 import { ModelStore, ModelType } from '../../../src/api/models/_ModelStore';
 
-export const DEFAULT_METHODS = [
+const DEFAULT_METHODS = [
   'create',
   'getById',
   'getAll',

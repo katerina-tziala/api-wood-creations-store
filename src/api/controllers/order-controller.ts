@@ -1,3 +1,4 @@
+import { ErrorType } from '../../utilities/error-handling/error-type.enum';
 import { Order, OrderStore } from '../models/Order';
 import { OrderItem, OrderItemStore } from '../models/OrderItem';
 
@@ -15,14 +16,14 @@ export class OrderController {
       return item;
     } catch (error) {
       await this.OrderStore.deleteById(order_id);
-      throw new Error('ORDER_NOT_CREATED_COULD_NOT_CREATE_ORDER_ITEMS');
+      throw new Error(ErrorType.OrderCreationFailed);
     }
   }
 
   private async getCurrentOrderOfUser(userId: number): Promise<Order> {
     const order = await this.OrderStore.getCurrentOrderOfUser(userId);
     if (!order) {
-      throw new Error('CURRENT_ORDER_NOT_FOUND');
+      throw new Error(ErrorType.CurrentOrderNotFound);
     }
     return order;
   }
@@ -30,7 +31,7 @@ export class OrderController {
   private async checkCurrentOrderExistence(userId: number): Promise<undefined> {
     const order = await this.OrderStore.getCurrentOrderOfUser(userId);
     if (order) {
-      throw new Error('CURRENT_ORDER_EXISTS');
+      throw new Error(ErrorType.CurrentOrderExists);
     }
     return;
   }

@@ -55,20 +55,20 @@ export class OrderItemStore extends ModelStore<OrderItem> {
     return await this.getBykey(order_id, 'order_id');
   }
 
-  public async deleteByIdAndOrderId(
-    id: number,
-    orderId: number
-  ): Promise<OrderItem> {
-    const sql = `DELETE FROM ${this.table} WHERE id=($1) AND order_id=($2) RETURNING *`;
-    const results = await this.runQuery(sql, [id, orderId]);
-    return this.returnOne(results);
-  }
-
   public async getByIdAndOrderId(
     id: number,
     orderId: number
   ): Promise<OrderItem> {
     const sql = `${this.selectQuery} WHERE ${this.table}.id=($1) AND ${this.table}.order_id=($2)`;
+    const results = await this.runQuery(sql, [id, orderId]);
+    return this.returnOne(results);
+  }
+
+  public async deleteByIdAndOrderId(
+    id: number,
+    orderId: number
+  ): Promise<OrderItem> {
+    const sql = `DELETE FROM ${this.table} WHERE id=($1) AND order_id=($2) RETURNING *`;
     const results = await this.runQuery(sql, [id, orderId]);
     return this.returnOne(results);
   }
