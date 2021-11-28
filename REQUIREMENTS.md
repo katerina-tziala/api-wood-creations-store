@@ -8,46 +8,76 @@ These are the notes that describe the endpoints of the API, as well as the data 
 
 There are 4 main routes in the API: users, categories, products and orders. All the endpoints of the API are under the route **/api**.
 
-#### Users
+Success and error responses are described for special cases.
 
-**[POST] /users/authenticate/**
+### Users
 
-_Request Headers_
+* **[POST] /users/authenticate/**
 
-Content-Type: application/json
+    Authenticates a user and provides access.
+    
+    *  **_Request Headers:_**
+        ```
+        Content-Type: application/json
+        ```
+    * **_Request Body:_**
 
-_Request Body_
+        ```
+        {
+            "username": string,
+            "password": string
+        }
+        ```
+    * **_Success Response:_**
+    
+        Status Code: 200 OK
 
-```
-{
-    "username": "admin",
-    "password": "root"
-}
-```
+        Content: ``` { "accessToken": string } ```
+                
+    * **_Error Response:_**
+    
+       * Status Code: 400 Bad Request
+          
+          Content: 
+            ```
+            {
+                "error": "CREDENTIALS_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT"
+            }
+            ``` 
+        
+        * Status Code: 401 Unauthorized
+          
+          Content: ``` { "error": "WRONG_CREDENTIALS" } ```
+            
+* **[GET] /users**
 
+    Provides a list of all users. Available only for authenticated users with the **_Admin_** role.
+    
+    *  **_Request Headers:_**
+        ```
+        Content-Type: application/json
+        Authorization: Bearer <accessToken>
+        ```
 
-* **Success Response:**
-  
-  <_What should the status code be on success and is there any returned data? This is useful when people need to to know what their callbacks should expect!_>
+* **[GET] /users/:id**
 
-  * **Code:** 200 <br />
-    **Content:** `{ id : 12 }`
- 
-* **Error Response:**
+    Returns the requested user including the current order and the 5 most recent completed orders. Available only for authenticated users with the **_Admin_** role.
+    
+    *  **_Request Headers:_**
+        ```
+        Content-Type: application/json
+        Authorization: Bearer <accessToken>
+        ```
+    * **_Error Response:_**
+    
+       * Status Code: 400 Bad Request
+          
+          Content: ``` { "error": "INVALID_USER_ID" } ``` 
+        
+        * Status Code: 404 Not Found
+          
+          Content: ``` { "error": "NOT_FOUND" } ``` 
 
-  <_Most endpoints will have many ways they can fail. From unauthorized access, to wrongful parameters etc. All of those should be liste d here. It might seem repetitive, but it helps prevent assumptions from being made where they should be._>
-
-  * **Code:** 401 UNAUTHORIZED <br />
-    **Content:** `{ error : "Log in" }`
-
-  OR
-
-  * **Code:** 422 UNPROCESSABLE ENTRY <br />
-    **Content:** `{ error : "Email Invalid" }`
-
-#### [GET] /users
-
-#### [GET] /users/:id
 
 #### [POST] /users/
 
