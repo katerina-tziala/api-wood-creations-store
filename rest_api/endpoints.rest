@@ -96,10 +96,51 @@ GET {{api}}/products/category/1
 ### GET TOP FIVE PRODUCTS 
 GET {{api}}/products/top-five/
 
+### CREATE PRODUCT
+# @name new_product
+POST {{api}}/products
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "name": "standing photo frame",
+    "price": "15.8",
+    "category_id": 4,
+    "description": "standing photo frame to attach photos"
+}
+
+### UPDATE PRODUCT
+PATCH {{api}}/products/{{new_product.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "name": "standing photo frame for lovers",
+    "price": "17.75",
+    "description": " - "
+}
+
+### DELETE PRODUCT
+DELETE {{api}}/products/{{new_product.response.body.id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
 
 ##### ORDERS ####
+### GET ORDERS
+GET {{api}}/orders
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+### GET CURRENT ORDER
+GET {{api}}/orders/current/
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+### GET COMPLETED ORDERS
+GET {{api}}/orders/completed/
+Authorization: Bearer {{authenticate.response.body.accessToken}}
 
 ### CREATE ORDER
+# @name new_order
 POST {{api}}/orders
 Content-Type: application/json
 Authorization: Bearer {{authenticate.response.body.accessToken}}
@@ -107,9 +148,51 @@ Authorization: Bearer {{authenticate.response.body.accessToken}}
 {
     "item": {
         "product_id": 1,
-        "quantity":1,
+        "quantity": 1,
         "engraving": "custom engraving"
     },
     "comments": "new order",
     "calledAt": 1638044955061
 }
+
+### ADD ITEM IN CURRENT ORDER
+# @name new_order_item
+POST {{api}}/orders/current/item/
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "product_id": 2,
+    "quantity": 2,
+    "engraving": "custom engraving"
+}
+
+### UPDATE ITEM IN CURRENT ORDER
+PATCH {{api}}/orders/current/item/{{new_order_item.response.body.items[1].id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "quantity": 4,
+    "engraving": null
+}
+
+### DELETE ITEM FROM CURRENT ORDER
+DELETE {{api}}/orders/current/item/{{new_order_item.response.body.items[1].id}}
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+### COMPLETE CURRENT ORDER
+PATCH {{api}}/orders/current/complete/
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}
+
+{
+    "calledAt": 1638109052630,
+    "comments": null
+}
+
+### DELETE CURRENT ORDER
+DELETE {{api}}/orders/current/
+Content-Type: application/json
+Authorization: Bearer {{authenticate.response.body.accessToken}}

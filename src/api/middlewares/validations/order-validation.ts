@@ -4,7 +4,8 @@ import { OrderItem } from '../../models/OrderItem';
 import {
   numberTypeError,
   requiredDataError,
-  requiredTimestampError
+  requiredTimestampError,
+  getOptionalString
 } from '../../../utilities/validations';
 
 export function checkCreation(
@@ -23,7 +24,7 @@ export function checkCreation(
   const orderData: Partial<Order> = {
     created_at,
     customer_id: res.locals.userData.id,
-    comments: comments ? comments : null
+    comments: !comments ? null : getOptionalString(comments)
   };
   req.body = { ...orderData, item: orderItem };
 
@@ -46,6 +47,7 @@ export function checkOrderItemUpdate(
   next: NextFunction
 ): void {
   req.body = getOrderItemData(req.body);
+
   const error = getUpdatedOrderItemError(req.body);
   error ? res.status(400).json({ error }) : next();
 }
@@ -88,7 +90,7 @@ function getOrderItemData(params: Partial<OrderItem>): Partial<OrderItem> {
   const orderItem: Partial<OrderItem> = {
     product_id: product_id ? product_id : undefined,
     quantity: typeof quantity === 'number' ? quantity : undefined,
-    engraving: engraving ? engraving.toString().trim() : undefined
+    engraving: getOptionalString(engraving)
   };
   return JSON.parse(JSON.stringify(orderItem));
 }

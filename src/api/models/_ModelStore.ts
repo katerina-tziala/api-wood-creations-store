@@ -32,6 +32,9 @@ export class ModelStore<T extends ModelType> {
     }
     return { keys, values };
   }
+  protected getOptionalString(value: string | undefined | null): string | null {
+    return !value ? null : value.length > 0 ? value : null;
+  }
 
   protected async runQuery<U>(sql: string, params: U[] = []): Promise<T[]> {
     // try {

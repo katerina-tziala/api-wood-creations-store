@@ -65,3 +65,12 @@ export function requiredTimestampError(
 function getErrorKey(name: string | undefined): string {
   return name ? name.toUpperCase() : '';
 }
+
+export function getOptionalString(
+  value: string | undefined | null
+): string | undefined | null {
+  if (value === undefined) {
+    return;
+  }
+  return value !== null ? value.toString().trim() : null;
+}

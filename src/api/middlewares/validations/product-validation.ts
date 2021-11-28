@@ -5,7 +5,8 @@ import {
   optionalStringValidationError,
   numberTypeError,
   requiredDataError,
-  optionalNumberTypeError
+  optionalNumberTypeError,
+  getOptionalString
 } from '../../../utilities/validations';
 
 export function checkCreation(
@@ -45,7 +46,7 @@ function getProductData(params: Omit<Product, 'id'>): Partial<Product> {
     name: name ? name.toString().trim() : undefined,
     category_id: category_id ? category_id : undefined,
     price: price ? price.toString().trim() : undefined,
-    description: description ? description.toString().trim() : undefined
+    description: getOptionalString(description)
   };
   return JSON.parse(JSON.stringify(product));
 }

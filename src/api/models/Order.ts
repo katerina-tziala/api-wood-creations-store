@@ -40,13 +40,9 @@ export class OrderStore extends ModelStore<Order> {
     return await this.runQuery(sql, [userId, status]);
   }
 
-  private getComments(comments: string | undefined): string | null {
-    return !comments ? null : comments.length > 0 ? comments : null;
-  }
-
   public async create(newOrder: Partial<Order>): Promise<Order> {
     newOrder.status = OrderStatus.Active;
-    newOrder.comments = this.getComments(newOrder.comments as string);
+    newOrder.comments = this.getOptionalString(newOrder.comments as string);
     return super.create(newOrder);
   }
 
@@ -61,8 +57,8 @@ export class OrderStore extends ModelStore<Order> {
       status,
       completed_at
     };
-    if (comments) {
-      data.comments = this.getComments(comments);
+    if (comments !== undefined) {
+      data.comments = this.getOptionalString(comments);
     }
     return super.update(data);
   }

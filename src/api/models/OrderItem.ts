@@ -21,17 +21,13 @@ export class OrderItemStore extends ModelStore<OrderItem> {
     super('order_item', selectQuery);
   }
 
-  private getEngraving(engraving: string | undefined): string | null {
-    return !engraving ? null : engraving.length > 0 ? engraving : null;
-  }
-
   private getCreationData(data: Partial<OrderItem>): Partial<OrderItem> {
     const { order_id, product_id, quantity, engraving } = data;
     return {
       order_id,
       product_id,
       quantity,
-      engraving: this.getEngraving(engraving as string)
+      engraving: this.getOptionalString(engraving as string)
     };
   }
 
@@ -41,8 +37,8 @@ export class OrderItemStore extends ModelStore<OrderItem> {
     if (quantity) {
       updateData.quantity = quantity;
     }
-    if (engraving) {
-      updateData.engraving = this.getEngraving(engraving);
+    if (engraving !== undefined) {
+      updateData.engraving = this.getOptionalString(engraving);
     }
     return updateData;
   }
