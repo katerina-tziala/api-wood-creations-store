@@ -300,21 +300,154 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
 ### Products
 
-#### [GET] /products
+- **[GET] /products**
 
-#### [GET] /products/:id
+  Provides a list of all products.
 
-#### [GET] /products/category/:id
+  - **_Request Headers:_**
+    ```
+    Content-Type: application/json
+    ```
+    
+- **[GET] /products/top-five**
 
-#### [GET] /products/top-five
+    Provides a list of the 5 most popular products (most commonly ordered).
 
-#### [POST] /products
+    - **_Request Headers:_**
+      ```
+      Content-Type: application/json
+      ```
 
-#### [PATCH] /products/:id
+ - **[GET] /products/:id**
 
-#### [DELETE] /products/:id
+    Returns the product with the specified id.
 
-### ORDERS
+    - **_Request Headers:_**
+      ```
+      Content-Type: application/json
+      ```
+    - **_Error Response:_**
+
+      - Status Code: _400 Bad Request_
+
+        Content: `{ "error": "INVALID_PRODUCT_ID"}`
+
+      - Status Code: _404 Not Found_
+
+        Content: `{ "error": "NOT_FOUND" }`
+   
+
+ - **[GET] /products/category/:id**
+
+    Provides a list of all products that belong in the specified category.
+
+    - **_Request Headers:_**
+
+      ```
+      Content-Type: application/json
+      ```
+
+    - **_Error Response:_**
+
+      - Status Code: _400 Bad Request_
+
+        Content: `{ "error": "INVALID_CATEGORY_ID"}`
+
+ - **[POST] /products**
+
+    Creates a new product. Available only for authenticated users with the **_Admin_** role.
+
+    - **_Request Headers:_**
+      ```
+      Content-Type: application/json
+      Authorization: Bearer <accessToken>
+      ```
+    - **_Request Body:_**
+
+      ```
+      {
+        "name": string,
+        "price": string,
+        "category_id": number,
+        "description": string | null
+      }
+      ```
+
+    - **_Error Response:_**
+
+      - Status Code: _400 Bad Request_
+        Content:
+
+        ```
+        {
+            "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
+        }
+        ```
+   
+ - **[PATCH] /products/:id**
+
+    Updates the product with the specified id. Available only for authenticated users with the **_Admin_** role.
+
+    - **_Request Headers:_**
+      ```
+      Content-Type: application/json
+      Authorization: Bearer <accessToken>
+      ```
+     
+     - **_Request Body:_**
+
+      At least one of the following is required.
+
+      ```
+      {
+        "name"?: string,
+        "price"?: string,
+        "category_id"?: number,
+        "description"?: string | null
+      }
+      ```
+
+    - **_Error Response:_**
+
+      - Status Code: _400 Bad Request_
+        Content:
+
+        ```
+        {
+            "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
+        }
+        ```
+ 
+ - **[DELETE] /products/:id**
+
+    Deletes the product with the specified id. Available only for authenticated users with the **_Admin_** role.
+
+    - **_Request Headers:_**
+      ```
+      Content-Type: application/json
+      Authorization: Bearer <accessToken>
+      ```
+
+    - **_Success Response:_**
+
+      Status Code: _204 No Content_
+
+    - **_Error Response:_**
+
+      - Status Code: _400 Bad Request_
+
+        Content: `{ "error": "INVALID_PRODUCT_ID" }`
+
+      - Status Code: _403 Forbidden_
+
+        Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+
+      - Status Code: _404 Not Found_
+
+        Content: `{ "error": "NOT_FOUND" }`
+
+
+### Orders
 
 #### [GET] /orders
 
