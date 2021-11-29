@@ -40,6 +40,10 @@ export class OrderStore extends ModelStore<Order> {
     return await this.runQuery(sql, [userId, status]);
   }
 
+  private async update(data: Partial<Order>): Promise<Order> {
+    return super.updateModel(data);
+  }
+
   public async create(newOrder: Partial<Order>): Promise<Order> {
     const { created_at, ...data } = newOrder;
     if (Object.values(data).length) {
@@ -63,7 +67,7 @@ export class OrderStore extends ModelStore<Order> {
     if (comments !== undefined) {
       data.comments = this.getOptionalString(comments);
     }
-    return super.update(data);
+    return this.update(data);
   }
 
   public async getOrdersOfUser(userId: number): Promise<Order[]> {

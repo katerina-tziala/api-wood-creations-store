@@ -48,7 +48,7 @@ export class OrderItemStore extends ModelStore<OrderItem> {
   }
 
   public async update(data: Partial<OrderItem>): Promise<OrderItem> {
-    return super.update(this.getUpdateData(data));
+    return super.updateModel(this.getUpdateData(data));
   }
 
   public async getItemsByOrderId(order_id: number): Promise<OrderItem[]> {

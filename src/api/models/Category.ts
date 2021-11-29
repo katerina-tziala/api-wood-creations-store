@@ -9,4 +9,7 @@ export class CategoryStore extends ModelStore<Category> {
     super('category');
   }
 
+  public async update(data: Partial<Category>): Promise<Category> {
+    return super.updateModel(data);
+  }
 }

@@ -46,6 +46,10 @@ function runCreateFailTest(): void {
     it('name is not unique', async () => {
       await expectAsync(store.create({ name: MockItem.name })).toBeRejected();
     });
+
+    it('name is shorter than 3 characters', async () => {
+      await expectAsync(store.create({ name: 'na' })).toBeRejected();
+    });
   });
 }
 
@@ -70,7 +74,7 @@ function runGetAllTest(): void {
 function runDeleteByIdTest(): void {
   it('should delete the correct category with the specified id when it exists', async () => {
     const toDelete = [...MockData].pop() as Category;
-    return runDeleteByIdSuccessTest<CategoryStore, Category>(store, toDelete);
+    await runDeleteByIdSuccessTest<CategoryStore, Category>(store, toDelete);
   });
   runDeleteFailTest();
 }
@@ -119,6 +123,12 @@ function runUpdateFailTest(name: string): void {
     it('when name is not unique', async () => {
       const toUpdate = [...MockData].pop() as Category;
       const updateData = { ...toUpdate, name: MockItem.name };
+      await expectAsync(store.update(updateData)).toBeRejected();
+    });
+
+    it('name is shorter than 3 characters', async () => {
+      const toUpdate = [...MockData].pop() as Category;
+      const updateData = { ...toUpdate, name: 'na' };
       await expectAsync(store.update(updateData)).toBeRejected();
     });
   });

@@ -28,7 +28,7 @@ export class ProductStore extends ModelStore<Product> {
     if (Object.values(data).length && data.description !== undefined) {
       data.description = this.getOptionalString(data.description);
     }
-    return super.update(data);
+    return super.updateModel(data);
   }
 
   public async getByCategory(id: number): Promise<Product[]> {

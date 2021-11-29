@@ -30,27 +30,24 @@ export class UserStore extends ModelStore<User> {
     return UserRole[role] || UserRole.Customer;
   }
 
-  public async create(data: Omit<User, 'id'>): Promise<User> {
-    const newUserData: Omit<User, 'id'> = {
-      username: data.username,
-      firstname: data.firstname,
-      lastname: data.lastname,
-      role: this.getUserRole(data.role),
-      password: data.password ? encryptPassword(data.password) : null
-    };
+  public async create(data: Omit<Partial<User>, 'id'>): Promise<User> {
+    if (Object.values(data).length) {
+      data.role = this.getUserRole(data.role as UserRole);
+      data.password = data.password ? encryptPassword(data.password) : null;
+    }
 
-    const { password, ...createdUser } = await super.create(newUserData);
+    const { password, ...createdUser } = await super.create(data);
     return createdUser;
   }
 
-  public async update(updateData: Partial<User>): Promise<User> {
-    if (updateData.password) {
-      updateData.password = encryptPassword(updateData.password);
+  public async update(data: Partial<User>): Promise<User> {
+    if (data.password) {
+      data.password = encryptPassword(data.password);
     }
-    if (updateData.role) {
-      updateData.role = this.getUserRole(updateData.role);
-    }
-    const { password, ...updated } = await super.update(updateData);
+    if (data.role) {
+      data.role = this.getUserRole(data.role);
+    } 
+    const { password, ...updated } = await super.updateModel(data);
     return updated;
   }
 
@@ -59,10 +56,15 @@ export class UserStore extends ModelStore<User> {
     password: string
   ): Promise<User | null> {
     const sql = `SELECT * from ${this.table} WHERE username=($1)`;
-    const results = await this.runQuery(sql, [username]); 
+    const results = await this.runQuery(sql, [username]);
     const user = results[0];
     return user && passwordsMatch(password, user.password as string)
       ? user
       : null;
+  }
+
+  public async deleteById(id: number): Promise<User> {
+    const { password, ...updated } = await super.deleteById(id);
+    return updated;
   }
 }

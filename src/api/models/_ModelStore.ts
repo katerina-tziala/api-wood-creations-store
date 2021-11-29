@@ -53,6 +53,18 @@ export class ModelStore<T extends ModelType> {
     return await this.runQuery(sql, [id]);
   }
 
+  protected async updateModel(model: Partial<T>): Promise<T> {
+    const { id, ...data } = model;
+    if (!id) {
+      throw new Error(ErrorType.IdRequired);
+    }
+    const { keys, values } = this.getKeysAndValues(data);
+    const where = `id=($${keys.length + 1})`;
+    const sql = QUERY.getUpdateQuery(this.table, keys, where);
+    const results = await this.runQuery(sql, [...values, id]);
+    return results[0];
+  }
+
   public async create(data: Omit<Partial<T>, 'id'>): Promise<T> {
     const { keys, values } = this.getKeysAndValues(data);
     const sql = QUERY.getCreationQuery(this.table, keys, values);
@@ -68,18 +80,6 @@ export class ModelStore<T extends ModelType> {
   public async getById(id: number): Promise<T> {
     const results = await this.getBykey(id, 'id');
     return this.returnOne(results);
-  }
-
-  public async update(model: Partial<T>): Promise<T> {
-    const { id, ...data } = model;
-    if (!id) {
-      throw new Error(ErrorType.IdRequired);
-    }
-    const { keys, values } = this.getKeysAndValues(data);
-    const where = `id=($${keys.length + 1})`;
-    const sql = QUERY.getUpdateQuery(this.table, keys, where);
-    const results = await this.runQuery(sql, [...values, id]);
-    return results[0];
   }
 
   public async deleteById(id: number): Promise<T> {

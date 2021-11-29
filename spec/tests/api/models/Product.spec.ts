@@ -31,7 +31,7 @@ const CATEGORY: Category = CATEGORIES[0];
 
 const store: ProductStore = new ProductStore();
 
-fdescribe('* Product Model * ', () => {
+describe('* Product Model * ', () => {
   hasBasicMethods<ProductStore, Product>(store, METHODS);
   describe('- Method create', () => runCreateTest());
   describe('- Method getAll', () => runGetAllTest());
@@ -103,7 +103,7 @@ function runCreateFailTest(data: Partial<Product>): void {
       'category_id'
     );
 
-    it('categpry_id does not exist', async () => {
+    it('category_id does not exist', async () => {
       const data = { category_id: 1000, name, price, description };
       await expectAsync(store.create(data)).toBeRejected();
     });
@@ -113,6 +113,11 @@ function runCreateFailTest(data: Partial<Product>): void {
       { category_id, price, description },
       'name'
     );
+
+    it('name is shorter than 3 characters', async () => {
+      const data = { category_id, name: 'na', price, description };
+      await expectAsync(store.create(data)).toBeRejected();
+    });
 
     runCreationFailureForOmittedKey<ProductStore, Product>(
       store,
@@ -161,9 +166,9 @@ function runGetByCategoryTest(): void {
 }
 
 function runUpdateTest(): void {
-  const itemToUpdate = [...MockData].pop() as Product;
-
   it('should update correctly a product when data valid', async () => {
+    const itemToUpdate = [...MockData].pop() as Product;
+
     const { category, ...data } = itemToUpdate;
     const updateData = {
       ...data,
@@ -176,11 +181,13 @@ function runUpdateTest(): void {
     MockData.pop();
     MockData.push({ ...result });
   });
-  runUpdateFailTest(itemToUpdate);
+  runUpdateFailTest();
 }
 
-function runUpdateFailTest(itemToUpdate: Product): void {
+function runUpdateFailTest(): void {
   describe('> should throw an error when:', () => {
+    const itemToUpdate = [...MockData].pop() as Product;
+
     it('id is not present in data', async () => {
       const { id, ...data } = itemToUpdate;
       await expectAsync(store.update(data)).toBeRejectedWithError(
@@ -192,6 +199,12 @@ function runUpdateFailTest(itemToUpdate: Product): void {
       await expectAsync(
         store.update({ id: itemToUpdate.id })
       ).toBeRejectedWithError(ErrorType.ValuesRequired);
+    });
+
+    it('name is shorter than 3 characters', async () => {
+      await expectAsync(
+        store.update({ ...itemToUpdate, name: 'na' })
+      ).toBeRejected();
     });
 
     it('category_id does not exist', async () => {
@@ -232,7 +245,7 @@ function runDeleteByIdTest(): void {
   it('should delete the correct product with the specified id when it exists', async () => {
     const toDelete = [...MockData].pop() as Product;
     const { category, ...data } = toDelete;
-    return runDeleteByIdSuccessTest<ProductStore, Product>(store, data);
+    await runDeleteByIdSuccessTest<ProductStore, Product>(store, data);
   });
   runDeleteFailTest();
 }
