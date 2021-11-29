@@ -17,13 +17,15 @@ export class ProductStore extends ModelStore<Product> {
     super('product', selectQuery);
   }
 
-  public async create(data: Omit<Product, 'id'>): Promise<Product> {
-    data.description = this.getOptionalString(data.description as string);
+  public async create(data: Omit<Partial<Product>, 'id'>): Promise<Product> {
+    if (Object.values(data).length) {
+      data.description = this.getOptionalString(data.description as string);
+    }
     return super.create(data);
   }
 
   public async update(data: Partial<Product>): Promise<Product> {
-    if (data.description !== undefined) {
+    if (Object.values(data).length && data.description !== undefined) {
       data.description = this.getOptionalString(data.description);
     }
     return super.update(data);
@@ -34,12 +36,15 @@ export class ProductStore extends ModelStore<Product> {
   }
 
   public async getTopFive(): Promise<Product[]> {
-    const distinct_products = `SELECT DISTINCT order_id, product_id FROM order_item`;
+    const distinct_products = `SELECT DISTINCT order_id, product_id FROM order_item INNER JOIN customer_order ON customer_order.id = order_item.order_id WHERE customer_order.status = 'Complete'`;
     const popular =
       `SELECT ordered_products.product_id, COUNT(ordered_products.order_id) as times_ordered`.concat(
         ` FROM (${distinct_products}) as ordered_products GROUP BY ordered_products.product_id`
       );
-    const sql = `SELECT * FROM product INNER JOIN (${popular}) as popular ON popular.product_id = product.id ORDER BY times_ordered DESC LIMIT 5`;
+    const sql =
+      `${this.selectQuery} INNER JOIN (${popular}) as popular ON popular.product_id = product.id`
+        .concat(` ORDER BY times_ordered DESC, product_id ASC`)
+        .concat(`  LIMIT 5`);
     return this.runQuery(sql);
   }
 }

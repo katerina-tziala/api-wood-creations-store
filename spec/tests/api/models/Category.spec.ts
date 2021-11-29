@@ -1,143 +1,125 @@
 import {
   hasBasicMethods,
-  testGetlMethods,
-  testDeletelOneError,
-  testDeletelOneSuccess,
-  testDeletelAllFailure,
-  runDeleteAllSuccess
+  runDeleteByIdSuccessTest
 } from '../../../../spec/helpers/model-helpers/model-helper';
-
 import { CategoryStore, Category } from '../../../../src/api/models/Category';
-// import { CATEGORIES } from '../../../helpers/model-helpers/dummy-data';
-// import {
-//   setData,
-//   deleteProducts,
-//   clearData
-// } from '../../../helpers/model-helpers/model-data-utils';
+import { ErrorType } from '../../../../src/utilities/error-handling/error-type.enum';
+import { CATEGORIES } from '../../../helpers/mock-data';
 
-// const MockData: Category[] = CATEGORIES;
-// const MockItem: Category = CATEGORIES[0];
-// const MockNewItem: Category = {
-//   id: 224,
-//   name: 'office supplies'
-// };
+// MOCK DATA
+const MockData: Category[] = CATEGORIES;
+const MockItem: Category = CATEGORIES[0];
+
 const store: CategoryStore = new CategoryStore();
 
-fdescribe('* Category Model *', () => {
-  // beforeAll(async (): Promise<void> => {
-  //   await setData();
-  // });
-
-  // afterAll(async (): Promise<void> => {
-  //   await clearData();
-  // });
-
+describe('* Category Model *', () => {
   hasBasicMethods<CategoryStore, Category>(store);
-
-  xdescribe('- Create Methods', () => {});
-
-  xdescribe('- Read Methods', () => {});
-
-  xdescribe('- Update Methods', () => {});
-
-  xdescribe('- Delete Methods', () => {});
-  // describe('- Create Methods', () => runCreationTest());
-
-  // describe('- Read Methods', () => {
-  //   testGetlMethods<CategoryStore, Category>(store, MockData, {
-  //     singular: 'category',
-  //     plural: 'categories'
-  //   });
-  // });
-
-  // describe('- Update Methods', () => runUpdateTest());
-
-  // describe('- Delete Methods', () => runDeletionTest());
+  describe('- Method create', () => runCreateTest());
+  describe('- Method getAll', () => runGetAllTest());
+  describe('- Method getById', () => runGetByIdTest());
+  describe('- Method update', () => runUpdateTest());
+  describe('- Method deleteById', () => runDeleteByIdTest());
 });
 
-// function creationSuccess() {
-//   it('create: should create a new category when passing name only', async () => {
-//     const created: Category = await store.create({ name: 'test' });
-//     expect(created).toBeDefined();
-//     expect(created.id).toBeDefined();
-//     expect(created.name).toBe('test');
-//     MockData.push({ ...created });
-//   });
+function runCreateTest(): void {
+  it('should create a new category with the specified data when data valid', async () => {
+    const name = 'various';
+    const category: Category = await store.create({ name });
 
-//   it('create: should create a new category when passing id and name', async () => {
-//     await expectAsync(store.create(MockNewItem)).toBeResolvedTo(MockNewItem);
-//     MockData.push(MockNewItem);
-//   });
-// }
+    expect(category).toBeDefined();
+    expect(category.id).toBeDefined();
+    expect(category.name).toBe(name);
 
-// function runCreationTest() {
-//   it('create: should throw an error when no data passed', async () => {
-//     await expectAsync(store.create({})).toBeRejected();
-//   });
+    MockData.push({ ...category });
+  });
+  runCreateFailTest();
+}
 
-//   it('create: should throw an error when id is not unique', async () => {
-//     await expectAsync(
-//       store.create({ id: MockItem.id, name: 'test' })
-//     ).toBeRejected();
-//   });
+function runCreateFailTest(): void {
+  describe('> should throw an error when:', () => {
+    it('no data passed', async () => {
+      await expectAsync(store.create({})).toBeRejectedWithError(
+        ErrorType.ValuesRequired
+      );
+    });
 
-//   it('create: should throw an error when name is not defined', async () => {
-//     await expectAsync(store.create({ id: 4 })).toBeRejected();
-//   });
+    it('name is not unique', async () => {
+      await expectAsync(store.create({ name: MockItem.name })).toBeRejected();
+    });
+  });
+}
 
-//   it('create: should throw an error when name is not unique', async () => {
-//     await expectAsync(store.create({ name: MockItem.name })).toBeRejected();
-//   });
-//   creationSuccess();
-// }
+function runGetByIdTest(): void {
+  it(`should throw an error when category with the specified id does not exist`, async () => {
+    await expectAsync(store.getById(0)).toBeRejectedWithError(
+      ErrorType.NotFound
+    );
+  });
+  it(`should return the category with the specified id when it exists`, async () => {
+    const result: Category = await store.getById(MockItem.id);
+    expect(result).toEqual(MockItem);
+  });
+}
 
-// function runUpdateTest() {
-//   it('update: should throw an error when id is not present in data', async () => {
-//     await expectAsync(store.update({ name: 'update test' })).toBeRejected();
-//   });
+function runGetAllTest(): void {
+  it(`should return a list of all categories`, async () => {
+    await expectAsync(store.getAll()).toBeResolvedTo(MockData);
+  });
+}
 
-//   it('update: should throw an error when name is not defined', async () => {
-//     await expectAsync(store.update({ id: MockItem.id })).toBeRejected();
-//   });
+function runDeleteByIdTest(): void {
+  it('should delete the correct category with the specified id when it exists', async () => {
+    const toDelete = [...MockData].pop() as Category;
+    return runDeleteByIdSuccessTest<CategoryStore, Category>(store, toDelete);
+  });
+  runDeleteFailTest();
+}
 
-//   it('update: should throw an error when name is not unique', async () => {
-//     const updateData = { ...MockItem, name: MockNewItem.name };
-//     await expectAsync(store.update(updateData)).toBeRejected();
-//   });
+function runDeleteFailTest(): void {
+  describe('> should throw an error when:', () => {
+    it('trying to delete a category that does not exist', async () => {
+      await expectAsync(store.deleteById(0)).toBeRejectedWithError(
+        ErrorType.NotFound
+      );
+    });
 
-//   it('update: should update correctly a category when data is passed', async () => {
-//     const updateData = { ...MockItem, name: 'update test' };
-//     const result: Category = await store.update(updateData);
-//     expect(result).toEqual(updateData);
-//   });
-// }
+    it('trying to delete a category that relates to a product', async () => {
+      await expectAsync(store.deleteById(MockItem.id)).toBeRejected();
+    });
+  });
+}
 
-// function runDeletionTest() {
-//   testDeletelOneError<CategoryStore, Category>(
-//     store,
-//     0,
-//     'category that does not exist'
-//   );
+function runUpdateTest(): void {
+  const name = 'various updated';
+  it('should update correctly a category when data valid', async () => {
+    const toUpdate = [...MockData].pop() as Category;
+    const updateData = { ...toUpdate, name };
+    const result: Category = await store.update(updateData);
+    expect(result).toEqual(updateData);
+    MockData.pop();
+    MockData.push({ ...result });
+  });
+  runUpdateFailTest(name);
+}
 
-//   testDeletelOneError<CategoryStore, Category>(
-//     store,
-//     1,
-//     'category that relates to a product'
-//   );
+function runUpdateFailTest(name: string): void {
+  describe('> should throw an error when:', () => {
+    it('id is not present in data', async () => {
+      await expectAsync(store.update({ name })).toBeRejectedWithError(
+        ErrorType.IdRequired
+      );
+    });
 
-//   testDeletelOneSuccess<CategoryStore, Category>(
-//     store,
-//     MockNewItem,
-//     'category'
-//   );
+    it('name is not defined', async () => {
+      await expectAsync(
+        store.update({ id: MockItem.id })
+      ).toBeRejectedWithError(ErrorType.ValuesRequired);
+    });
 
-//   testDeletelAllFailure<CategoryStore, Category>(
-//     store,
-//     'categories and there are related products'
-//   );
-
-//   it(`deleteAll: should delete all categories`, async () => {
-//     await deleteProducts();
-//     await runDeleteAllSuccess<CategoryStore, Category>(store);
-//   });
-// }
+    it('when name is not unique', async () => {
+      const toUpdate = [...MockData].pop() as Category;
+      const updateData = { ...toUpdate, name: MockItem.name };
+      await expectAsync(store.update(updateData)).toBeRejected();
+    });
+  });
+}

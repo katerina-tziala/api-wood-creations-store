@@ -1,5 +1,6 @@
 export enum ErrorType {
   NotFound = 'NOT_FOUND',
+  IdRequired = 'ID_REQUIRED',
   ValuesRequired = 'VALUES_REQUIRED',
   CurrentOrderNotFound = 'CURRENT_ORDER_NOT_FOUND',
   CurrentOrderExists = 'CURRENT_ORDER_EXISTS',

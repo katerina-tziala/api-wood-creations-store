@@ -53,7 +53,7 @@ export class ModelStore<T extends ModelType> {
     return await this.runQuery(sql, [id]);
   }
 
-  public async create(data: Partial<T>): Promise<T> {
+  public async create(data: Omit<Partial<T>, 'id'>): Promise<T> {
     const { keys, values } = this.getKeysAndValues(data);
     const sql = QUERY.getCreationQuery(this.table, keys, values);
     const results = await this.runQuery(sql, values);
@@ -72,6 +72,9 @@ export class ModelStore<T extends ModelType> {
 
   public async update(model: Partial<T>): Promise<T> {
     const { id, ...data } = model;
+    if (!id) {
+      throw new Error(ErrorType.IdRequired);
+    }
     const { keys, values } = this.getKeysAndValues(data);
     const where = `id=($${keys.length + 1})`;
     const sql = QUERY.getUpdateQuery(this.table, keys, where);

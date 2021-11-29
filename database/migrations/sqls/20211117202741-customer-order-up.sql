@@ -4,6 +4,6 @@ CREATE TABLE customer_order (
     customer_id INTEGER REFERENCES store_user(id) ON DELETE RESTRICT,
     status order_status NOT NULL DEFAULT 'Active',
     comments text,
-    created_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL,
     completed_at TIMESTAMPTZ
 );

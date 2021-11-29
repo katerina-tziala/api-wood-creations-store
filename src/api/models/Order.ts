@@ -41,8 +41,11 @@ export class OrderStore extends ModelStore<Order> {
   }
 
   public async create(newOrder: Partial<Order>): Promise<Order> {
-    newOrder.status = OrderStatus.Active;
-    newOrder.comments = this.getOptionalString(newOrder.comments as string);
+    const { created_at, ...data } = newOrder;
+    if (Object.values(data).length) {
+      newOrder.status = OrderStatus.Active;
+      newOrder.comments = this.getOptionalString(newOrder.comments as string);
+    }
     return super.create(newOrder);
   }
 

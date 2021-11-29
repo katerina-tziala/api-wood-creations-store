@@ -1,9 +1,10 @@
 import { ModelStore, ModelType } from '../../../src/api/models/_ModelStore';
+import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
 
 export const DEFAULT_METHODS = [
   'create',
-  'getById',
   'getAll',
+  'getById',
   'update',
   'deleteById'
 ];
@@ -17,7 +18,7 @@ export function hasBasicMethods<T extends ModelStore<U>, U extends ModelType>(
   );
 }
 
-export function testHasMethod<T extends ModelStore<U>, U extends ModelType>(
+function testHasMethod<T extends ModelStore<U>, U extends ModelType>(
   store: T,
   method: keyof typeof store
 ): void {
@@ -26,65 +27,21 @@ export function testHasMethod<T extends ModelStore<U>, U extends ModelType>(
   });
 }
 
-export function testGetlMethods<T extends ModelStore<U>, U extends ModelType>(
-  store: T,
-  mockData: U[],
-  text: { singular: string; plural: string }
-) {
-  it(`getAll: should return a list of all ${text.plural}`, async () => {
-    await expectAsync(store.getAll()).toBeResolvedTo(mockData);
-  });
-
-  it(`getById: should return the correct ${text.singular}`, async () => {
-    const result: Partial<ModelType> = await store.getById(mockData[0].id);
-    expect(result).toEqual(mockData[0]);
-  });
-
-  it(`getById: should throw an error when trying to get a ${text.singular} that does not exist`, async () => {
-    await expectAsync(store.getById(0)).toBeRejected();
-  });
-}
-
-export function testDeletelOneError<
+export async function runDeleteByIdSuccessTest<
   T extends ModelStore<U>,
   U extends ModelType
->(store: T, id: number, reason: string) {
-  it(`deleteById: should throw an error when trying to delete ${reason}`, async () => {
-    await expectAsync(store.deleteById(id)).toBeRejected();
-  });
-}
-
-export function testDeletelOneSuccess<
-  T extends ModelStore<U>,
-  U extends ModelType
->(store: T, item: U, reason: string) {
-  it(`deleteById: should delete the correct ${reason}`, async () => {
-    await expectAsync(store.deleteById(item.id)).toBeResolvedTo(item);
-    const result: Array<Partial<ModelType>> = await store.getAll();
-    expect(result.find(record => record.id === item.id)).not.toBeDefined();
-  });
-}
-
-export function testDeletelAllFailure<
-  T extends ModelStore<U>,
-  U extends ModelType
->(store: T, reason: string) {
-  it(`deleteAll: should throw an error when trying to delete all ${reason}`, async () => {
-    await expectAsync(store.deleteById(3)).toBeRejected();
-  });
-}
-
-export async function runDeleteAllSuccess<
-  T extends ModelStore<U>,
-  U extends ModelType
->(store: T): Promise<void> {
-  // await expectAsync(store.deleteAll()).toBeResolved();
+>(store: T, mockItem: U): Promise<void> {
+  await expectAsync(store.deleteById(mockItem.id)).toBeResolvedTo(mockItem);
   const result: Array<Partial<ModelType>> = await store.getAll();
-  expect(result.length).toBe(0);
+  expect(result.find(record => record.id === mockItem.id)).not.toBeDefined();
   return;
 }
 
-//   it('should delete all records', async () => {
-//     const result: Array<Partial<ModelType>> = await store.deleteAll();
-//     expect(result.length).toEqual(expectedData.length);
-//   });
+export function runCreationFailureForOmittedKey<
+  T extends ModelStore<U>,
+  U extends ModelType
+>(store: T, data: Partial<U>, omittedKey: string) {
+  it(`${omittedKey} is not specified`, async () => {
+    await expectAsync(store.create(data)).toBeRejected();
+  });
+}

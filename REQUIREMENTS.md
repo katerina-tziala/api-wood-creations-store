@@ -754,6 +754,7 @@ The following diagram depicts the database schema that address the API endpoints
 ## Future Improvements
 
 - Implement email verification for the new users. Unverified users should not have acees to the endpoints.
+- Implement price tracking per period for each one of the products and calculate total price of an order based on the priced that the product had when the order was completed.
 - Create endpoint to allow adminstrators see active orders of specified user(s).
 - Create endpoint to allow adminstrators see statistics about customers' orders.
 - Extend user creation endpoint to allow adminstrators create new adminstrators.
