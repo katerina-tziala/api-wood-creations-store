@@ -8,7 +8,7 @@ export interface OrderItem extends ModelType {
   name?: string;
   price?: string;
   category_id?: number;
-  description?: string;
+  description?: string | null;
 }
 
 export class OrderItemStore extends ModelStore<OrderItem> {
@@ -43,12 +43,20 @@ export class OrderItemStore extends ModelStore<OrderItem> {
     return updateData;
   }
 
-  public async create(data: Partial<OrderItem>): Promise<OrderItem> {
-    return super.create(this.getCreationData(data));
+  public async create(
+    data: Omit<Partial<OrderItem>, 'id'>
+  ): Promise<OrderItem> {
+    const creationData = !Object.values(data).length
+      ? data
+      : this.getCreationData(data);
+    return super.create(creationData);
   }
 
   public async update(data: Partial<OrderItem>): Promise<OrderItem> {
-    return super.updateModel(this.getUpdateData(data));
+    const updateData = !Object.values(data).length
+      ? data
+      : this.getUpdateData(data);
+    return super.updateModel(updateData);
   }
 
   public async getItemsByOrderId(order_id: number): Promise<OrderItem[]> {

@@ -60,8 +60,7 @@ function runGetByIdTest(): void {
     );
   });
   it(`should return the category with the specified id when it exists`, async () => {
-    const result: Category = await store.getById(MockItem.id);
-    expect(result).toEqual(MockItem);
+    await expectAsync(store.getById(MockItem.id)).toBeResolvedTo(MockItem);
   });
 }
 

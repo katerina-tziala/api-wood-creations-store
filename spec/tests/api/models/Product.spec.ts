@@ -5,8 +5,7 @@ import {
 } from '../../../helpers/model-helpers/model-helper';
 import { ProductStore, Product } from '../../../../src/api/models/Product';
 import { ErrorType } from '../../../../src/utilities/error-handling/error-type.enum';
-import { PRODUCTS } from '../../../helpers/mock-data';
-import { CATEGORIES } from '../../../helpers/mock-data';
+import { CATEGORIES, PRODUCTS } from '../../../helpers/mock-data';
 import { Category } from '../../../../src/api/models/Category';
 import { Order } from '../../../../src/api/models/Order';
 import {
@@ -145,8 +144,7 @@ function runGetByIdTest(): void {
     );
   });
   it(`should return the product with the specified id when it exists`, async () => {
-    const result: Product = await store.getById(MockItem.id);
-    expect(result).toEqual(MockItem);
+    await expectAsync(store.getById(MockItem.id)).toBeResolvedTo(MockItem);
   });
 }
 

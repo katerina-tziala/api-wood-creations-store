@@ -13,7 +13,6 @@ import {
   createCurrentOrderWithoutItems,
   deleteOrder
 } from '../../../helpers/test-data';
-import e from 'cors';
 
 const METHODS = [
   'create',
@@ -100,8 +99,7 @@ function runGetByIdTest(): void {
     );
   });
   it(`should return the order with the specified id when it exists`, async () => {
-    const result: Order = await store.getById(MockData[0].id);
-    expect(result).toEqual(MockData[0]);
+    await expectAsync(store.getById(MockData[0].id)).toBeResolvedTo(MockData[0]);
   });
 }
 

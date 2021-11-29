@@ -151,8 +151,7 @@ function runGetByIdTest(): void {
     );
   });
   it(`should return the user with the specified id when user exists`, async () => {
-    const result: User = await store.getById(ADMIN.id);
-    expect(result).toEqual(ADMIN);
+    await expectAsync(store.getById(ADMIN.id)).toBeResolvedTo(ADMIN);
   });
 }
 
