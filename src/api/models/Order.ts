@@ -12,8 +12,8 @@ export interface Order extends ModelType {
   created_at: Date;
   completed_at?: Date;
   comments?: string | null;
-  total?: string;
-  number_of_products?: string;
+  total?: string | null;
+  number_of_products?: string | null;
   items?: OrderItem[];
 }
 
@@ -40,10 +40,6 @@ export class OrderStore extends ModelStore<Order> {
     return await this.runQuery(sql, [userId, status]);
   }
 
-  private async update(data: Partial<Order>): Promise<Order> {
-    return super.updateModel(data);
-  }
-
   public async create(newOrder: Partial<Order>): Promise<Order> {
     const { created_at, ...data } = newOrder;
     if (Object.values(data).length) {
@@ -67,7 +63,7 @@ export class OrderStore extends ModelStore<Order> {
     if (comments !== undefined) {
       data.comments = this.getOptionalString(comments);
     }
-    return this.update(data);
+    return this.updateModel(data);
   }
 
   public async getOrdersOfUser(userId: number): Promise<Order[]> {

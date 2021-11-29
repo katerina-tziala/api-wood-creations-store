@@ -6,7 +6,6 @@ export function getCreationQuery<U>(
   const properties = getCommaSeparatedString(keys);
   const valuesIndexes = values.map((_, index) => `$${index + 1}`);
   const valuesString = getCommaSeparatedString(valuesIndexes);
-
   return `INSERT INTO ${table} (${properties}) VALUES(${valuesString}) RETURNING *`;
 }
 

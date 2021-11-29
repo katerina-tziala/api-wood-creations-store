@@ -5,7 +5,7 @@ import { USERS, PRODUCTS } from './mock-data';
 const orderStore: OrderStore = new OrderStore();
 const itemStore: OrderItemStore = new OrderItemStore();
 
-export async function createCompletedOrder() {
+export async function createCompletedOrder(): Promise<Order> {
   const order: Order = await orderStore.create({
     customer_id: USERS[0].id,
     created_at: new Date()
@@ -19,19 +19,23 @@ export async function createCompletedOrder() {
   return { ...completeOrder, items };
 }
 
-export async function deleteOrder(id: number) {
+export async function deleteOrder(id: number): Promise<Order> {
   return await orderStore.deleteById(id);
 }
 
-export async function createCurrentOrder() {
-  const order: Order = await orderStore.create({
+export async function createCurrentOrder(): Promise<Order> {
+  const order: Order = await createCurrentOrderWithoutItems();
+  const orderItems = getRandomItems(order.id, 5, 7);
+  const items = await createOrderItems(orderItems);
+  return { ...order, items };
+}
+
+export async function createCurrentOrderWithoutItems(): Promise<Order> {
+  return await orderStore.create({
     customer_id: USERS[0].id,
     status: OrderStatus.Active,
     created_at: new Date()
   });
-  const orderItems = getRandomItems(order.id, 5, 7);
-  const items = await createOrderItems(orderItems);
-  return { ...order, items };
 }
 
 function getRandomItems(

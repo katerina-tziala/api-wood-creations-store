@@ -245,6 +245,7 @@ function runUpdateFailTest(): void {
     });
 
     // TODO: check why if commenting this out the rest of the tests fail
+    
     // it('firstname is shorter than 3 characters', async () => {
     //   await runUpdateError({ ...userToUpdate, firstname: 'na' });
     // });

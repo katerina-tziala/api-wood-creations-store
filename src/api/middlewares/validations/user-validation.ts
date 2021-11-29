@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { User, UserRole } from '../../models/User';
+import { User } from '../../models/User';
 import {
   stringValidationError,
   optionalStringValidationError,
