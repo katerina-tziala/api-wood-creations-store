@@ -1,18 +1,18 @@
 import {
   hasBasicMethods,
   runDeleteByIdSuccessTest
-} from '../../../helpers/model-helpers/model-helper';
+} from '../../helpers/model-helpers/model-helper';
 import {
   OrderStore,
   Order,
   OrderStatus
-} from '../../../../src/api/models/Order';
-import { USERS } from '../../../helpers/mock-data';
-import { ErrorType } from '../../../../src/utilities/error-handling/error-type.enum';
+} from '../../../src/api/models/Order';
+import { USERS } from '../../helpers/mock-data';
+import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
 import {
   createCurrentOrderWithoutItems,
   deleteOrder
-} from '../../../helpers/test-data';
+} from '../../helpers/test-data';
 
 const METHODS = [
   'create',

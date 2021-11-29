@@ -3,15 +3,15 @@ import {
   hasBasicMethods,
   runDeleteByIdSuccessTest,
   runCreationFailureForOmittedKey
-} from '../../../helpers/model-helpers/model-helper';
-import { UserStore, User, UserRole } from '../../../../src/api/models/User';
-import { USERS } from '../../../helpers/mock-data';
-import { ErrorType } from '../../../../src/utilities/error-handling/error-type.enum';
+} from '../../helpers/model-helpers/model-helper';
+import { UserStore, User, UserRole } from '../../../src/api/models/User';
+import { USERS } from '../../helpers/mock-data';
+import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
 import {
   createCurrentOrder,
   deleteOrder
-} from '../../../helpers/test-data';
-import { Order } from '../../../../src/api/models/Order';
+} from '../../helpers/test-data';
+import { Order } from '../../../src/api/models/Order';
 
 const METHODS = [...DEFAULT_METHODS, 'authenticate'];
 

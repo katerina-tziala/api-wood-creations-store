@@ -2,17 +2,17 @@ import {
   hasBasicMethods,
   runCreationFailureForOmittedKey,
   runDeleteByIdSuccessTest
-} from '../../../helpers/model-helpers/model-helper';
-import { ProductStore, Product } from '../../../../src/api/models/Product';
-import { ErrorType } from '../../../../src/utilities/error-handling/error-type.enum';
-import { CATEGORIES, PRODUCTS } from '../../../helpers/mock-data';
-import { Category } from '../../../../src/api/models/Category';
-import { Order } from '../../../../src/api/models/Order';
+} from '../../helpers/model-helpers/model-helper';
+import { ProductStore, Product } from '../../../src/api/models/Product';
+import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
+import { CATEGORIES, PRODUCTS } from '../../helpers/mock-data';
+import { Category } from '../../../src/api/models/Category';
+import { Order } from '../../../src/api/models/Order';
 import {
   createCompletedOrder,
   createCurrentOrder,
   deleteOrder
-} from '../../../helpers/test-data';
+} from '../../helpers/test-data';
 
 const METHODS = [
   'create',

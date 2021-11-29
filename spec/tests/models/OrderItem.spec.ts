@@ -2,18 +2,18 @@ import {
   hasBasicMethods,
   runCreationFailureForOmittedKey,
   runDeleteByIdSuccessTest
-} from '../../../helpers/model-helpers/model-helper';
+} from '../../helpers/model-helpers/model-helper';
 import {
   OrderItemStore,
   OrderItem
-} from '../../../../src/api/models/OrderItem';
+} from '../../../src/api/models/OrderItem';
 import {
   createCurrentOrderWithoutItems,
   deleteOrder
-} from '../../../helpers/test-data';
-import { PRODUCTS } from '../../../helpers/mock-data';
-import { Order } from '../../../../src/api/models/Order';
-import { ErrorType } from '../../../../src/utilities/error-handling/error-type.enum';
+} from '../../helpers/test-data';
+import { PRODUCTS } from '../../helpers/mock-data';
+import { Order } from '../../../src/api/models/Order';
+import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
 const store: OrderItemStore = new OrderItemStore();
 const METHODS = [
   'create',

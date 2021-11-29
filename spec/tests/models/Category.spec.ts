@@ -1,10 +1,10 @@
 import {
   hasBasicMethods,
   runDeleteByIdSuccessTest
-} from '../../../../spec/helpers/model-helpers/model-helper';
-import { CategoryStore, Category } from '../../../../src/api/models/Category';
-import { ErrorType } from '../../../../src/utilities/error-handling/error-type.enum';
-import { CATEGORIES } from '../../../helpers/mock-data';
+} from '../../helpers/model-helpers/model-helper';
+import { CategoryStore, Category } from '../../../src/api/models/Category';
+import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
+import { CATEGORIES } from '../../helpers/mock-data';
 
 // MOCK DATA
 const MockData: Category[] = CATEGORIES;
