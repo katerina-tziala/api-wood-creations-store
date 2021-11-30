@@ -1,12 +1,8 @@
 import {
   hasBasicMethods,
   runDeleteByIdSuccessTest
-} from '../../helpers/model-helpers/model-helper';
-import {
-  OrderStore,
-  Order,
-  OrderStatus
-} from '../../../src/api/models/Order';
+} from '../../helpers/model-helper';
+import { OrderStore, Order, OrderStatus } from '../../../src/api/models/Order';
 import { USERS } from '../../helpers/mock-data';
 import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
 import {
@@ -87,27 +83,29 @@ function runCreateFailTest(): void {
 }
 
 function runGetAllTest(): void {
-  it(`should return a list of all orders`, async () => {
+  it('should return a list of all orders', async () => {
     await expectAsync(store.getAll()).toBeResolvedTo(MockData);
   });
 }
 
 function runGetByIdTest(): void {
-  it(`should throw an error when order with the specified id does not exist`, async () => {
+  it('should throw an error when order with the specified id does not exist', async () => {
     await expectAsync(store.getById(0)).toBeRejectedWithError(
       ErrorType.NotFound
     );
   });
-  it(`should return the order with the specified id when it exists`, async () => {
-    await expectAsync(store.getById(MockData[0].id)).toBeResolvedTo(MockData[0]);
+  it('should return the order with the specified id when it exists', async () => {
+    await expectAsync(store.getById(MockData[0].id)).toBeResolvedTo(
+      MockData[0]
+    );
   });
 }
 
 function runGetUserOrdersTest(): void {
-  it(`return an empty array when user does not exist`, async () => {
+  it('return an empty array when user does not exist', async () => {
     await expectAsync(store.getOrdersOfUser(0)).toBeResolvedTo([]);
   });
-  it(`should return the orders of the user with the specified id`, async () => {
+  it('should return the orders of the user with the specified id', async () => {
     const result: Order[] = await store.getOrdersOfUser(
       MockData[0].customer_id
     );
@@ -116,21 +114,21 @@ function runGetUserOrdersTest(): void {
 }
 
 function runGetCurrentOrderOfUserTest(): void {
-  it(`should return the active order of the user with the specified id`, async () => {
+  it('should return the active order of the user with the specified id', async () => {
     const result: Order | undefined = await store.getCurrentOrderOfUser(
       MockData[0].customer_id
     );
     expect(result).toEqual(MockData[0]);
   });
 
-  it(`return undefined when user does not exist`, async () => {
+  it('return undefined when user does not exist', async () => {
     const currentOrder: Order | undefined = await store.getCurrentOrderOfUser(
       0
     );
     expect(currentOrder).toBeUndefined();
   });
 
-  it(`return undefined when current order does not exist`, async () => {
+  it('return undefined when current order does not exist', async () => {
     await deleteOrder(MockData[0].id);
     const currentOrder: Order | undefined = await store.getCurrentOrderOfUser(
       0
@@ -140,7 +138,7 @@ function runGetCurrentOrderOfUserTest(): void {
 }
 
 function runCompleteOrderTest(): void {
-  it(`should throw an error when current active order does not exist`, async () => {
+  it('should throw an error when current active order does not exist', async () => {
     await expectAsync(
       store.completeOrderById(1, new Date())
     ).toBeRejectedWithError(ErrorType.NotFound);
@@ -164,11 +162,11 @@ function runCompletedOrdersTest(): void {
     ).toBeResolvedTo(MockData);
   });
 
-  it(`return an empty array when user does not exist`, async () => {
+  it('return an empty array when user does not exist', async () => {
     await expectAsync(store.getCompletedOrdersOfUser(0)).toBeResolvedTo([]);
   });
 
-  it(`return an empty array when complete orders do not exist`, async () => {
+  it('return an empty array when complete orders do not exist', async () => {
     await deleteOrder(MockData[0].id);
     await expectAsync(
       store.getCompletedOrdersOfUser(USERS[0].id)

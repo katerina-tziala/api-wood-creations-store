@@ -20,13 +20,13 @@ export interface Order extends ModelType {
 export class OrderStore extends ModelStore<Order> {
   constructor() {
     const selectQuery =
-      `SELECT * FROM (SELECT customer_order.*, SUM(order_product.quantity) as number_of_products, SUM(total) as total`
-        .concat(` FROM customer_order LEFT JOIN`)
+      'SELECT * FROM (SELECT customer_order.*, SUM(order_product.quantity) as number_of_products, SUM(total) as total'
+        .concat(' FROM customer_order LEFT JOIN ')
         .concat(
-          ` (SELECT order_item.*, product.price * order_item.quantity as total FROM order_item INNER JOIN product ON order_item.product_id = product.id) as order_product`
+          '(SELECT order_item.*, product.price * order_item.quantity as total FROM order_item INNER JOIN product ON order_item.product_id = product.id) as order_product'
         )
         .concat(
-          ` ON customer_order.id = order_product.order_id GROUP BY customer_order.id ORDER BY created_at DESC) as customer_order`
+          ' ON customer_order.id = order_product.order_id GROUP BY customer_order.id ORDER BY created_at DESC) as customer_order'
         );
     super('customer_order', selectQuery);
   }
@@ -41,6 +41,8 @@ export class OrderStore extends ModelStore<Order> {
   }
 
   public async create(newOrder: Partial<Order>): Promise<Order> {
+    // prettier-ignore
+    // eslint-disable-next-line
     const { created_at, ...data } = newOrder;
     if (Object.values(data).length) {
       newOrder.status = OrderStatus.Active;

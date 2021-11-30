@@ -14,10 +14,9 @@ export interface OrderItem extends ModelType {
 export class OrderItemStore extends ModelStore<OrderItem> {
   constructor() {
     const selectQuery =
-      `SELECT order_item.*, product.name as name, product.price as price, product.category_id as category_id, product.description as description`
-        .concat(` FROM order_item`)
-        .concat(` INNER JOIN product`)
-        .concat(` ON order_item.product_id = product.id`);
+      'SELECT order_item.*, product.name as name, product.price as price, product.category_id as category_id, product.description as description'
+        .concat(' FROM order_item  INNER JOIN product')
+        .concat(' ON order_item.product_id = product.id');
     super('order_item', selectQuery);
   }
 

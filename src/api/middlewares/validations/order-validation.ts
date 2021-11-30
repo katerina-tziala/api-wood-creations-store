@@ -46,6 +46,8 @@ export function checkOrderItemUpdate(
   res: Response,
   next: NextFunction
 ): void {
+  // prettier-ignore
+  // eslint-disable-next-line
   const { product_id, ...updateData } = getOrderItemData(req.body);
   req.body = updateData;
 
@@ -66,7 +68,10 @@ export function checkCompletion(
   error ? res.status(400).json({ error }) : next();
 }
 
-function getNewOrderItemError(item: Partial<OrderItem>, dataError?: string): string | undefined {
+function getNewOrderItemError(
+  item: Partial<OrderItem>,
+  dataError?: string
+): string | undefined {
   const { product_id, quantity } = item;
   return (
     requiredDataError<OrderItem>(item, dataError) ||
@@ -75,12 +80,11 @@ function getNewOrderItemError(item: Partial<OrderItem>, dataError?: string): str
   );
 }
 
-function getUpdatedOrderItemError(item: Partial<OrderItem>): string | undefined {
+function getUpdatedOrderItemError(
+  item: Partial<OrderItem>
+): string | undefined {
   const { quantity } = item;
-  return (
-    requiredDataError<OrderItem>(item) ||
-    optionalQuantityError(quantity)
-  );
+  return requiredDataError<OrderItem>(item) || optionalQuantityError(quantity);
 }
 
 function getOrderItemData(params: Partial<OrderItem>): Partial<OrderItem> {
@@ -95,9 +99,9 @@ function getOrderItemData(params: Partial<OrderItem>): Partial<OrderItem> {
 
 function quantityError(quantity: number | undefined): string | undefined {
   if (!quantity) {
-    return `QUANTITY_REQUIRED`;
+    return 'QUANTITY_REQUIRED';
   }
-  return quantity < 0 ? `QUANTITY_MUST_BE_POSITIVE` : undefined;
+  return quantity < 0 ? 'QUANTITY_MUST_BE_POSITIVE' : undefined;
 }
 
 function optionalQuantityError(

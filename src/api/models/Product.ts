@@ -1,3 +1,4 @@
+import { OrderStatus } from './Order';
 import { ModelStore, ModelType } from './_ModelStore';
 
 export interface Product extends ModelType {
@@ -11,9 +12,9 @@ export interface Product extends ModelType {
 export class ProductStore extends ModelStore<Product> {
   constructor() {
     const selectQuery =
-      `SELECT product.*, category.name as category FROM product `
-        .concat(` INNER JOIN category`)
-        .concat(` ON product.category_id = category.id`);
+      'SELECT product.*, category.name as category FROM product'
+        .concat(' INNER JOIN category')
+        .concat(' ON product.category_id = category.id');
     super('product', selectQuery);
   }
 
@@ -36,15 +37,21 @@ export class ProductStore extends ModelStore<Product> {
   }
 
   public async getTopFive(): Promise<Product[]> {
-    const distinct_products = `SELECT DISTINCT order_id, product_id FROM order_item INNER JOIN customer_order ON customer_order.id = order_item.order_id WHERE customer_order.status = 'Complete'`;
+    const distinct_products =
+      'SELECT DISTINCT order_id, product_id FROM order_item'
+        .concat(
+          ' INNER JOIN customer_order ON customer_order.id = order_item.order_id'
+        )
+        .concat(` WHERE customer_order.status = ${OrderStatus.Complete}`);
+
     const popular =
-      `SELECT ordered_products.product_id, COUNT(ordered_products.order_id) as times_ordered`.concat(
+      'SELECT ordered_products.product_id, COUNT(ordered_products.order_id) as times_ordered'.concat(
         ` FROM (${distinct_products}) as ordered_products GROUP BY ordered_products.product_id`
       );
     const sql =
       `${this.selectQuery} INNER JOIN (${popular}) as popular ON popular.product_id = product.id`
-        .concat(` ORDER BY times_ordered DESC, product_id ASC`)
-        .concat(`  LIMIT 5`);
+        .concat(' ORDER BY times_ordered DESC, product_id ASC')
+        .concat(' LIMIT 5');
     return this.runQuery(sql);
   }
 }

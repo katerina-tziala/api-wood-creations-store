@@ -2,11 +2,8 @@ import {
   hasBasicMethods,
   runCreationFailureForOmittedKey,
   runDeleteByIdSuccessTest
-} from '../../helpers/model-helpers/model-helper';
-import {
-  OrderItemStore,
-  OrderItem
-} from '../../../src/api/models/OrderItem';
+} from '../../helpers/model-helper';
+import { OrderItemStore, OrderItem } from '../../../src/api/models/OrderItem';
 import {
   createCurrentOrderWithoutItems,
   deleteOrder
@@ -27,7 +24,7 @@ const METHODS = [
 ];
 
 let order: Order;
-let MockData: OrderItem[] = [];
+const MockData: OrderItem[] = [];
 
 describe('* OrderItem Model * ', () => {
   beforeAll(async () => {
@@ -124,18 +121,18 @@ function runCreateFailTest(data: Partial<OrderItem>): void {
 }
 
 function runGetAllTest(): void {
-  it(`should return a list of all order items`, async () => {
+  it('should return a list of all order items', async () => {
     await expectAsync(store.getAll()).toBeResolvedTo(MockData);
   });
 }
 
 function runGetByIdTest(): void {
-  it(`should throw an error when order item with the specified id does not exist`, async () => {
+  it('should throw an error when order item with the specified id does not exist', async () => {
     await expectAsync(store.getById(0)).toBeRejectedWithError(
       ErrorType.NotFound
     );
   });
-  it(`should return the order item with the specified id when it exists`, async () => {
+  it('should return the order item with the specified id when it exists', async () => {
     await expectAsync(store.getById(MockData[0].id)).toBeResolvedTo(
       MockData[0]
     );
@@ -143,31 +140,31 @@ function runGetByIdTest(): void {
 }
 
 function runGetByOrderIdTest(): void {
-  it(`should return the order items of an order that exists`, async () => {
+  it('should return the order items of an order that exists', async () => {
     await expectAsync(store.getItemsByOrderId(order.id)).toBeResolvedTo(
       MockData
     );
   });
 
-  it(`return an empty array when order not exist`, async () => {
+  it('return an empty array when order not exist', async () => {
     await expectAsync(store.getItemsByOrderId(100)).toBeResolvedTo([]);
   });
 }
 
 function runGetByIdAndOrderIdTest(): void {
-  it(`should throw an error when order item with the specified id does not exist in order`, async () => {
+  it('should throw an error when order item with the specified id does not exist in order', async () => {
     await expectAsync(
       store.getByIdAndOrderId(order.id, 12)
     ).toBeRejectedWithError(ErrorType.NotFound);
   });
 
-  it(`should throw an error when order item does not exist`, async () => {
+  it('should throw an error when order item does not exist', async () => {
     await expectAsync(
       store.getByIdAndOrderId(100, MockData[0].id)
     ).toBeRejectedWithError(ErrorType.NotFound);
   });
 
-  it(`should return the order item with the specified id`, async () => {
+  it('should return the order item with the specified id', async () => {
     await expectAsync(
       store.getByIdAndOrderId(MockData[0].id, order.id)
     ).toBeResolvedTo(MockData[0]);
@@ -176,6 +173,8 @@ function runGetByIdAndOrderIdTest(): void {
 
 function runDeleteByIdTest(): void {
   it('should delete the correct order item  with the specified id when it exists', async () => {
+    // prettier-ignore
+    // eslint-disable-next-line
     const { name, price, description, category_id, ...toDelete } = MockData[0];
     await runDeleteByIdSuccessTest<OrderItemStore, OrderItem>(store, toDelete);
   });
@@ -214,7 +213,9 @@ function runDeleteByIdAndOrderIdTest(): void {
 function runUpdateTest(): void {
   it('should update correctly a product when data valid', async () => {
     const itemToUpdate = MockData[0];
-    const { name, price, description, category_id, id, ...data } = MockData[0];
+    // prettier-ignore
+    // eslint-disable-next-line
+    const { name, price, description, category_id, id, ...data } = itemToUpdate;
     const updateData = {
       id,
       quantity: 4,
@@ -231,6 +232,8 @@ function runUpdateTest(): void {
 function runUpdateFailTest(): void {
   describe('> should throw an error when:', () => {
     it('id is not present in data', async () => {
+      // prettier-ignore
+      // eslint-disable-next-line
       const { id, ...data } = MockData[0];
       await expectAsync(store.update(data)).toBeRejectedWithError(
         ErrorType.IdRequired
@@ -238,13 +241,14 @@ function runUpdateFailTest(): void {
     });
 
     it('update data not defined', async () => {
-      const { id, ...data } = MockData[0];
-      await expectAsync(store.update({ id })).toBeRejectedWithError(
-        ErrorType.ValuesRequired
-      );
+      await expectAsync(
+        store.update({ id: MockData[0].id })
+      ).toBeRejectedWithError(ErrorType.ValuesRequired);
     });
 
     it('quantity is negative', async () => {
+      // prettier-ignore
+      // eslint-disable-next-line
       const { name, price, description, category_id, ...data } = MockData[0];
       await expectAsync(store.update({ ...data, quantity: -2 })).toBeRejected();
     });

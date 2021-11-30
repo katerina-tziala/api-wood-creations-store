@@ -52,9 +52,7 @@ describe('--> Users Endpoints <--', () => {
   });
 
   it(`POST ${baseRoute} creates a user`, async () => {
-    const res = await request
-      .post(baseRoute)
-      .send(testUser);
+    const res = await request.post(baseRoute).send(testUser);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(testUser);
@@ -64,7 +62,7 @@ describe('--> Users Endpoints <--', () => {
     const res = await request
       .get(baseRoute)
       .set('Authorization', 'Bearer ' + TOKEN);
-    
+
     expect(res.status).toBe(200);
     expect(res.body).toEqual(USERS);
   });
@@ -73,7 +71,7 @@ describe('--> Users Endpoints <--', () => {
     const res = await request
       .get(`${baseRoute}/20`)
       .set('Authorization', 'Bearer ' + TOKEN);
-    
+
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
       ...testUser,
@@ -100,7 +98,7 @@ describe('--> Users Endpoints <--', () => {
     const res = await request
       .delete(`${baseRoute}/${testUser.id}`)
       .set('Authorization', 'Bearer ' + TOKEN);
-    
+
     expect(res.status).toBe(204);
   });
 });

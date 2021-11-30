@@ -22,7 +22,8 @@ export interface User extends ModelType {
 
 export class UserStore extends ModelStore<User> {
   constructor() {
-    const selectQuery = `SELECT id, username, firstname, lastname, role FROM store_user`;
+    const selectQuery =
+      'SELECT id, username, firstname, lastname, role FROM store_user';
     super('store_user', selectQuery);
   }
 
@@ -35,7 +36,8 @@ export class UserStore extends ModelStore<User> {
       data.role = this.getUserRole(data.role as UserRole);
       data.password = data.password ? encryptPassword(data.password) : null;
     }
-
+    // prettier-ignore
+    // eslint-disable-next-line
     const { password, ...createdUser } = await super.create(data);
     return createdUser;
   }
@@ -46,7 +48,9 @@ export class UserStore extends ModelStore<User> {
     }
     if (data.role) {
       data.role = this.getUserRole(data.role);
-    } 
+    }
+    // prettier-ignore
+    // eslint-disable-next-line
     const { password, ...updated } = await super.updateModel(data);
     return updated;
   }
@@ -64,6 +68,8 @@ export class UserStore extends ModelStore<User> {
   }
 
   public async deleteById(id: number): Promise<User> {
+    // prettier-ignore
+    // eslint-disable-next-line
     const { password, ...updated } = await super.deleteById(id);
     return updated;
   }

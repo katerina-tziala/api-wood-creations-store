@@ -8,7 +8,7 @@ export function checkCategoryName(
   next: NextFunction
 ): void {
   req.body = getCategoryData(req.body);
-  let { name } = getCategoryData(req.body);
+  const { name } = getCategoryData(req.body);
   const error = stringValidationError(name, 'name', 3);
   error ? res.status(400).json({ error }) : next();
 }

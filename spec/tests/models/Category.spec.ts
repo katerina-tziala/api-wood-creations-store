@@ -1,7 +1,7 @@
 import {
   hasBasicMethods,
   runDeleteByIdSuccessTest
-} from '../../helpers/model-helpers/model-helper';
+} from '../../helpers/model-helper';
 import { CategoryStore, Category } from '../../../src/api/models/Category';
 import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
 import { CATEGORIES } from '../../helpers/mock-data';
@@ -54,18 +54,18 @@ function runCreateFailTest(): void {
 }
 
 function runGetByIdTest(): void {
-  it(`should throw an error when category with the specified id does not exist`, async () => {
+  it('should throw an error when category with the specified id does not exist', async () => {
     await expectAsync(store.getById(0)).toBeRejectedWithError(
       ErrorType.NotFound
     );
   });
-  it(`should return the category with the specified id when it exists`, async () => {
+  it('should return the category with the specified id when it exists', async () => {
     await expectAsync(store.getById(MockItem.id)).toBeResolvedTo(MockItem);
   });
 }
 
 function runGetAllTest(): void {
-  it(`should return a list of all categories`, async () => {
+  it('should return a list of all categories', async () => {
     await expectAsync(store.getAll()).toBeResolvedTo(MockData);
   });
 }

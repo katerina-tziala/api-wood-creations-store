@@ -10,9 +10,11 @@ export const SALT_ROUNDS = parseInt(
   10
 );
 
-export const BCRYPT_PASSWORD: string = process.env.BCRYPT_PASSWORD as unknown as string;
+export const BCRYPT_PASSWORD: string = process.env
+  .BCRYPT_PASSWORD as unknown as string;
 
-export const TOKEN_SECRET: string = process.env.TOKEN_SECRET as unknown as string;
+export const TOKEN_SECRET: string = process.env
+  .TOKEN_SECRET as unknown as string;
 
 const database =
   process.env.NODE_ENV === 'test'

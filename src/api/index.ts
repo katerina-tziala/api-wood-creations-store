@@ -19,8 +19,13 @@ function handleError(
   error: Error,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ) {
+  if (!error) {
+    next();
+    return;
+  }
+
   const { statusCode, ...errorData }: ResponseError = getResponseError(error);
   res.status(statusCode).json(JSON.parse(JSON.stringify(errorData)));
 }

@@ -3,7 +3,7 @@ import {
   hasBasicMethods,
   runDeleteByIdSuccessTest,
   runCreationFailureForOmittedKey
-} from '../../helpers/model-helpers/model-helper';
+} from '../../helpers/model-helper';
 import { UserStore, User, UserRole } from '../../../src/api/models/User';
 import { USERS } from '../../helpers/mock-data';
 import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
@@ -20,7 +20,6 @@ const store: UserStore = new UserStore();
 
 describe('* User Model * ', () => {
   hasBasicMethods<UserStore, User>(store, METHODS);
-
   describe('- Method create', () => runCreateTest());
   describe('- Method getAll', () => runGetAllTest());
   describe('- Method getById', () => runGetByIdTest());
@@ -136,18 +135,18 @@ function runCreateFailTest(newUser: Omit<Partial<User>, 'id'>): void {
 }
 
 function runGetAllTest(): void {
-  it(`should return a list of all users`, async () => {
+  it('should return a list of all users', async () => {
     await expectAsync(store.getAll()).toBeResolvedTo(MockData);
   });
 }
 
 function runGetByIdTest(): void {
-  it(`should throw an error when user with the specified id does not exist`, async () => {
+  it('should throw an error when user with the specified id does not exist', async () => {
     await expectAsync(store.getById(0)).toBeRejectedWithError(
       ErrorType.NotFound
     );
   });
-  it(`should return the user with the specified id when user exists`, async () => {
+  it('should return the user with the specified id when user exists', async () => {
     await expectAsync(store.getById(ADMIN.id)).toBeResolvedTo(ADMIN);
   });
 }
@@ -207,6 +206,8 @@ function runUpdateTest(): void {
       username: 'newusername',
       password: 'newPass'
     };
+    // prettier-ignore
+    // eslint-disable-next-line
     const { password, ...expectedData } = updateData;
     const result: User = await store.update(updateData);
 

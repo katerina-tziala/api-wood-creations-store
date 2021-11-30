@@ -2,7 +2,7 @@ import {
   hasBasicMethods,
   runCreationFailureForOmittedKey,
   runDeleteByIdSuccessTest
-} from '../../helpers/model-helpers/model-helper';
+} from '../../helpers/model-helper';
 import { ProductStore, Product } from '../../../src/api/models/Product';
 import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
 import { CATEGORIES, PRODUCTS } from '../../helpers/mock-data';
@@ -107,28 +107,28 @@ function runCreateFailTest(data: Partial<Product>): void {
 }
 
 function runGetAllTest(): void {
-  it(`should return a list of all products`, async () => {
+  it('should return a list of all products', async () => {
     await expectAsync(store.getAll()).toBeResolvedTo(MockData);
   });
 }
 
 function runGetByIdTest(): void {
-  it(`should throw an error when product with the specified id does not exist`, async () => {
+  it('should throw an error when product with the specified id does not exist', async () => {
     await expectAsync(store.getById(0)).toBeRejectedWithError(
       ErrorType.NotFound
     );
   });
-  it(`should return the product with the specified id when it exists`, async () => {
+  it('should return the product with the specified id when it exists', async () => {
     await expectAsync(store.getById(MockItem.id)).toBeResolvedTo(MockItem);
   });
 }
 
 function runGetByCategoryTest(): void {
-  it(`should return an empty array when category does not exist`, async () => {
+  it('should return an empty array when category does not exist', async () => {
     await expectAsync(store.getByCategory(0)).toBeResolvedTo([]);
   });
 
-  it(`should return all the products with the specified category id`, async () => {
+  it('should return all the products with the specified category id', async () => {
     const categoryId = 3;
     const expectedProducts = PRODUCTS.filter(
       product => product.category_id === categoryId
@@ -142,7 +142,8 @@ function runGetByCategoryTest(): void {
 function runUpdateTest(): void {
   it('should update correctly a product when data valid', async () => {
     const itemToUpdate = [...MockData].pop() as Product;
-
+    // prettier-ignore
+    // eslint-disable-next-line
     const { category, ...data } = itemToUpdate;
     const updateData = {
       ...data,
@@ -163,6 +164,8 @@ function runUpdateFailTest(): void {
     const itemToUpdate = [...MockData].pop() as Product;
 
     it('id is not present in data', async () => {
+      // prettier-ignore
+      // eslint-disable-next-line
       const { id, ...data } = itemToUpdate;
       await expectAsync(store.update(data)).toBeRejectedWithError(
         ErrorType.IdRequired
@@ -196,11 +199,11 @@ function runUpdateFailTest(): void {
 }
 
 function runGetTopFiveTest(): void {
-  it(`should return an empty array when no orders`, async () => {
+  it('should return an empty array when no orders', async () => {
     await expectAsync(store.getTopFive()).toBeResolvedTo([]);
   });
 
-  it(`should return 5 most popular products`, async () => {
+  it('should return 5 most popular products', async () => {
     const completedOrder = await createCompletedOrder();
     const currentOrder = await createCurrentOrder();
 
@@ -218,6 +221,8 @@ function runGetTopFiveTest(): void {
 function runDeleteByIdTest(): void {
   it('should delete the correct product with the specified id when it exists', async () => {
     const toDelete = [...MockData].pop() as Product;
+    // prettier-ignore
+    // eslint-disable-next-line
     const { category, ...data } = toDelete;
     await runDeleteByIdSuccessTest<ProductStore, Product>(store, data);
   });

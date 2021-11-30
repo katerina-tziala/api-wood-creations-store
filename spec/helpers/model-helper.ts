@@ -1,5 +1,4 @@
-import { ModelStore, ModelType } from '../../../src/api/models/_ModelStore';
-import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
+import { ModelStore, ModelType } from '../../src/api/models/_ModelStore';
 
 export const DEFAULT_METHODS = [
   'create',

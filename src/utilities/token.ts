@@ -5,7 +5,7 @@ import { TOKEN_SECRET } from '../config/config';
 export function generateUserToken(user: User): string {
   const { id, username, role } = user;
   return jsonwebtoken.sign({ id, username, role }, TOKEN_SECRET as string, {
-    expiresIn: "24h"
+    expiresIn: '24h'
   });
 }
 
