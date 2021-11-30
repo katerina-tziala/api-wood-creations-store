@@ -1,4 +1,7 @@
 # :rocket: Wood Creations Store RESTful API
+A RESTful API for an online wood creations store.
+
+The database schema, the data contracts and the exposed API endpoints can be found in the [REQUIREMENTS.md](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/REQUIREMENTS.md)
 
 ## Prerequisites
 
