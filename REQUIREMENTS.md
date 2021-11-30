@@ -24,7 +24,7 @@ The following list is an overview of the exposed endpoints. More details for eac
 
   _Provides a list of all users_
 
-- [[GET] <Token> /users/:id]()
+- [[GET] <Token> /users/:id](#get-usersid)
 
   _Returns the requested user including the current order and the 5 most recent completed orders_
 
