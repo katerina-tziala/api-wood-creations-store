@@ -1,6 +1,6 @@
 # Database Setup
 
-In order to run the app you must have a database up and running. In this document you will find the instructions on how to install, run and connect to the database(s) of this app.
+In order to run the app you must have a database up and running. In this document you will find the instructions on how to install, run and connect to the database(s) of this app. You can either run the database through docker or host it locally.
 The choice is yours! Just make sure you do not use both setups interchangeably.
 
 ## Set Up Environment
