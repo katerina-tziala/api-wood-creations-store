@@ -6,7 +6,7 @@ Users need to be able to browse an index of all products, see the specifics of a
 
 Administrators should also be able to manage users, categories and products of the store.
 
-These are the notes that describe the endpoints of the API, the [database schema]() and the [data contracts]() the frontend and backend have agreed upon to meet the requirements of the application.
+These are the notes that describe the endpoints of the API, the [database schema](#database-schema) and the [data contracts](#data-contracts) the frontend and backend have agreed upon to meet the requirements of the application.
 
 ## API Endpoints
 
@@ -16,11 +16,11 @@ The following list is an overview of the exposed endpoints. More details for eac
 
 ### Users
 
-- [[POST] /users/authenticate/]()
+- [[POST] /users/authenticate/](#post-usersauthenticate)
 
   _Authenticates a user and provides access_
 
-- [[GET] <Token> /users]()
+- [[GET] <Token> /users](#get-users)
 
   _Provides a list of all users_
 
@@ -28,104 +28,104 @@ The following list is an overview of the exposed endpoints. More details for eac
 
   _Returns the requested user including the current order and the 5 most recent completed orders_
 
-- [[POST] /users]()
+- [[POST] /users](#post-users)
 
   _Creates a user_
 
-- [[PATCH] <Token> /users]()
+- [[PATCH] <Token> /users](#patch-users)
 
 _Updates the authorized user and returns the updated user_
 
-- [[DELETE] <Token> /users/:id]()
+- [[DELETE] <Token> /users/:id](#delete-usersid)
   _Deletes the customer with the specified id_
 
 ### Categories
 
-- [[GET] <Token> /categories]()
+- [[GET] <Token> /categories](#get-categories)
 
   _Provides a list of all categories for the products_
 
-- [[GET] <Token> /categories/:id]()
+- [[GET] <Token> /categories/:id](#get-categoriesid)
 
   _Returns the category with the specified id_
 
-- [[POST] <Token> /categories]()
+- [[POST] <Token> /categories](#post-categories)
 
   _Creates a new category_
 
-- [[PATCH] <Token> /categories/:id]()
+- [[PATCH] <Token> /categories/:id](#patch-categoriesid)
 
   _Updates the category with the specified id_
 
-- [[DELETE] <Token> /categories/:id]()
+- [[DELETE] <Token> /categories/:id](#delete-categoriesid)
 
   _Deletes the category with the specified id_
 
 ### Products
 
-- [[GET] /products]()
+- [[GET] /products](#get-products)
 
-  _Provides a list of all products_.\_
+  _Provides a list of all products_
 
-- [[GET] /products/top-five]()
+- [[GET] /products/top-five](#get-productstop-five)
 
   _Provides a list of the 5 most popular products (most commonly ordered)_
 
-- [[GET] /products/:id]()
+- [[GET] /products/:id](#get-productsid)
 
   _Returns the product with the specified id_
 
-- [[GET] /products/category/:id]()
+- [[GET] /products/category/:id](#get-productscategoryid)
 
   _Provides a list of all products that belong in the specified category_
 
-- [[POST] <Token> /products]()
+- [[POST] <Token> /products](#post-products)
 
   _Creates a new product_
 
-- [[PATCH] <Token> /products/:id]()
+- [[PATCH] <Token> /products/:id](#patch-productsid)
 
   _Updates the product with the specified id_
 
-- [[DELETE] <Token> /products/:id]()
+- [[DELETE] <Token> /products/:id](#delete-productsid)
 
   _Deletes the product with the specified id_
 
 ### Orders
 
-- [[GET] <Token> /orders]()
+- [[GET] <Token> /orders](#get-orders)
 
   _Provides a list of all orders of the user_
 
-- [[GET] <Token> /orders/current]()
+- [[GET] <Token> /orders/current](#get-orderscurrent)
 
   _Returns the current order of the user_
 
-- [[GET] <Token> /orders/completed]()
+- [[GET] <Token> /orders/completed](#get-orderscompleted)
 
   _Provides a list of all completed orders of the user_
 
-- [[POST] <Token> /orders]()
+- [[POST] <Token> /orders](#post-orders)
 
   _Creates a new order for the user_
 
-- [[POST] <Token> /orders/item]()
+- [[POST] <Token> /orders/item](#post-ordersitem)
 
   _Adds a new order item in the current active order of the user_
 
-- [[PATCH] <Token> /orders/item]()
+- [[PATCH] <Token> /orders/item](#patch-ordersitem)
 
   _Updates an order item in the current active order of the user_
 
-- [[DELETE] <Token> /orders/item/:id]()
+- [[DELETE] <Token> /orders/item/:id](#delete-ordersitemid)
 
   _Deletes the order item with the specified id in the current active order of the user_
 
-- [[PATCH] <Token> /orders/current/complete]()
+- [[PATCH] <Token> /orders/current/complete](#patch-orderscurrentcomplete)
 
   _Completes the current active order of the user_
 
-- [[DELETE] <Token> /orders/current/complete]()
+- [[DELETE] <Token> /orders/current/complete](#delete-orderscurrentcomplete)
 
   _Deletes the current active order of the user_
 
@@ -140,8 +140,8 @@ The following data contracts specify the expected structure of the data returned
 ```
 
 {
-id: number;
-name: string;
+  id: number;
+  name: string;
 }
 
 ```
@@ -151,12 +151,12 @@ name: string;
 ```
 
 {
-id: number;
-name: string;
-price: string;
-category_id: number;
-category?: string;
-description?: string | null;
+  id: number;
+  name: string;
+  price: string;
+  category_id: number;
+  category?: string;
+  description?: string | null;
 }
 
 ```
@@ -166,28 +166,28 @@ description?: string | null;
 ```
 
 {
-id: number;
-customer_id: number;
-status: Active | Complete;
-created_at: Date | string;
-completed_at?: Date | string | null;
-comments?: string | null;
-total?: string | null;
-number_of_products?: string | null;
-items?: [
-{
-id: number;
-order_id: number;
-product_id: number;
-quantity: number;
-engraving?: string | null;
-name?: string;
-price?: string;
-category_id?: number;
-description?: string;
-},
-...
-];
+  id: number;
+  customer_id: number;
+  status: Active | Complete;
+  created_at: Date | string;
+  completed_at?: Date | string | null;
+  comments?: string | null;
+  total?: string | null;
+  number_of_products?: string | null;
+  items?: [
+    {
+      id: number;
+      order_id: number;
+      product_id: number;
+      quantity: number;
+      engraving?: string | null;
+      name?: string;
+      price?: string;
+      category_id?: number;
+      description?: string;
+    },
+    ...
+  ];
 }
 
 ```
@@ -195,18 +195,16 @@ description?: string;
 ### User
 
 ```
-
 {
-id: number;
-username: string;
-firstname: string;
-lastname: string;
-role: Admin | Customer;
-password?: string | null;
-recentOrders?: Order[];
-currentOrder?: Order;
+  id: number;
+  username: string;
+  firstname: string;
+  lastname: string;
+  role: Admin | Customer;
+  password?: string | null;
+  recentOrders?: Order[];
+  currentOrder?: Order;
 }
-
 ```
 
 ## Database Schema
@@ -216,7 +214,7 @@ The following diagram depicts the database schema that address the API endpoints
 <p align="center">
     <img src="https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/wood-creations-store.png" alt="database-schema" width="100%" height="auto">
 </p>
-```
+
 
 ## API Endpoints Details
 
@@ -282,7 +280,7 @@ Provides a list of all users. Available only for authenticated users with the **
   Authorization: Bearer <accessToken>
   ```
 
-- **[GET] /users/:id**
+#### **[GET] /users/:id**
 
 Returns the requested user including the current order and the 5 most recent completed orders. Available only for authenticated users with the **_Admin_** role.
 
