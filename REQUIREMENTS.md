@@ -132,7 +132,7 @@ The following list is an overview of the exposed endpoints. More details for eac
 
   _Deletes the current active order of the user_
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 ## Data Contracts
 
@@ -210,7 +210,7 @@ The following data contracts specify the expected structure of the data returned
 }
 ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 ## Database Schema
 
@@ -220,7 +220,7 @@ The following diagram depicts the database schema that address the API endpoints
     <img src="https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/wood-creations-store.png" alt="database-schema" width="100%" height="auto">
 </p>
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 ## API Endpoints Details
 
@@ -275,7 +275,7 @@ Authenticates a user and provides access.
 
     Content: `{ "error": "WRONG_CREDENTIALS" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /users**
 
@@ -287,6 +287,8 @@ Provides a list of all users. Available only for authenticated users with the **
   Content-Type: application/json
   Authorization: Bearer <accessToken>
   ```
+
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /users/:id**
 
@@ -312,7 +314,7 @@ Returns the requested user including the current order and the 5 most recent com
     Content: `{ "error": "NOT_FOUND" }`
 
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[POST] /users**
 
@@ -344,7 +346,7 @@ Creates a user. Creating a user with the **_Admin_** role is not allowed.
     }
     ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[PATCH] /users**
 
@@ -379,7 +381,7 @@ Updates the authorized user and returns the updated user.
     }
     ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[DELETE] /users/:id**
 
@@ -410,7 +412,7 @@ Deletes the user with the specified id if the user exists and the user does not 
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 ### Categories
 
@@ -430,7 +432,7 @@ Provides a list with the categories of the products.
   Authorization: Bearer <accessToken>
   ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /categories/:id**
 
@@ -451,7 +453,7 @@ Returns the category with the specified id.
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[POST] /categories**
 
@@ -480,7 +482,7 @@ Creates a new category.
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[PATCH] /categories/:id**
 
@@ -509,7 +511,7 @@ Updates the category with the specified id.
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[DELETE] /categories/:id**
 
@@ -536,7 +538,7 @@ Deletes the category with the specified id.
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 ### Products
 
@@ -549,7 +551,7 @@ Provides a list of all products.
   Content-Type: application/json
   ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /products/top-five**
 
@@ -560,7 +562,7 @@ Provides a list of the 5 most popular products (most commonly ordered).
   Content-Type: application/json
   ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /products/:id**
 
@@ -580,7 +582,7 @@ Returns the product with the specified id.
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /products/category/:id**
 
@@ -598,7 +600,7 @@ Provides a list of all products that belong in the specified category.
 
     Content: `{ "error": "INVALID_CATEGORY_ID"}`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[POST] /products**
 
@@ -631,7 +633,7 @@ Creates a new product. Available only for authenticated users with the **_Admin_
     }
     ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[PATCH] /products/:id**
 
@@ -670,7 +672,7 @@ At least one of the following is required.
     }
     ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[DELETE] /products/:id**
 
@@ -701,7 +703,7 @@ Deletes the product with the specified id. Available only for authenticated user
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 ### Orders
 
@@ -717,7 +719,7 @@ Provides a list of all orders of the user.
   Authorization: Bearer <accessToken>
   ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /orders/current**
 
@@ -734,7 +736,7 @@ Returns the current order of the user.
 
     Content: `{ "error": "NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[GET] /orders/completed**
 
@@ -746,7 +748,7 @@ Provides a list of all completed orders of the user.
   Authorization: Bearer <accessToken>
   ```
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[POST] /orders**
 
@@ -785,7 +787,7 @@ Creates a new order for the user. Users are allowed to have only one active orde
   - Status Code: _403 Forbidden_
     Content: `{ "error": "CURRENT_ORDER_EXISTS" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[POST] /orders/item**
 
@@ -821,7 +823,7 @@ Adds a new order item in the current active order of the user.
 
   Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[PATCH] /orders/item**
 
@@ -858,7 +860,7 @@ Updates an order item in the current active order of the user.
 
   Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[DELETE] /orders/item/:id**
 
@@ -888,7 +890,7 @@ Deletes the order item with the specified id in the current active order of the 
 
   Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[PATCH] /orders/current/complete**
 
@@ -919,7 +921,7 @@ Completes the current active order of the user.
 
   Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
 
 #### **[DELETE] /orders/current/complete**
 
@@ -946,4 +948,4 @@ Deletes the current active order of the user.
 
     Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
-[:arrow_up:Back to top](#api-requirements)
+[:arrow_up: Back to top](#api-requirements)
