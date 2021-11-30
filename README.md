@@ -55,7 +55,7 @@ To lint the app run `npm run lint`.
 
 To test the app:
 
-1. Make sure the database is up and running
+1. Make sure postgress is up and running
 
 2. Make sure the database for testing exists
 
