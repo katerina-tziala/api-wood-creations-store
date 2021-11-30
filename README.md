@@ -53,8 +53,21 @@ To lint the app run `npm run lint`.
 
 ### Testing
 
-To test the app run in the project directory `npm run test`.
+To test the app:
 
-In order to test the endpoints through the [REST Client plugin for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), use the provided [endpoints.rest](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/endpoints.rest) file.
+1. Make sure the database is up and running
 
-In order to test the endpoints through [Postman](https://www.postman.com/) install the app and import both the [environment](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/WoodCreationsStore.postman_environment.json) and the [collection](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/WoodCreationsStore.postman_collection.json). Make sure you the imported environment is selected when sending the requests.
+2. Make sure the database for testing exists
+
+3. In the project directory run `npm run test`.
+
+## Future Improvements
+- Increase test coverage by adding more tests.
+- Implement email verification for the new users. Unverified users should not have access to the RESTful API.
+- Implement price tracking per period for each one of the products and calculate total price of an order based on the price that the product had when the order was completed.
+- Create endpoint to allow adminstrators see active orders of specified user(s).
+- Create endpoint to allow adminstrators see statistics about customers' orders.
+- Extend user creation endpoint to allow adminstrators create new adminstrators.
+
+## Attributions
+Many thanks to the designer of handmade wood creations (and friend) [manukhantu](https://www.instagram.com/manukhantu/) for the idea of the project.
