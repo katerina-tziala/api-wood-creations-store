@@ -9,8 +9,8 @@ export enum OrderStatus {
 export interface Order extends ModelType {
   customer_id: number;
   status: OrderStatus;
-  created_at: Date;
-  completed_at?: Date;
+  created_at: Date | string;
+  completed_at?: Date | string | null;
   comments?: string | null;
   total?: string | null;
   number_of_products?: string | null;

@@ -1,6 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 import * as Routes from './routes/@routes.module';
-import { DatabaseError, Pool, PoolClient, QueryResult } from 'pg';
+import {
+  ResponseError,
+  getResponseError
+} from '../utilities/error-handling/response-error-handling';
 const api = express.Router();
 
 api.use('/users', Routes.Users);
@@ -8,35 +11,18 @@ api.use('/categories', Routes.Categories);
 api.use('/products', Routes.Products);
 api.use('/orders', Routes.Orders);
 
-
 api.get('/', async (_, res: Response): Promise<void> => {
   res.status(200).send('API is listening...');
 });
 
-// TODO: error handling
-function handleError(error: Error, req: Request, res: Response, next: NextFunction) {
-  const message = error.message;
-  if (message === 'NOT_FOUND' || message ==='CURRENT_ORDER_NOT_FOUND') {
-    res.status(404).json({error: message});
-    return;
-  }
-
-  if (message === 'CURRENT_ORDER_EXISTS' ) {
-    res.status(403).json({error: message});
-    return;
-  }
- //   const errorMessage = extractQueryErorrMessage(error as DatabaseError);
-    //   // console.log(error);
-
-    //   // TODO get details
-    //   throw error;
-  
-  console.log(error.message);
-  
-  console.log('ERROR ----');
-
-  console.error(error);
-  res.status(500).send('Something broke!');
+function handleError(
+  error: Error,
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+) {
+  const { statusCode, ...errorData }: ResponseError = getResponseError(error);
+  res.status(statusCode).json(JSON.parse(JSON.stringify(errorData)));
 }
 
 api.use(handleError);

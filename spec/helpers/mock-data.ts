@@ -1,6 +1,7 @@
 import { Category } from '../../src/api/models/Category';
 import { Product } from '../../src/api/models/Product';
 import { User, UserRole } from '../../src/api/models/User';
+import { generateUserToken } from '../../src/utilities/token';
 
 export const CATEGORIES: Category[] = [
   {
@@ -129,3 +130,5 @@ export const USERS: User[] = [
     role: UserRole.Admin
   }
 ];
+
+export const TOKEN = generateUserToken({ ...USERS[0], password: 'root' });

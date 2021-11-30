@@ -1,6 +1,4 @@
-import { DatabaseError } from 'pg';
-
-const PG_QUERY_ERROR: {
+export const PG_ERROR_INDEX: {
   [key: string]: string[];
 } = {
   SUCCESSFUL_COMPLETION: ['00000'],
@@ -231,27 +229,3 @@ const PG_QUERY_ERROR: {
   DATA_CORRUPTED: ['XX001'],
   INDEX_CORRUPTE: ['XX002']
 };
-
-export enum QueryErrorType {
-  NotFound = 'NOT_FOUND',
-  ValuesRequired = 'VALUES_REQUIRED'
-}
-
-function getQueryErorrKey(code: string): string | undefined {
-  const codeKeys: string[] = Object.keys(PG_QUERY_ERROR);
-  return codeKeys.find(key => PG_QUERY_ERROR[key].includes(code));
-}
-
-function getQueryErorrType(code?: string): string {
-  const defaultError = 'UNEXPTECTED_BD_ERROR';
-  if (!code) {
-    return defaultError;
-  }
-  const errorKey = getQueryErorrKey(code);
-  return errorKey ? errorKey : defaultError;
-}
-
-export function extractQueryErorrMessage(error: DatabaseError): string {
-  const errorType = getQueryErorrType(error.code);
-  return `${errorType}`;
-}

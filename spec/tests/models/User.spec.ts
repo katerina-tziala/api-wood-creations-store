@@ -7,10 +7,7 @@ import {
 import { UserStore, User, UserRole } from '../../../src/api/models/User';
 import { USERS } from '../../helpers/mock-data';
 import { ErrorType } from '../../../src/utilities/error-handling/error-type.enum';
-import {
-  createCurrentOrder,
-  deleteOrder
-} from '../../helpers/test-data';
+import { createCurrentOrder, deleteOrder } from '../../helpers/test-data';
 import { Order } from '../../../src/api/models/Order';
 
 const METHODS = [...DEFAULT_METHODS, 'authenticate'];
@@ -220,10 +217,6 @@ function runUpdateTest(): void {
   runUpdateFailTest();
 }
 
-async function runUpdateError(data: Partial<User>): Promise<void> {
-  return await expectAsync(store.update(data)).toBeRejected();
-}
-
 function runUpdateFailTest(): void {
   const userToUpdate = { ...ADMIN };
   const { firstname, lastname, username } = userToUpdate;
@@ -244,25 +237,35 @@ function runUpdateFailTest(): void {
     });
 
     // TODO: check why if commenting this out the rest of the tests fail
-    
+
     // it('firstname is shorter than 3 characters', async () => {
-    //   await runUpdateError({ ...userToUpdate, firstname: 'na' });
+    //   await expectAsync(
+    //     store.update({ ...userToUpdate, firstname: 'na' })
+    //   ).toBeRejected();
     // });
 
     // it('lastname is shorter than 3 characters', async () => {
-    //   await runUpdateError({ ...userToUpdate, lastname: 'la' });
+    //   await expectAsync(
+    //     store.update({ ...userToUpdate, lastname: 'la' })
+    //   ).toBeRejected();
     // });
 
     // it('password is shorter than 4 characters', async () => {
-    //   await runUpdateError({ ...userToUpdate, password: 'pas' });
+    //   await expectAsync(
+    //     store.update({ ...userToUpdate, password: 'pas' })
+    //   ).toBeRejected();
     // });
 
     // it('username is not unique', async () => {
-    //   await runUpdateError({ ...userToUpdate, username: 'jdoe' });
+    //   await expectAsync(
+    //     store.update({ ...userToUpdate, username: 'jdoe' })
+    //   ).toBeRejected();
     // });
 
     // it('username is shorter than 4 characters', async () => {
-    //   await runUpdateError({ ...userToUpdate, username: 'use' });
+    //   await expectAsync(
+    //     store.update({ ...userToUpdate, username: 'use' })
+    //   ).toBeRejected();
     // });
   });
 }

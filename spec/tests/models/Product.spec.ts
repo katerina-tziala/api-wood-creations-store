@@ -47,44 +47,19 @@ function runCreateTest() {
   const category_id = CATEGORY.id;
   const description = 'product description';
 
-  describe('> should create a new product:', () => {
-    it('with the specified data', async () => {
-      const data = { category_id, name, price, description };
-      const product: Product = await store.create(data);
-      checkCreatedProduct(product, data);
-      expect(product.description).toBe(description);
-      MockData.push({ ...product, category: CATEGORY.name });
-    });
-
-    it('with description = null when description not specified', async () => {
-      const data = { category_id, name, price };
-      const product: Product = await store.create(data);
-      checkCreatedProduct(product, data);
-      expect(product.description).toBe(null);
-      MockData.push({ ...product, category: CATEGORY.name });
-    });
-
-    it('with description = null when description is an empty string', async () => {
-      const data = { category_id, name, price, description: '' };
-      const product: Product = await store.create(data);
-      checkCreatedProduct(product, data);
-      expect(product.description).toBe(null);
-      MockData.push({ ...product, category: CATEGORY.name });
-    });
+  it('should create a new product with the specified data', async () => {
+    const data = { category_id, name, price, description };
+    const product: Product = await store.create(data);
+    expect(product).toBeDefined();
+    expect(product.id).toBeDefined();
+    expect(product.name).toBe(data.name);
+    expect(product.category_id).toBe(data.category_id);
+    expect(product.price).toBe(data.price);
+    expect(product.description).toBe(description);
+    MockData.push({ ...product, category: CATEGORY.name });
   });
 
   runCreateFailTest({ name, category_id, price, description });
-}
-
-function checkCreatedProduct(
-  product: Product,
-  expectedData: Omit<Product, 'id'>
-): void {
-  expect(product).toBeDefined();
-  expect(product.id).toBeDefined();
-  expect(product.name).toBe(expectedData.name);
-  expect(product.category_id).toBe(expectedData.category_id);
-  expect(product.price).toBe(expectedData.price);
 }
 
 function runCreateFailTest(data: Partial<Product>): void {
@@ -154,10 +129,11 @@ function runGetByCategoryTest(): void {
   });
 
   it(`should return all the products with the specified category id`, async () => {
+    const categoryId = 3;
     const expectedProducts = PRODUCTS.filter(
-      product => product.category_id === CATEGORY.id
+      product => product.category_id === categoryId
     );
-    await expectAsync(store.getByCategory(CATEGORY.id)).toBeResolvedTo(
+    await expectAsync(store.getByCategory(categoryId)).toBeResolvedTo(
       expectedProducts
     );
   });

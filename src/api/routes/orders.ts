@@ -94,24 +94,6 @@ router.post(
   }
 );
 
-// Remove item from current order
-router.delete(
-  '/current/item/:id',
-  [authTokenGuard, itemIdChecker],
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const itemId: number = parseInt(req.params.id);
-    try {
-      const order = await orderController.deleteItemFromCurrentOrder(
-        res.locals.userData.id,
-        itemId
-      );
-      res.status(200).json(order);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
 // Update item in current order
 router.patch(
   '/current/item/:id',
@@ -124,6 +106,24 @@ router.patch(
         res.locals.userData.id,
         itemId,
         updateData
+      );
+      res.status(200).json(order);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// Remove item from current order
+router.delete(
+  '/current/item/:id',
+  [authTokenGuard, itemIdChecker],
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const itemId: number = parseInt(req.params.id);
+    try {
+      const order = await orderController.deleteItemFromCurrentOrder(
+        res.locals.userData.id,
+        itemId
       );
       res.status(200).json(order);
     } catch (error) {
