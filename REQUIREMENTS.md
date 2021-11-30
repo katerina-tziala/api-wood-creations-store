@@ -20,11 +20,11 @@ The following list is an overview of the exposed endpoints. More details for eac
 
   _Authenticates a user and provides access_
 
-- [[GET] <Token> /users](#get-users)
+- [[GET] [Token] /users](#get-users)
 
   _Provides a list of all users_
 
-- [[GET] <Token> /users/:id](#get-usersid)
+- [[GET] [Token] /users/:id](#get-usersid)
 
   _Returns the requested user including the current order and the 5 most recent completed orders_
 
@@ -32,32 +32,33 @@ The following list is an overview of the exposed endpoints. More details for eac
 
   _Creates a user_
 
-- [[PATCH] <Token> /users](#patch-users)
+- [[PATCH] [Token] /users](#patch-users)
 
-_Updates the authorized user and returns the updated user_
+    _Updates the authorized user and returns the updated user_
 
-- [[DELETE] <Token> /users/:id](#delete-usersid)
+- [[DELETE] [Token] /users/:id](#delete-usersid)
+
   _Deletes the customer with the specified id_
 
 ### Categories
 
-- [[GET] <Token> /categories](#get-categories)
+- [[GET] [Token] /categories](#get-categories)
 
-  _Provides a list of all categories for the products_
+  _Provides a list with the categories of the products_
 
-- [[GET] <Token> /categories/:id](#get-categoriesid)
+- [[GET] [Token] /categories/:id](#get-categoriesid)
 
   _Returns the category with the specified id_
 
-- [[POST] <Token> /categories](#post-categories)
+- [[POST] [Token] /categories](#post-categories)
 
   _Creates a new category_
 
-- [[PATCH] <Token> /categories/:id](#patch-categoriesid)
+- [[PATCH] [Token] /categories/:id](#patch-categoriesid)
 
   _Updates the category with the specified id_
 
-- [[DELETE] <Token> /categories/:id](#delete-categoriesid)
+- [[DELETE] [Token] /categories/:id](#delete-categoriesid)
 
   _Deletes the category with the specified id_
 
@@ -79,53 +80,53 @@ _Updates the authorized user and returns the updated user_
 
   _Provides a list of all products that belong in the specified category_
 
-- [[POST] <Token> /products](#post-products)
+- [[POST] [Token] /products](#post-products)
 
   _Creates a new product_
 
-- [[PATCH] <Token> /products/:id](#patch-productsid)
+- [[PATCH] [Token] /products/:id](#patch-productsid)
 
   _Updates the product with the specified id_
 
-- [[DELETE] <Token> /products/:id](#delete-productsid)
+- [[DELETE] [Token] /products/:id](#delete-productsid)
 
   _Deletes the product with the specified id_
 
 ### Orders
 
-- [[GET] <Token> /orders](#get-orders)
+- [[GET] [Token] /orders](#get-orders)
 
   _Provides a list of all orders of the user_
 
-- [[GET] <Token> /orders/current](#get-orderscurrent)
+- [[GET] [Token] /orders/current](#get-orderscurrent)
 
   _Returns the current order of the user_
 
-- [[GET] <Token> /orders/completed](#get-orderscompleted)
+- [[GET] [Token] /orders/completed](#get-orderscompleted)
 
   _Provides a list of all completed orders of the user_
 
-- [[POST] <Token> /orders](#post-orders)
+- [[POST] [Token] /orders](#post-orders)
 
   _Creates a new order for the user_
 
-- [[POST] <Token> /orders/item](#post-ordersitem)
+- [[POST] [Token] /orders/item](#post-ordersitem)
 
   _Adds a new order item in the current active order of the user_
 
-- [[PATCH] <Token> /orders/item](#patch-ordersitem)
+- [[PATCH] [Token] /orders/item](#patch-ordersitem)
 
   _Updates an order item in the current active order of the user_
 
-- [[DELETE] <Token> /orders/item/:id](#delete-ordersitemid)
+- [[DELETE] [Token] /orders/item/:id](#delete-ordersitemid)
 
   _Deletes the order item with the specified id in the current active order of the user_
 
-- [[PATCH] <Token> /orders/current/complete](#patch-orderscurrentcomplete)
+- [[PATCH] [Token] /orders/current/complete](#patch-orderscurrentcomplete)
 
   _Completes the current active order of the user_
 
-- [[DELETE] <Token> /orders/current/complete](#delete-orderscurrentcomplete)
+- [[DELETE] [Token] /orders/current/complete](#delete-orderscurrentcomplete)
 
   _Deletes the current active order of the user_
 
@@ -405,7 +406,7 @@ Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
 
 #### **[GET] /categories**
 
-Provides a list of all categories for the products.
+Provides a list with the categories of the products.
 
 - **_Request Headers:_**
   ```
