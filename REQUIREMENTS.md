@@ -1,745 +1,212 @@
 # API Requirements
 
-The _"Wood Creations"_ company stakeholders want to create an online storefront to showcase their great product creations. Users need to be able to browse an index of all products, see the specifics of a single product, and add products to an order that they can view in a cart page. Administrators should also be able to manage users, categories and products of the store.
+The [Wood Creations](https://www.instagram.com/manukhantu/) company stakeholders want to create an online storefront to showcase their great product creations.
 
-These are the notes that describe the endpoints of the API, as well as the data contracts the frontend and backend have agreed upon to meet the requirements of the application.
+Users need to be able to browse an index of all products, see the specifics of a single product, and add products to an order that they can view in a cart page.
+
+Administrators should also be able to manage users, categories and products of the store.
+
+These are the notes that describe the endpoints of the API, the [database schema]() and the [data contracts]() the frontend and backend have agreed upon to meet the requirements of the application.
 
 ## API Endpoints
 
-There are 4 main routes in the API: users, categories, products and orders. All the endpoints of the API are under the route **/api**.
+There are 4 main routes in the RESTful API: users, categories, products and orders. All the endpoints of the API are under the route **/api**.
 
-Success and error responses are described for special cases.
-
-For endpoints that require authorization, unauthorized users that try to access them will get an error response:
-
-Status Code: _401 Unauthorized_
-
-Content: `{ "error": "UNAUTHORIZED" }`
+The following list is an overview of the exposed endpoints. More details for each endpoint can be found at the end of this document, in the [API Endpoints Details section](#api-endpoints-details).
 
 ### Users
 
-- **[POST] /users/authenticate/**
+- [[POST] /users/authenticate/]()
 
-  Authenticates a user and provides access.
+  _Authenticates a user and provides access_
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    ```
-  - **_Request Body:_**
+- [[GET] <Token> /users]()
 
-    ```
-    {
-        "username": string,
-        "password": string
-    }
-    ```
+  _Provides a list of all users_
 
-  - **_Success Response:_**
+- [[GET] <Token> /users/:id]()
 
-    Status Code: _200 OK_
+  _Returns the requested user including the current order and the 5 most recent completed orders_
 
-    Content: `{ "accessToken": string }`
+- [[POST] /users]()
 
-  - **_Error Response:_**
+  _Creates a user_
 
-    - Status Code: _400 Bad Request_
+- [[PATCH] <Token> /users]()
 
-      Content:
+_Updates the authorized user and returns the updated user_
 
-      ```
-      {
-          "error": "CREDENTIALS_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT"
-      }
-      ```
-
-    - Status Code: _401 Unauthorized_
-
-      Content: `{ "error": "WRONG_CREDENTIALS" }`
-
-- **[GET] /users**
-
-  Provides a list of all users. Available only for authenticated users with the **_Admin_** role.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-
-- **[GET] /users/:id**
-
-  Returns the requested user including the current order and the 5 most recent completed orders. Available only for authenticated users with the **_Admin_** role.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_USER_ID" }`
-
-    - Status Code: _403 Forbidden_
-
-      Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
-
-- **[POST] /users**
-
-  Creates a user. Creating a user with the **_Admin_** role is not allowed.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    ```
-  - **_Request Body:_**
-
-    ```
-    {
-        "firstname": string,
-        "lastname": string,
-        "username": string,
-        "password": string
-    }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-      Content:
-
-      ```
-      {
-          "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
-      }
-      ```
-
-- **[PATCH] /users**
-
-  Updates the authorized user and returns the updated user.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
-
-    At least one of the following is required.
-
-    ```
-    {
-      "firstname"?: string,
-      "lastname"?: string,
-      "username"?: string,
-      "password"?: string
-     }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-      Content:
-
-      ```
-      {
-          "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
-      }
-      ```
-
-- **[DELETE] /users/:id**
-
-  Deletes the user with the specified id if the user exists and the user does not have the **_Admin_** role. Available only for authenticated users with the **_Admin_** role.
-
-  - **_Request Headers:_**
-
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-
-  - **_Success Response:_**
-
-    Status Code: _204 No Content_
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_USER_ID" }`
-
-    - Status Code: _403 Forbidden_
-
-      Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" | "ADMIN_DELETION_FORBIDDEN" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
+- [[DELETE] <Token> /users/:id]()
+  _Deletes the customer with the specified id_
 
 ### Categories
 
-Categories can only be managed for authenticated users with the **_Admin_** role. When users with the **_Customer_** role try to access the endpoind they will get an error response:
+- [[GET] <Token> /categories]()
 
-Status Code: _403 Forbidden_
+  _Provides a list of all categories for the products_
 
-Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+- [[GET] <Token> /categories/:id]()
 
-- **[GET] /categories**
+  _Returns the category with the specified id_
 
-  Provides a list of all categories for the products.
+- [[POST] <Token> /categories]()
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
+  _Creates a new category_
 
-- **[GET] /categories/:id**
+- [[PATCH] <Token> /categories/:id]()
 
-  Returns the category with the specified id.
+  _Updates the category with the specified id_
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Error Response:_**
+- [[DELETE] <Token> /categories/:id]()
 
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_CATEGORY_ID" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
-
-- **[POST] /categories**
-
-  Creates a new category.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
-
-    ```
-    {
-        "name": string
-    }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
-
-- **[PATCH] /categories/:id**
-
-  Updates the category with the specified id.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
-
-    ```
-    {
-        "name": string
-    }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_CATEGORY_ID" | "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
-
-- **[DELETE] /categories/:id**
-
-  Deletes the category with the specified id.
-
-  - **_Request Headers:_**
-
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-
-  - **_Success Response:_**
-
-    Status Code: _204 No Content_
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_CATEGORY_ID" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
+  _Deletes the category with the specified id_
 
 ### Products
 
-- **[GET] /products**
+- [[GET] /products]()
 
-  Provides a list of all products.
+  _Provides a list of all products_.\_
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    ```
+- [[GET] /products/top-five]()
 
-- **[GET] /products/top-five**
+  _Provides a list of the 5 most popular products (most commonly ordered)_
 
-  Provides a list of the 5 most popular products (most commonly ordered).
+- [[GET] /products/:id]()
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    ```
+  _Returns the product with the specified id_
 
-- **[GET] /products/:id**
+- [[GET] /products/category/:id]()
 
-  Returns the product with the specified id.
+  _Provides a list of all products that belong in the specified category_
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    ```
-  - **_Error Response:_**
+- [[POST] <Token> /products]()
 
-    - Status Code: _400 Bad Request_
+  _Creates a new product_
 
-      Content: `{ "error": "INVALID_PRODUCT_ID"}`
+- [[PATCH] <Token> /products/:id]()
 
-    - Status Code: _404 Not Found_
+  _Updates the product with the specified id_
 
-      Content: `{ "error": "NOT_FOUND" }`
+- [[DELETE] <Token> /products/:id]()
 
-- **[GET] /products/category/:id**
-
-  Provides a list of all products that belong in the specified category.
-
-  - **_Request Headers:_**
-
-    ```
-    Content-Type: application/json
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_CATEGORY_ID"}`
-
-- **[POST] /products**
-
-  Creates a new product. Available only for authenticated users with the **_Admin_** role.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
-
-    ```
-    {
-      "name": string,
-      "price": string,
-      "category_id": number,
-      "description": string | null
-    }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-      Content:
-
-      ```
-      {
-          "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
-      }
-      ```
-
-- **[PATCH] /products/:id**
-
-  Updates the product with the specified id. Available only for authenticated users with the **_Admin_** role.
-
-  - **_Request Headers:_**
-
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-
-  - **_Request Body:_**
-
-  At least one of the following is required.
-
-  ```
-  {
-    "name"?: string,
-    "price"?: string,
-    "category_id"?: number,
-    "description"?: string | null
-  }
-  ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-      Content:
-
-      ```
-      {
-          "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
-      }
-      ```
-
-- **[DELETE] /products/:id**
-
-  Deletes the product with the specified id. Available only for authenticated users with the **_Admin_** role.
-
-  - **_Request Headers:_**
-
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-
-  - **_Success Response:_**
-
-    Status Code: _204 No Content_
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_PRODUCT_ID" }`
-
-    - Status Code: _403 Forbidden_
-
-      Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
+  _Deletes the product with the specified id_
 
 ### Orders
 
-All the orders endpoints can be accessed by the authorized and are related to that user.
+- [[GET] <Token> /orders]()
 
-- **[GET] /orders**
+  _Provides a list of all orders of the user_
 
-  Provides a list of all orders of the user.
+- [[GET] <Token> /orders/current]()
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
+  _Returns the current order of the user_
 
-- **[GET] /orders/current**
+- [[GET] <Token> /orders/completed]()
 
-  Returns the current order of the user.
+  _Provides a list of all completed orders of the user_
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Error Response:_**
+- [[POST] <Token> /orders]()
 
-    - Status Code: _404 Not Found_
+  _Creates a new order for the user_
 
-      Content: `{ "error": "NOT_FOUND" }`
+- [[POST] <Token> /orders/item]()
 
-- **[GET] /orders/completed**
+  _Adds a new order item in the current active order of the user_
 
-  Provides a list of all completed orders of the user.
+- [[PATCH] <Token> /orders/item]()
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
+  _Updates an order item in the current active order of the user_
 
-- **[POST] /orders**
+- [[DELETE] <Token> /orders/item/:id]()
 
-  Creates a new order for the user. Users are allowed to have only one active order.
+  _Deletes the order item with the specified id in the current active order of the user_
 
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
+- [[PATCH] <Token> /orders/current/complete]()
 
-    ```
-    {
-       "item": {
-          "product_id": number,
-          "quantity": number,
-          "engraving": string | null
-      },
-      "comments": string | null,
-      "calledAt": number (timestamp)
-    }
-    ```
+  _Completes the current active order of the user_
 
-  - **_Error Response:_**
+- [[DELETE] <Token> /orders/current/complete]()
 
-    - Status Code: _400 Bad Request_
-      Content:
+  _Deletes the current active order of the user_
 
-      ```
-      {
-          "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" | "ORDER_ITEM_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
-      }
-      ```
 
-    - Status Code: _403 Forbidden_
-      Content: `{ "error": "CURRENT_ORDER_EXISTS" }`
-
-- **[POST] /orders/item**
-
-  Adds a new order item in the current active order of the user.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
-
-    ```
-    {
-        "product_id": number,
-        "quantity": number,
-        "engraving": string | null
-    }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-      Content:
-
-      ```
-      {
-          "error": "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
-      }
-      ```
-
-  - Status Code: _404 Not Found_
-
-    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
-
-- **[PATCH] /orders/item**
-
-  Updates an order item in the current active order of the user.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
-
-    At least one of the following is required.
-
-    ```
-    {
-        "quantity?": number,
-        "engraving?": string | null
-    }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-      Content:
-
-      ```
-      {
-          "error": "DATA_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
-      }
-      ```
-
-  - Status Code: _404 Not Found_
-
-    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
-
-- **[DELETE] /orders/item/:id**
-
-  Deletes the order item with the specified id in the current active order of the user. If there are no more items in the current order then the current order is deleted.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Success Response:_**
-
-    Status Code: _200 OK_
-    Content: The current order or null
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_ORDER_ITEM_ID" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "NOT_FOUND" }`
-
-  - Status Code: _404 Not Found_
-
-    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
-
-- **[PATCH] /orders/current/complete**
-
-  Completes the current active order of the user.
-
-  - **_Request Headers:_**
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-  - **_Request Body:_**
-
-    At least one of the following is required.
-
-    ```
-    {
-        "calledAt": number (timestamp),
-        "comments": string | null
-    }
-    ```
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-      Content: `{ "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" }`
-
-  - Status Code: _404 Not Found_
-
-    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
-
-- **[DELETE] /orders/current/complete**
-
-  Deletes the current active order of the user.
-
-  - **_Request Headers:_**
-
-    ```
-    Content-Type: application/json
-    Authorization: Bearer <accessToken>
-    ```
-
-  - **_Success Response:_**
-
-    Status Code: _204 No Content_
-
-  - **_Error Response:_**
-
-    - Status Code: _400 Bad Request_
-
-      Content: `{ "error": "INVALID_CATEGORY_ID" }`
-
-    - Status Code: _404 Not Found_
-
-      Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
 
 ## Data Contracts
+
+The following data contracts specify the expected structure of the data returned from the API endpoints.
 
 ### Category
 
 ```
+
 {
-  id: number;
-  name: string;
+id: number;
+name: string;
 }
+
 ```
 
 ### Product
 
 ```
+
 {
-  id: number;
-  name: string;
-  price: string;
-  category_id: number;
-  category?: string;
-  description?: string | null;
+id: number;
+name: string;
+price: string;
+category_id: number;
+category?: string;
+description?: string | null;
 }
+
 ```
 
 ### Order
 
 ```
+
 {
-  id: number;
-  customer_id: number;
-  status: Active | Complete;
-  created_at: Date;
-  completed_at?: Date;
-  comments?: string | null;
-  total?: string;
-  number_of_products?: string;
-  items?: [
-    {
-      id: number;
-      order_id: number;
-      product_id: number;
-      quantity: number;
-      engraving?: string | null;
-      name?: string;
-      price?: string;
-      category_id?: number;
-      description?: string;
-    },
-    ...
-  ];
+id: number;
+customer_id: number;
+status: Active | Complete;
+created_at: Date | string;
+completed_at?: Date | string | null;
+comments?: string | null;
+total?: string | null;
+number_of_products?: string | null;
+items?: [
+{
+id: number;
+order_id: number;
+product_id: number;
+quantity: number;
+engraving?: string | null;
+name?: string;
+price?: string;
+category_id?: number;
+description?: string;
+},
+...
+];
 }
+
 ```
 
 ### User
 
 ```
+
 {
-  id: number;
-  username: string;
-  firstname: string;
-  lastname: string;
-  role: Admin | Customer;
-  password?: string | null;
-  recentOrders?: Order[];
-  currentOrder?: Order;
+id: number;
+username: string;
+firstname: string;
+lastname: string;
+role: Admin | Customer;
+password?: string | null;
+recentOrders?: Order[];
+currentOrder?: Order;
 }
+
 ```
 
 ## Database Schema
@@ -749,12 +216,677 @@ The following diagram depicts the database schema that address the API endpoints
 <p align="center">
     <img src="https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/wood-creations-store.png" alt="database-schema" width="100%" height="auto">
 </p>
+```
 
+## API Endpoints Details
 
-## Future Improvements
+Success and error responses are described for special cases. In the **_Request Headers:_** the required headers for each request can be found.
 
-- Implement email verification for the new users. Unverified users should not have acees to the endpoints.
-- Implement price tracking per period for each one of the products and calculate total price of an order based on the priced that the product had when the order was completed.
-- Create endpoint to allow adminstrators see active orders of specified user(s).
-- Create endpoint to allow adminstrators see statistics about customers' orders.
-- Extend user creation endpoint to allow adminstrators create new adminstrators.
+Endpoints with the header
+
+```
+  Authorization: Bearer <accessToken>
+```
+
+require token authentication to be acccessed.
+
+### Users
+
+#### **[POST] /users/authenticate**
+
+Authenticates a user and provides access.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  ```
+- **_Request Body:_**
+
+  ```
+  {
+      "username": string,
+      "password": string
+  }
+  ```
+
+- **_Success Response:_**
+
+  Status Code: _200 OK_
+
+  Content: `{ "accessToken": string }`
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content:
+
+    ```
+    {
+        "error": "CREDENTIALS_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT"
+    }
+    ```
+
+  - Status Code: _401 Unauthorized_
+
+    Content: `{ "error": "WRONG_CREDENTIALS" }`
+
+#### **[GET] /users**
+
+Provides a list of all users. Available only for authenticated users with the **_Admin_** role.
+
+- **_Request Headers:_**
+
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+- **[GET] /users/:id**
+
+Returns the requested user including the current order and the 5 most recent completed orders. Available only for authenticated users with the **_Admin_** role.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_USER_ID" }`
+
+  - Status Code: _403 Forbidden_
+
+    Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+#### **[POST] /users**
+
+Creates a user. Creating a user with the **_Admin_** role is not allowed.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  ```
+- **_Request Body:_**
+
+  ```
+  {
+      "firstname": string,
+      "lastname": string,
+      "username": string,
+      "password": string
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content:
+
+    ```
+    {
+        "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
+    }
+    ```
+
+#### **[PATCH] /users**
+
+Updates the authorized user and returns the updated user.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  At least one of the following is required.
+
+  ```
+  {
+    "firstname"?: string,
+    "lastname"?: string,
+    "username"?: string,
+    "password"?: string
+   }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content:
+
+    ```
+    {
+        "error": "DATA_REQUIRED" | "USERNAME_REQUIRED" | "USERNAME_TOO_SHORT" | "PASSWORD_REQUIRED" | "PASSWORD_TOO_SHORT" | "FIRSTNAME_REQUIRED" | "FIRSTNAME_TOO_SHORT" | "LASTNAME_REQUIRED" | "LASTNAME_TOO_SHORT"
+    }
+    ```
+
+#### **[DELETE] /users/:id**
+
+Deletes the user with the specified id if the user exists and the user does not have the **_Admin_** role. Available only for authenticated users with the **_Admin_** role.
+
+- **_Request Headers:_**
+
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+- **_Success Response:_**
+
+  Status Code: _204 No Content_
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_USER_ID" }`
+
+  - Status Code: _403 Forbidden_
+
+    Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" | "ADMIN_DELETION_FORBIDDEN" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+### Categories
+
+Categories can only be managed for authenticated users with the **_Admin_** role. When users with the **_Customer_** role try to access the endpoind they will get an error response:
+
+Status Code: _403 Forbidden_
+
+Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+
+#### **[GET] /categories**
+
+Provides a list of all categories for the products.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+#### **[GET] /categories/:id**
+
+Returns the category with the specified id.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_CATEGORY_ID" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+#### **[POST] /categories**
+
+Creates a new category.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  ```
+  {
+      "name": string
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+#### **[PATCH] /categories/:id**
+
+Updates the category with the specified id.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  ```
+  {
+      "name": string
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_CATEGORY_ID" | "NAME_REQUIRED" | "NAME_TOO_SHORT" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+#### **[DELETE] /categories/:id**
+
+Deletes the category with the specified id.
+
+- **_Request Headers:_**
+
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+- **_Success Response:_**
+
+  Status Code: _204 No Content_
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_CATEGORY_ID" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+### Products
+
+#### **[GET] /products**
+
+Provides a list of all products.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  ```
+
+#### **[GET] /products/top-five**
+
+Provides a list of the 5 most popular products (most commonly ordered).
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  ```
+
+#### **[GET] /products/:id**
+
+Returns the product with the specified id.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  ```
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_PRODUCT_ID"}`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+#### **[GET] /products/category/:id**
+
+Provides a list of all products that belong in the specified category.
+
+- **_Request Headers:_**
+
+  ```
+  Content-Type: application/json
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_CATEGORY_ID"}`
+
+#### **[POST] /products**
+
+Creates a new product. Available only for authenticated users with the **_Admin_** role.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  ```
+  {
+    "name": string,
+    "price": string,
+    "category_id": number,
+    "description": string | null
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content:
+
+    ```
+    {
+        "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
+    }
+    ```
+
+#### **[PATCH] /products/:id**
+
+Updates the product with the specified id. Available only for authenticated users with the **_Admin_** role.
+
+- **_Request Headers:_**
+
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+- **_Request Body:_**
+
+At least one of the following is required.
+
+```
+
+{
+"name"?: string,
+"price"?: string,
+"category_id"?: number,
+"description"?: string | null
+}
+
+```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content:
+
+    ```
+    {
+        "error": "DATA_REQUIRED" | "NAME_REQUIRED" | "NAME_TOO_SHORT" | "PRICE_REQUIRED" | "PRICE_MUST_BE_POSITIVE" | "INVALID_NUMBER_CATEGORY_ID"
+    }
+    ```
+
+#### **[DELETE] /products/:id**
+
+Deletes the product with the specified id. Available only for authenticated users with the **_Admin_** role.
+
+- **_Request Headers:_**
+
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+- **_Success Response:_**
+
+  Status Code: _204 No Content_
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_PRODUCT_ID" }`
+
+  - Status Code: _403 Forbidden_
+
+    Content: `{ "error": "FORBIDDEN_FOR_CUSTOMER" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+### Orders
+
+All the orders endpoints can be accessed by the authorized and are related to that user.
+
+#### **[GET] /orders**
+
+Provides a list of all orders of the user.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+#### **[GET] /orders/current**
+
+Returns the current order of the user.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Error Response:_**
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+#### **[GET] /orders/completed**
+
+Provides a list of all completed orders of the user.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+#### **[POST] /orders**
+
+Creates a new order for the user. Users are allowed to have only one active order.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  ```
+  {
+     "item": {
+        "product_id": number,
+        "quantity": number,
+        "engraving": string | null
+    },
+    "comments": string | null,
+    "calledAt": number (timestamp)
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content:
+
+    ```
+    {
+        "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" | "ORDER_ITEM_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
+    }
+    ```
+
+  - Status Code: _403 Forbidden_
+    Content: `{ "error": "CURRENT_ORDER_EXISTS" }`
+
+#### **[POST] /orders/item**
+
+Adds a new order item in the current active order of the user.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  ```
+  {
+      "product_id": number,
+      "quantity": number,
+      "engraving": string | null
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content:
+
+    ```
+    {
+        "error": "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
+    }
+    ```
+
+- Status Code: _404 Not Found_
+
+  Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
+
+#### **[PATCH] /orders/item**
+
+Updates an order item in the current active order of the user.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  At least one of the following is required.
+
+  ```
+  {
+      "quantity?": number,
+      "engraving?": string | null
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content:
+
+    ```
+    {
+        "error": "DATA_REQUIRED" | "INVALID_NUMBER_PRODUCT_ID" | "QUANTITY_REQUIRED" | "QUANTITY_MUST_BE_POSITIVE"
+    }
+    ```
+
+- Status Code: _404 Not Found_
+
+  Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
+
+#### **[DELETE] /orders/item/:id**
+
+Deletes the order item with the specified id in the current active order of the user. If there are no more items in the current order then the current order is deleted.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Success Response:_**
+
+  Status Code: _200 OK_
+  Content: The current order or null
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_ORDER_ITEM_ID" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "NOT_FOUND" }`
+
+- Status Code: _404 Not Found_
+
+  Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
+
+#### **[PATCH] /orders/current/complete**
+
+Completes the current active order of the user.
+
+- **_Request Headers:_**
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+- **_Request Body:_**
+
+  At least one of the following is required.
+
+  ```
+  {
+      "calledAt": number (timestamp),
+      "comments": string | null
+  }
+  ```
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+    Content: `{ "error": "CALLEDAT_REQUIRED" | "INVALID_TIMESTAMP_CALLEDAT" }`
+
+- Status Code: _404 Not Found_
+
+  Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`
+
+#### **[DELETE] /orders/current/complete**
+
+Deletes the current active order of the user.
+
+- **_Request Headers:_**
+
+  ```
+  Content-Type: application/json
+  Authorization: Bearer <accessToken>
+  ```
+
+- **_Success Response:_**
+
+  Status Code: _204 No Content_
+
+- **_Error Response:_**
+
+  - Status Code: _400 Bad Request_
+
+    Content: `{ "error": "INVALID_CATEGORY_ID" }`
+
+  - Status Code: _404 Not Found_
+
+    Content: `{ "error": "CURRENT_ORDER_NOT_FOUND" }`

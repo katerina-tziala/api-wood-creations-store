@@ -26,8 +26,8 @@ Here’s a high level list of the technologies used for this app:
 2. To install the dependencies of the app, run in the project directory `npm install` or `npm i`
 
 3. In the root directory of the project create a **_.env_** file based on the [example.env](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/example.env)
-   
-   The default values of the environment variables are already provided.
+
+   The default values of the environment variables are already provided including the ports of the api and the database.
 
 4. Set up the databases for development and testing as described in the [DATABASE_SETUP.md](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/DATABASE_SETUP.md)
 
@@ -61,7 +61,33 @@ To test the app:
 
 3. In the project directory run `npm run test`.
 
+### Notes
+
+#### Endpoints Playground
+
+In order to experiment with and test the endpoints through the [REST Client plugin for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), use the provided [endpoints.rest](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/endpoints.rest) file.
+
+In order to experiment with and test the endpoints through [Postman](https://www.postman.com/) install the app and import both the [environment](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/WoodCreationsStore.postman_environment.json) and the [collection](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/docs/WoodCreationsStore.postman_collection.json). Make sure you the imported environment is selected when sending the requests.
+
+#### Database
+
+For the needs of this project, when running `npm run database:up` to create the database schema some of the tables are filled with data:
+
+- Users: The admin of the store is created. To login as an admin use the following credentials:
+
+  ```
+  {
+      "username": "admin",
+      "password": "root"
+  }
+  ```
+
+- Categories: The basic categories of the products are created
+
+- Products: Some showcase products are created
+
 ## Future Improvements
+
 - Increase test coverage by adding more tests.
 - Implement email verification for the new users. Unverified users should not have access to the RESTful API.
 - Implement price tracking per period for each one of the products and calculate total price of an order based on the price that the product had when the order was completed.
@@ -70,4 +96,5 @@ To test the app:
 - Extend user creation endpoint to allow adminstrators create new adminstrators.
 
 ## Attributions
+
 Many thanks to the designer of handmade wood creations (and friend) [manukhantu](https://www.instagram.com/manukhantu/) for the idea of the project.
