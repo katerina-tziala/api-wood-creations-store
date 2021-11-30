@@ -21,18 +21,21 @@ Here’s a high level list of the technologies used for this app:
 
 ## Running the App
 
-1. Fork and clone this repository.
+1. Fork and clone this repository
 
-2. To install the dependencies of the app, run in the project directory `npm install` or `npm i`.
+2. To install the dependencies of the app, run in the project directory `npm install` or `npm i`
 
-3. In the root directory of the project create a **_.env_** file based on the [example.env](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/example.env).
+3. In the root directory of the project create a **_.env_** file based on the [example.env](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/example.env)
+   
    The default values of the environment variables are already provided.
 
-4. Set up the databases for development and testing as described in the [DATABASE_SETUP.md](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/DATABASE_SETUP.md).
+4. Set up the databases for development and testing as described in the [DATABASE_SETUP.md](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/DATABASE_SETUP.md)
 
 5. Make sure your database is up and running
 
-6. To run the app, in the project directory run: `npm run dev`.
+6. To set up the database schema, in the project directory run: `npm run database:up`
+
+7. To run the app, in the project directory run: `npm run dev`
 
 ## Code Quality and Testing
 

@@ -42,7 +42,7 @@ export class ProductStore extends ModelStore<Product> {
         .concat(
           ' INNER JOIN customer_order ON customer_order.id = order_item.order_id'
         )
-        .concat(` WHERE customer_order.status = ${OrderStatus.Complete}`);
+        .concat(` WHERE customer_order.status='${OrderStatus.Complete}'`);
 
     const popular =
       'SELECT ordered_products.product_id, COUNT(ordered_products.order_id) as times_ordered'.concat(
