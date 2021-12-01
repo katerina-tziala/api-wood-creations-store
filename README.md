@@ -27,7 +27,7 @@ Here’s a high level list of the technologies used for this app:
 
 3. In the root directory of the project create a **_.env_** file based on the [example.env](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/example.env)
 
-   The default values of the environment variables are already provided including the ports of the api and the database.
+   The default values of the environment variables are already provided including the ports of the api(3000) and the database(5432).
 
 4. Set up the databases for development and testing as described in the [DATABASE_SETUP.md](https://github.com/katerina-tziala/api-wood-creations-store/blob/master/DATABASE_SETUP.md)
 
