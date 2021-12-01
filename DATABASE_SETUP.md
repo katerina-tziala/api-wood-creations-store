@@ -107,3 +107,7 @@ To connect to each one of the databases you can run
 - ` \dt ` Display Tables in a database
 
 - ` \q ` Quit out of psql to normal terminal
+
+- ` psql -U postgres ` Connect to postgress
+
+- ` psql --username=<username> --dbname=<database> ` Connect to database
