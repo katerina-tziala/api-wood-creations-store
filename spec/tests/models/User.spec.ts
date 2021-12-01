@@ -181,6 +181,7 @@ function runAuthenticateTest(): void {
       ADMIN.username,
       'root'
     );
+
     expect(authenticated).toBeDefined();
     expect(authenticated?.username).toBe(ADMIN.username);
   });
@@ -237,11 +238,14 @@ function runUpdateFailTest(): void {
       );
     });
 
-    // TODO: check why if commenting this out the rest of the tests fail
+    /**
+     * TODO: check why if commenting this out the rest of the tests fail
+     * Inside of this describe if we only run one of the test cases then each one of the cases pass
+     */
 
     // it('firstname is shorter than 3 characters', async () => {
     //   await expectAsync(
-    //     store.update({ ...userToUpdate, firstname: 'na' })
+    //     store.update({ id: ADMIN.id, firstname: 'na' })
     //   ).toBeRejected();
     // });
 
